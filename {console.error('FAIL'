@@ -1,0 +1,1 @@
+rzp.orders.create({amount:59900,currency:'INR',receipt:'test_001'}).then(d=,d.id)}).catch(e=,e.error

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Our Story — {{GROOM_NAME}} & {{BRIDE_NAME}}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Caveat:wght@500;700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --paper:#f7ecd8;
+  --paper2:#f1e2c8;
+  --ink:#4a3527;
+  --ink-light:#7a6250;
+  --terracotta:#c1543a;
+  --terracotta-deep:#9c3f2a;
+  --sage:#7c9473;
+  --sage-deep:#5c7355;
+  --gold:#c9962c;
+  --gold-light:#e2b658;
+}
+
+html,body{height:100%;overflow:hidden;}
+body{
+  background:#2b1f16;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Poppins',sans-serif;
+}
+
+/* ═══════════════════════
+   BOOK APP — fixed, paginated (no scroll)
+═══════════════════════ */
+#book-app{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:1;background:radial-gradient(ellipse at 50% 40%, #3a2c1e, #201509);
+}
+.book-stage{
+  width:390px;height:100vh;max-height:844px;position:relative;
+  perspective:1800px;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  border-radius:6px;overflow:hidden;background:var(--paper);
+}
+.book-spine-shadow{position:absolute;top:0;bottom:0;left:0;width:26px;background:linear-gradient(90deg, rgba(0,0,0,0.25), transparent);z-index:500;pointer-events:none;}
+
+.page{
+  position:absolute;inset:0;background:var(--paper);
+  transform-origin:left center;transform-style:preserve-3d;
+  backface-visibility:hidden;
+  transition:transform 0.85s cubic-bezier(0.45,0,0.55,1), box-shadow 0.85s ease;
+  overflow-y:auto;overflow-x:hidden;
+  padding:30px 26px 90px;
+  box-shadow:2px 0 0 rgba(74,53,39,0.06);
+}
+.page.flipped{box-shadow:-6px 0 18px rgba(0,0,0,0.25);}
+.page::-webkit-scrollbar{display:none;}
+.page::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:14px;
+  background:repeating-linear-gradient(90deg, transparent 0 8px, rgba(74,53,39,0.05) 8px 10px);
+  pointer-events:none;
+}
+.page-deco-corner{position:absolute;width:60px;height:60px;opacity:0.5;pointer-events:none;}
+
+.chapter-eyebrow{font-family:'Poppins',sans-serif;font-weight:600;font-size:9px;letter-spacing:4px;color:var(--terracotta-deep);text-transform:uppercase;text-align:center;margin-bottom:6px;}
+.chapter-title{font-family:'Berkshire Swash',cursive;font-size:32px;color:var(--ink);text-align:center;margin-bottom:16px;line-height:1.15;}
+.chapter-body{font-family:'Lora',serif;font-style:italic;font-size:14px;color:var(--ink-light);line-height:1.85;text-align:center;margin-bottom:18px;}
+
+/* ═══ COVER PAGE ═══ */
+.cover-page{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 30%, #fbf3e3, var(--paper));}
+.cover-illustration{margin-bottom:18px;}
+.cover-tag{font-family:'Poppins',sans-serif;font-weight:500;font-size:10px;letter-spacing:5px;color:var(--sage-deep);text-transform:uppercase;margin-bottom:10px;}
+.cover-title{font-family:'Berkshire Swash',cursive;font-size:46px;color:var(--terracotta-deep);margin-bottom:6px;}
+.cover-sub{font-family:'Caveat',cursive;font-weight:700;font-size:26px;color:var(--ink);margin-bottom:10px;}
+.cover-invite{font-family:'Lora',serif;font-style:italic;font-size:12.5px;color:var(--ink-light);margin-bottom:22px;line-height:1.7;}
+.cover-divider{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 26px;}
+.begin-btn{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--paper);background:linear-gradient(135deg,var(--terracotta),var(--terracotta-deep));padding:13px 30px;border-radius:26px;border:none;cursor:pointer;box-shadow:0 10px 24px rgba(156,63,42,0.4);animation:btnPulse 2.4s ease-in-out infinite;}
+@keyframes btnPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+.cover-hint{margin-top:16px;font-family:'Poppins',sans-serif;font-weight:500;font-size:9.5px;letter-spacing:2px;color:rgba(122,98,80,0.6);text-transform:uppercase;}
+
+/* ═══ NAV BAR ═══ */
+#book-nav{position:absolute;bottom:0;left:0;right:0;height:64px;background:linear-gradient(0deg, rgba(247,236,216,0.98), rgba(247,236,216,0.85));border-top:1px solid rgba(74,53,39,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:600;}
+.nav-btn{font-family:'Poppins',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;color:var(--ink);background:rgba(255,255,255,0.6);border:1px solid rgba(74,53,39,0.25);border-radius:20px;padding:9px 16px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.nav-btn:disabled{opacity:0.3;pointer-events:none;}
+.nav-indicator{font-family:'Caveat',cursive;font-weight:700;font-size:16px;color:var(--terracotta-deep);text-align:center;}
+.nav-indicator small{display:block;font-family:'Poppins',sans-serif;font-weight:500;font-size:8px;letter-spacing:1.5px;color:var(--ink-light);text-transform:uppercase;margin-top:-2px;}
+
+/* ═══ COUNTDOWN CHAPTER ═══ */
+.countdown-wrap{display:flex;justify-content:center;gap:9px;margin-top:10px;flex-wrap:wrap;}
+.cd-box{width:64px;background:linear-gradient(160deg, rgba(193,84,58,0.12), rgba(255,255,255,0.5));border:1px solid rgba(193,84,58,0.3);border-radius:8px;padding:12px 4px;text-align:center;}
+.cd-num{font-family:'Berkshire Swash',cursive;font-size:22px;color:var(--terracotta-deep);line-height:1;}
+.cd-label{font-family:'Poppins',sans-serif;font-weight:500;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-light);margin-top:6px;}
+
+/* ═══ NARRATIVE PHOTO FRAME ═══ */
+.story-photo-frame{width:180px;height:180px;margin:0 auto 18px;border-radius:6px;border:3px solid #fff;box-shadow:0 10px 26px rgba(74,53,39,0.25);transform:rotate(-2deg);background:linear-gradient(160deg,#e8dcc4,#d8c7a0);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.story-photo-frame img{width:100%;height:100%;object-fit:cover;}
+.story-photo-ph{font-family:'Poppins',sans-serif;font-weight:500;font-size:10px;color:rgba(74,53,39,0.4);text-align:center;letter-spacing:0.5px;}
+
+/* ═══ SCRATCH LETTER ═══ */
+.scratch-outer{position:relative;margin:0 auto 6px;width:100%;}
+.scratch-wrap{position:relative;border-radius:10px;overflow:hidden;border:2px solid rgba(193,84,58,0.3);box-shadow:0 10px 30px rgba(74,53,39,0.2);}
+.scratch-content{position:relative;padding:32px 18px;text-align:center;background:linear-gradient(150deg, rgba(193,84,58,0.15), rgba(255,255,255,0.6));}
+.scratch-content .label{font-family:'Poppins',sans-serif;font-weight:600;font-size:9px;letter-spacing:3px;color:var(--terracotta-deep);text-transform:uppercase;margin-bottom:8px;}
+.scratch-content .date-big{font-family:'Berkshire Swash',cursive;font-size:24px;color:var(--ink);letter-spacing:0.5px;line-height:1.3;}
+.scratch-content .date-day{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-top:6px;}
+#scratch-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity 0.6s ease;}
+.scratch-instruction{margin-top:10px;text-align:center;font-family:'Poppins',sans-serif;font-weight:500;font-size:10.5px;color:var(--terracotta-deep);}
+.scratch-star{position:fixed;z-index:900;pointer-events:none;font-size:15px;color:var(--gold);animation:starBurstUp 2.4s ease-out forwards;}
+@keyframes starBurstUp{0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(0.5);}12%{opacity:1;}100%{opacity:0;transform:translate(var(--dx),-220px) rotate(var(--rot)) scale(1);}}
+
+/* ═══ CELEBRATION CHAPTER CARD (Haldi/Wedding/Reception) ═══ */
+.wax-icon{width:56px;height:56px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,0,0,0.25);}
+.celeb-card{background:rgba(255,255,255,0.5);border:1px solid rgba(74,53,39,0.15);border-radius:12px;padding:20px;text-align:center;}
+.celeb-detail{font-family:'Lora',serif;font-size:13.5px;color:var(--ink-light);line-height:1.9;}
+.celeb-detail b{font-weight:600;color:var(--ink);}
+.directions-link{display:inline-flex;align-items:center;gap:5px;margin-top:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5px;text-decoration:none;color:var(--terracotta-deep);border:1px solid var(--terracotta-deep);border-radius:14px;padding:6px 12px;}
+.directions-link svg{width:11px;height:11px;}
+
+/* ═══ FAMILY CHAPTER ═══ */
+.family-card{background:rgba(255,255,255,0.5);border:1px solid rgba(74,53,39,0.15);border-radius:10px;padding:18px;margin-bottom:14px;text-align:center;}
+.family-photo{width:54px;height:54px;border-radius:50%;margin:0 auto 10px;border:2px solid #fff;box-shadow:0 4px 10px rgba(74,53,39,0.2);background:linear-gradient(160deg,#e8dcc4,#d8c7a0);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.family-photo .ph{font-family:'Poppins',sans-serif;font-size:7px;color:rgba(74,53,39,0.4);}
+.family-role{font-family:'Poppins',sans-serif;font-weight:600;font-size:8px;letter-spacing:3px;color:var(--terracotta-deep);text-transform:uppercase;margin-bottom:8px;}
+.family-name{font-family:'Lora',serif;font-style:italic;font-size:15px;color:var(--ink);line-height:1.7;}
+
+/* ═══ GALLERY CHAPTER ═══ */
+.mini-gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
+.mini-polaroid{background:#fff;padding:6px 6px 18px;border-radius:2px;box-shadow:0 8px 18px rgba(74,53,39,0.25);}
+.mini-polaroid:nth-child(odd){transform:rotate(-3deg);}
+.mini-polaroid:nth-child(even){transform:rotate(3deg);}
+.mini-polaroid-photo{aspect-ratio:1/1;background:linear-gradient(160deg,#e8dcc4,#d8c7a0);display:flex;align-items:center;justify-content:center;}
+.mini-polaroid-ph{font-family:'Poppins',sans-serif;font-size:8px;color:rgba(74,53,39,0.4);}
+.mini-polaroid-cap{text-align:center;font-family:'Caveat',cursive;font-weight:700;font-size:14px;color:var(--terracotta-deep);margin-top:3px;}
+
+/* ═══ WISH WALL CHAPTER ═══ */
+.wish-box{background:rgba(255,255,255,0.5);border:1px solid rgba(74,53,39,0.2);border-radius:14px;padding:20px 18px;text-align:center;}
+.wish-box textarea{width:100%;background:rgba(255,255,255,0.7);border:1px solid rgba(74,53,39,0.2);border-radius:8px;padding:11px;color:var(--ink);font-family:'Lora',serif;font-style:italic;font-size:13px;resize:none;height:56px;margin-bottom:10px;}
+.wish-box textarea::placeholder{color:rgba(74,53,39,0.35);}
+.wish-box input[type="text"]{width:100%;background:rgba(255,255,255,0.7);border:1px solid rgba(74,53,39,0.2);border-radius:20px;padding:9px 14px;color:var(--ink);font-family:'Poppins',sans-serif;font-size:12px;margin-bottom:10px;}
+.wish-box input::placeholder{color:rgba(74,53,39,0.35);}
+.wish-send-btn{font-family:'Poppins',sans-serif;font-weight:600;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--terracotta),var(--terracotta-deep));padding:10px 24px;border-radius:22px;border:none;cursor:pointer;}
+.wish-count{margin-top:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5px;color:var(--terracotta-deep);}
+.floating-wish{
+  position:fixed;left:50%;z-index:900;pointer-events:none;transform:translateX(-50%);
+  background:rgba(255,255,255,0.98);color:var(--ink);
+  border-radius:12px;padding:9px 16px;max-width:230px;
+  font-family:'Lora',serif;font-style:italic;font-size:12px;
+  box-shadow:0 8px 20px rgba(74,53,39,0.3);
+  animation:wishFloat 5s ease-in forwards;text-align:center;
+}
+.floating-wish b{font-family:'Poppins',sans-serif;font-style:normal;font-weight:700;display:block;font-size:9.5px;color:var(--terracotta-deep);margin-top:3px;}
+@keyframes wishFloat{0%{opacity:0;transform:translateX(-50%) translateY(0) scale(0.9);}10%{opacity:1;transform:translateX(-50%) translateY(-30px) scale(1);}85%{opacity:1;}100%{opacity:0;transform:translateX(-50%) translateY(-380px) scale(0.95);}}
+
+/* ═══ THE END PAGE ═══ */
+.end-page{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 40%, #fbf3e3, var(--paper));}
+.end-title{font-family:'Berkshire Swash',cursive;font-size:40px;color:var(--terracotta-deep);margin-bottom:14px;}
+.end-names{font-family:'Caveat',cursive;font-weight:700;font-size:30px;color:var(--ink);margin-bottom:6px;}
+.end-date{font-family:'Poppins',sans-serif;font-weight:500;font-size:10px;letter-spacing:2.5px;color:var(--ink-light);text-transform:uppercase;}
+
+/* ═══ MUSIC TOGGLE ═══ */
+#music-toggle{position:fixed;top:16px;left:50%;transform:translateX(calc(-50% + 155px));z-index:700;width:38px;height:38px;border-radius:50%;border:1px solid rgba(193,84,58,0.4);background:rgba(255,255,255,0.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+#music-toggle svg{width:16px;height:16px;}
+#music-toggle .bar{position:absolute;inset:-3px;border-radius:50%;border:1px solid rgba(193,84,58,0.25);animation:spinSlow 12s linear infinite;}
+#music-toggle.playing .bar{animation:spinSlow 4s linear infinite;}
+@keyframes spinSlow{to{transform:rotate(360deg);}}
+
+#ambient-canvas{position:fixed;top:0;left:50%;transform:translateX(-50%);width:390px;height:100vh;max-height:844px;pointer-events:none;z-index:300;}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+
+<canvas id="ambient-canvas"></canvas>
+
+{{#if ADD_MUSIC}}
+<div id="music-toggle">
+  <div class="bar"></div>
+<svg id="musicIconOn" viewBox="0 0 24 24" fill="none" style="display:none;"><path d="M9 18V6l10-2v12" stroke="#c1543a" stroke-width="1.5"/><circle cx="6" cy="18" r="3" stroke="#c1543a" stroke-width="1.5"/><circle cx="17" cy="16" r="3" stroke="#c1543a" stroke-width="1.5"/></svg>
+  <svg id="musicIconOff" viewBox="0 0 24 24" fill="none"><path d="M9 18V6l10-2v12" stroke="rgba(74,53,39,0.4)" stroke-width="1.5"/><circle cx="6" cy="18" r="3" stroke="rgba(74,53,39,0.4)" stroke-width="1.5"/><circle cx="17" cy="16" r="3" stroke="rgba(74,53,39,0.4)" stroke-width="1.5"/><line x1="3" y1="3" x2="21" y2="21" stroke="rgba(74,53,39,0.4)" stroke-width="1.5"/></svg>
+</div>
+{{/if}}
+
+<div id="book-app">
+  <div class="book-stage" id="bookStage">
+    <div class="book-spine-shadow"></div>
+
+    <!-- PAGE 0 — COVER -->
+    <div class="page cover-page" id="page0" style="z-index:1000;">
+      <div class="cover-illustration">
+        <svg width="150" height="110" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="75" cy="95" rx="70" ry="8" fill="#7c9473" opacity="0.3"/>
+          <path d="M75,20 C60,20 50,35 50,50 C50,70 75,90 75,90 C75,90 100,70 100,50 C100,35 90,20 75,20 Z" fill="#c1543a" opacity="0.85"/>
+          <circle cx="55" cy="60" r="14" fill="#e8dcc4"/>
+          <circle cx="95" cy="60" r="14" fill="#e8dcc4"/>
+          <path d="M50,68 Q75,85 100,68" stroke="#4a3527" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <p class="cover-tag">A Little Book About</p>
+      <h1 class="cover-title">Our Story</h1>
+      <p class="cover-sub">{{GROOM_NAME}} & {{BRIDE_NAME}}</p>
+      <p class="cover-invite">are getting married — and you're warmly<br/>invited to turn the page with us</p>
+      <div class="cover-divider"></div>
+      <button class="begin-btn" id="beginBtn">Begin Our Story</button>
+      <p class="cover-hint">Tap to turn the first page</p>
+    </div>
+
+    <!-- PAGE 1 — COUNTDOWN -->
+    <div class="page" id="page1">
+      <p class="chapter-eyebrow">Chapter One</p>
+      <h2 class="chapter-title">Once Upon A Time...</h2>
+      <p class="chapter-body">...there was a countdown. Every second brings us closer to forever.</p>
+      <div class="countdown-wrap" id="countdownWrap">
+        <div class="cd-box"><div class="cd-num" id="cdDays">00</div><div class="cd-label">Days</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdHours">00</div><div class="cd-label">Hours</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdMins">00</div><div class="cd-label">Mins</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdSecs">00</div><div class="cd-label">Secs</div></div>
+      </div>
+    </div>
+
+    <!-- PAGE 2 — HOW WE MET -->
+    <div class="page" id="page2">
+      <p class="chapter-eyebrow">Chapter Two</p>
+      <h2 class="chapter-title">How We Met</h2>
+      <div class="story-photo-frame"><img src="{{COUPLE_PHOTOS_1}}" alt="Couple" /></div>
+      <p class="chapter-body">It started with a chance meeting and a conversation that neither of us wanted to end. Some stories begin with fireworks — ours began with a quiet, certain kind of knowing.</p>
+    </div>
+
+    <!-- PAGE 3 — THE PROPOSAL -->
+    <div class="page" id="page3">
+      <p class="chapter-eyebrow">Chapter Three</p>
+      <h2 class="chapter-title">The Proposal</h2>
+      <div class="story-photo-frame" style="transform:rotate(2deg);"><img src="{{COUPLE_PHOTOS_2}}" alt="Couple" /></div>
+      <p class="chapter-body">One knee, one question, one very shaky "yes." It was, without question, the best moment of our story so far — until the next chapter, that is.</p>
+    </div>
+
+    <!-- PAGE 4 — SAVE THE DATE -->
+    <div class="page" id="page4">
+      <p class="chapter-eyebrow">Chapter Four</p>
+      <h2 class="chapter-title">Save The Date</h2>
+      <p class="chapter-body">Scratch the letter below to reveal the day our story continues.</p>
+      <div class="scratch-outer">
+        <div class="scratch-wrap" id="scratchWrap">
+          <div class="scratch-content">
+            <div class="label">The Next Chapter Begins</div>
+            <div class="date-big">{{SCRATCH_DATE}}</div>
+            <div class="date-day">{{SCRATCH_LOCATION}}</div>
+          </div>
+          <canvas id="scratch-canvas"></canvas>
+        </div>
+        <p class="scratch-instruction" id="scratchHint">👆 Scratch to reveal</p>
+      </div>
+    </div>
+
+
+    <!-- PAGE 5 — HALDI -->
+    <div class="page" id="page5">
+      <p class="chapter-eyebrow">Chapter Five</p>
+      <h2 class="chapter-title">The Haldi</h2>
+      <div class="wax-icon" style="background:radial-gradient(circle at 35% 35%,#f4cf7a,#e0a52c);">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="none"><path d="M4,9 C4,14 8,17 10,17 C12,17 16,14 16,9 C16,9 14,10 10,10 C6,10 4,9 4,9 Z" fill="#fff"/></svg>
+      </div>
+      <div class="celeb-card">
+        <div class="celeb-detail"><b>{{HALDI_DATE}}</b> · {{HALDI_TIME}}<br/>{{HALDI_VENUE_NAME}}<br/>{{HALDI_DRESS_CODE}}</div>
+        <a class="directions-link" href="https://www.google.com/maps/search/?api=1&query=Grand+Quality+Hotel+Mumbai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10,2 C6.7,2 4,4.7 4,8 C4,12.5 10,17 10,17 C10,17 16,12.5 16,8 C16,4.7 13.3,2 10,2 Z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          Get Directions
+        </a>
+      </div>
+    </div>
+
+
+
+    <!-- PAGE 6 — WEDDING -->
+    <div class="page" id="page6">
+      <p class="chapter-eyebrow">Chapter Six</p>
+      <h2 class="chapter-title">The Wedding</h2>
+      <div class="wax-icon" style="background:radial-gradient(circle at 35% 35%,#e08a7a,#c1543a);">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><circle cx="7.5" cy="12" r="4" stroke="#fff" stroke-width="1.4"/><circle cx="12.5" cy="12" r="4" stroke="#fff" stroke-width="1.4"/></svg>
+      </div>
+      <div class="celeb-card">
+        <div class="celeb-detail"><b>{{WEDDING_CEREMONY_DATE}}</b> · {{WEDDING_CEREMONY_TIME}}<br/>{{WEDDING_VENUE_NAME}}<br/>{{WEDDING_MUHURAT_NOTE}}</div>
+        <a class="directions-link" href="https://www.google.com/maps/search/?api=1&query=Grand+Quality+Hotel+Mumbai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10,2 C6.7,2 4,4.7 4,8 C4,12.5 10,17 10,17 C10,17 16,12.5 16,8 C16,4.7 13.3,2 10,2 Z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          Get Directions
+        </a>
+      </div>
+    </div>
+
+
+
+    <!-- PAGE 7 — RECEPTION -->
+    <div class="page" id="page7">
+      <p class="chapter-eyebrow">Chapter Seven</p>
+      <h2 class="chapter-title">The Reception</h2>
+      <div class="wax-icon" style="background:radial-gradient(circle at 35% 35%,#a3bf95,#7c9473);">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M5,3 L15,3 L10.8,10 L10.8,16 L13,16 L13,17 L7,17 L7,16 L9.2,16 L9.2,10 Z" fill="#fff"/></svg>
+      </div>
+      <div class="celeb-card">
+        <div class="celeb-detail"><b>{{RECEPTION_DATE}}</b> · {{RECEPTION_TIME}}<br/>{{RECEPTION_VENUE_NAME}}<br/>{{RECEPTION_NOTE}}</div>
+        <a class="directions-link" href="https://www.google.com/maps/search/?api=1&query=Grand+Quality+Hotel+Mumbai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10,2 C6.7,2 4,4.7 4,8 C4,12.5 10,17 10,17 C10,17 16,12.5 16,8 C16,4.7 13.3,2 10,2 Z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          Get Directions
+        </a>
+      </div>
+    </div>
+
+
+    <!-- PAGE 8 — FAMILIES -->
+    <div class="page" id="page8">
+      <p class="chapter-eyebrow">Chapter Eight</p>
+      <h2 class="chapter-title">Our Families</h2>
+      <div class="family-card">
+        <div class="family-photo"><img src="{{BRIDE_FAMILY_PHOTO_1}}" alt="Bride Family" style="width:100%;height:100%;object-fit:cover;"/></div>
+        <div class="family-role">Bride's Side</div>
+        <div class="family-name">{{BRIDE_FATHER_NAME}} & {{BRIDE_MOTHER_NAME}}</div>
+      </div>
+      <div class="family-card">
+        <div class="family-photo"><img src="{{GROOM_FAMILY_PHOTO_1}}" alt="Groom Family" style="width:100%;height:100%;object-fit:cover;"/></div>
+        <div class="family-role">Groom's Side</div>
+        <div class="family-name">{{GROOM_FATHER_NAME}} & {{GROOM_MOTHER_NAME}}</div>
+      </div>
+    </div>
+
+    <!-- PAGE 9 — GALLERY -->
+    <div class="page" id="page9">
+      <p class="chapter-eyebrow">Chapter Nine</p>
+      <h2 class="chapter-title">Moments We Love</h2>
+      <div class="mini-gallery">
+        <div class="mini-polaroid"><div class="mini-polaroid-photo"><img src="{{GALLERY_PHOTOS_1}}" alt="Gallery 1" style="width:100%;height:100%;object-fit:cover;"/></div><div class="mini-polaroid-cap">{{GALLERY_CAPTION_1}}</div></div>
+        <div class="mini-polaroid"><div class="mini-polaroid-photo"><img src="{{GALLERY_PHOTOS_2}}" alt="Gallery 2" style="width:100%;height:100%;object-fit:cover;"/></div><div class="mini-polaroid-cap">{{GALLERY_CAPTION_2}}</div></div>
+        <div class="mini-polaroid"><div class="mini-polaroid-photo"><img src="{{GALLERY_PHOTOS_3}}" alt="Gallery 3" style="width:100%;height:100%;object-fit:cover;"/></div><div class="mini-polaroid-cap">{{GALLERY_CAPTION_3}}</div></div>
+        <div class="mini-polaroid"><div class="mini-polaroid-photo"><img src="{{GALLERY_PHOTOS_4}}" alt="Gallery 4" style="width:100%;height:100%;object-fit:cover;"/></div><div class="mini-polaroid-cap">{{GALLERY_CAPTION_4}}</div></div>
+      </div>
+    </div>
+
+    <!-- PAGE 10 — WISH WALL -->
+    <div class="page" id="page10">
+      <p class="chapter-eyebrow">Chapter Ten</p>
+      <h2 class="chapter-title">Send Your Blessings</h2>
+      <p class="chapter-body">Write us a little something. It'll float across the page ✿</p>
+      <div class="wish-box">
+        <input type="text" id="wishName" placeholder="Your name" maxlength="24"/>
+        <textarea id="wishMsg" placeholder="Write a little blessing for {{GROOM_NAME}} & {{BRIDE_NAME}}..." maxlength="120"></textarea>
+        <button class="wish-send-btn" id="wishSendBtn">✿ Send Blessing ✿</button>
+        <div class="wish-count">💌 <b id="wishCounter">87</b> blessings sent so far</div>
+      </div>
+    </div>
+
+    <!-- PAGE 11 — THE END -->
+    <div class="page end-page" id="page11">
+      <p class="chapter-eyebrow">Final Chapter</p>
+      <h2 class="end-title">The End</h2>
+      <p class="chapter-body">...or rather, just the beginning.</p>
+      <div class="end-names">{{GROOM_NAME}} & {{BRIDE_NAME}}</div>
+      <div class="end-date">{{END_DATE}}</div>
+    </div>
+
+    <!-- NAV BAR -->
+    <div id="book-nav">
+      <button class="nav-btn" id="prevBtn">‹ Prev</button>
+      <div class="nav-indicator" id="navIndicator">1 / 12<small>Cover</small></div>
+      <button class="nav-btn" id="nextBtn">Next ›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════
+   AMBIENT DUST MOTES
+══════════════════════════════ */
+function startAmbient(){
+  const canvas = document.getElementById('ambient-canvas');
+  canvas.width = 390; canvas.height = Math.min(window.innerHeight, 844);
+  const ctx = canvas.getContext('2d');
+  const items = [];
+  function makeItem(){
+    items.push({
+      x: Math.random()*390, y: canvas.height+10,
+      size: Math.random()*2.5+1,
+      speed: Math.random()*0.3+0.15,
+      drift: Math.random()*0.3-0.15,
+      hue: 'rgba(201,150,44,0.4)',
+    });
+  }
+  setInterval(makeItem, 600);
+  function draw(){
+    ctx.clearRect(0,0,390,canvas.height);
+    for(let i=items.length-1;i>=0;i--){
+      const p = items[i];
+      p.y -= p.speed; p.x += p.drift;
+      if(p.y < -10){ items.splice(i,1); continue; }
+      ctx.beginPath();
+      ctx.fillStyle = p.hue;
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+startAmbient();
+
+/* ══════════════════════════════
+   PAGE-FLIP NAVIGATION
+══════════════════════════════ */
+const TOTAL_PAGES = 12;
+const chapterLabels = ['Cover Page','Once Upon A Time','How We Met','The Proposal','Save The Date','The Haldi','The Wedding','The Reception','Our Families','Moments We Love','Send Your Blessings','The End'];
+let currentPage = 0;
+const pages = [];
+for(let i=0;i<TOTAL_PAGES;i++) pages.push(document.getElementById('page'+i));
+
+function renderPages(){
+  pages.forEach((pg,i)=>{
+    const newFlipped = i < currentPage;
+    const oldFlipped = pg.classList.contains('flipped');
+
+    if(newFlipped && !oldFlipped){
+      /* turning FORWARD: rotate away now, but keep this page's high z-index
+         until the rotation finishes so it stays visibly on top while it flips
+         (previously the destination page snapped to front instantly, hiding the flip) */
+      pg.classList.add('flipped');
+      pg.style.transform = 'rotateY(-180deg)';
+      if(pg._zTimeout) clearTimeout(pg._zTimeout);
+      pg._zTimeout = setTimeout(()=>{ pg.style.zIndex = i; pg._zTimeout = null; }, 820);
+    } else if(!newFlipped && oldFlipped){
+      /* turning BACKWARD: raise z-index immediately so it's visibly on top while it rotates back */
+      if(pg._zTimeout){ clearTimeout(pg._zTimeout); pg._zTimeout = null; }
+      pg.classList.remove('flipped');
+      pg.style.zIndex = 2000 - i;
+      pg.style.transform = 'rotateY(0deg)';
+    } else if(!pg._zTimeout){
+      pg.style.zIndex = newFlipped ? i : (2000 - i);
+    }
+  });
+  document.getElementById('prevBtn').disabled = currentPage === 0;
+  document.getElementById('nextBtn').disabled = currentPage === TOTAL_PAGES - 1;
+
+  let label;
+  if(currentPage === 0){
+    label = 'Prologue';
+  } else if(currentPage === TOTAL_PAGES - 1){
+    label = 'Epilogue';
+  } else {
+    label = 'Chapter '+currentPage+' of '+(TOTAL_PAGES-2);
+  }
+  document.getElementById('navIndicator').innerHTML = label+'<small>'+chapterLabels[currentPage]+'</small>';
+}
+
+function goToPage(n){
+  currentPage = Math.max(0, Math.min(TOTAL_PAGES-1, n));
+  renderPages();
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=> goToPage(currentPage-1));
+document.getElementById('nextBtn').addEventListener('click', ()=> goToPage(currentPage+1));
+document.getElementById('beginBtn').addEventListener('click', ()=> goToPage(1));
+
+let touchStartX = 0;
+const stage = document.getElementById('bookStage');
+stage.addEventListener('touchstart', e=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+stage.addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) < 40) return;
+  if(dx < 0) goToPage(currentPage+1);
+  else goToPage(currentPage-1);
+});
+
+renderPages();
+startCountdown();
+initScratchCard();
+initMusicToggle();
+initWishWall();
+
+/* ══════════════════════════════
+   COUNTDOWN
+══════════════════════════════ */
+function startCountdown(){
+  const targetString = '{{COUNTDOWN_TARGET}}' || '2026-11-21T17:00:00+05:30';
+  const target = new Date(targetString).getTime();
+  const dEl = document.getElementById('cdDays');
+  const hEl = document.getElementById('cdHours');
+  const mEl = document.getElementById('cdMins');
+  const sEl = document.getElementById('cdSecs');
+  function tick(){
+    const now = Date.now();
+    let diff = target - now;
+    if(diff < 0) diff = 0;
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    dEl.textContent = String(days).padStart(2,'0');
+    hEl.textContent = String(hours).padStart(2,'0');
+    mEl.textContent = String(mins).padStart(2,'0');
+    sEl.textContent = String(secs).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ══════════════════════════════
+   SCRATCH-REVEAL STAR BURST
+══════════════════════════════ */
+function burstStarsFrom(wrapEl){
+  const rect = wrapEl.getBoundingClientRect();
+  for(let i=0;i<14;i++){
+    const el = document.createElement('div');
+    el.className = 'scratch-star';
+    el.textContent = '✿';
+    const startX = rect.left + rect.width*0.15 + Math.random()*rect.width*0.7;
+    const startY = rect.top + rect.height*0.5;
+    const dx = (Math.random()-0.5)*240;
+    const rot = (Math.random()-0.5)*360;
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+    el.style.setProperty('--dx', dx+'px');
+    el.style.setProperty('--rot', rot+'deg');
+    el.style.animationDelay = (Math.random()*0.4)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 3000);
+  }
+}
+
+function initScratchCard(){
+  const canvas = document.getElementById('scratch-canvas');
+  const wrap = document.getElementById('scratchWrap');
+  const hint = document.getElementById('scratchHint');
+  const ctx = canvas.getContext('2d');
+  let revealed = false;
+
+  function size(){
+    const rect = wrap.getBoundingClientRect();
+    if(rect.width === 0) { setTimeout(size, 300); return; }
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    paintFoil();
+  }
+  function paintFoil(){
+    const w = canvas.width, h = canvas.height;
+    const grad = ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0,'#e2b658');
+    grad.addColorStop(0.3,'#c9962c');
+    grad.addColorStop(0.5,'#fff3d0');
+    grad.addColorStop(0.7,'#a97b1f');
+    grad.addColorStop(1,'#e2b658');
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1;
+    for(let i=0;i<w+h;i+=10){
+      ctx.beginPath();
+      ctx.moveTo(i,0); ctx.lineTo(0,i);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(74,53,39,0.6)';
+    ctx.font = '600 11px Poppins, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('S C R A T C H   H E R E', w/2, h/2 - 6);
+    ctx.font = '18px serif';
+    ctx.fillText('✿', w/2, h/2 + 20);
+  }
+  size();
+  window.addEventListener('resize', size);
+
+  let scratching = false;
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return {x:cx,y:cy};
+  }
+  function scratchAt(x,y){
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x,y,24,0,Math.PI*2);
+    ctx.fill();
+  }
+  function checkProgress(){
+    const w = canvas.width, h = canvas.height;
+    const sample = ctx.getImageData(0,0,w,h,{willReadFrequently:true}).data;
+    let cleared = 0, total = 0;
+    const step = 40;
+    for(let i=3; i<sample.length; i+= 4*step){
+      total++;
+      if(sample[i] < 40) cleared++;
+    }
+    const pct = cleared/total;
+    if(pct > 0.5 && !revealed){
+      revealed = true;
+      canvas.style.opacity = '0';
+      hint.style.opacity = '0';
+      burstStarsFrom(wrap);
+      setTimeout(()=>{ canvas.style.pointerEvents='none'; }, 650);
+    }
+  }
+  function start(e){ scratching = true; hint.style.opacity='0'; const p=getPos(e); scratchAt(p.x,p.y); }
+  function move(e){ if(!scratching) return; e.preventDefault(); const p=getPos(e); scratchAt(p.x,p.y); checkProgress(); }
+  function end(){ scratching = false; checkProgress(); }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:true});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+}
+
+/* ══════════════════════════════
+   MUSIC TOGGLE
+══════════════════════════════ */
+function initMusicToggle(){
+  const btn = document.getElementById('music-toggle');
+  if(!btn) return;
+  const iconOn = document.getElementById('musicIconOn');
+  const iconOff = document.getElementById('musicIconOff');
+
+  const customUrl = "{{MUSIC_URL}}".trim();
+  const isCustom = customUrl && customUrl !== "" && !customUrl.startsWith("{{");
+  
+  if (!isCustom) {
+    btn.style.display = 'none';
+    return;
+  }
+
+  let playing = false;
+  
+  // Detect YouTube
+  let ytVideoId = null;
+  if (customUrl.indexOf('youtube.com') !== -1 || customUrl.indexOf('youtu.be') !== -1) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = customUrl.match(regExp);
+    if (match && match[2].length === 11) {
+      ytVideoId = match[2];
+    }
+  }
+
+  let audio;
+  let ytPlayer;
+  if (ytVideoId) {
+    const div = document.createElement('div');
+    div.id = 'yt-player';
+    div.style.position = 'absolute';
+    div.style.top = '-9999px';
+    div.style.left = '-9999px';
+    div.style.width = '1px';
+    div.style.height = '1px';
+    div.style.opacity = '0';
+    div.style.pointerEvents = 'none';
+    document.body.appendChild(div);
+
+    function createPlayer() {
+      ytPlayer = new YT.Player('yt-player', {
+        videoId: ytVideoId,
+        playerVars: {
+          'loop': 1,
+          'playlist': ytVideoId,
+          'controls': 0,
+          'disablekb': 1,
+          'fs': 0,
+          'rel': 0,
+          'showinfo': 0
+        }
+      });
+    }
+
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      
+      const prevCallback = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function() {
+        if (prevCallback) prevCallback();
+        createPlayer();
+      };
+    }
+  } else {
+    audio = new Audio(customUrl);
+    audio.loop = true;
+  }
+
+  btn.addEventListener('click', ()=>{
+    playing = !playing;
+    btn.classList.toggle('playing', playing);
+    iconOn.style.display = playing ? 'block' : 'none';
+    iconOff.style.display = playing ? 'none' : 'block';
+    
+    if(playing){
+      if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        ytPlayer.playVideo();
+      } else if (audio) {
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+    } else {
+      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+        ytPlayer.pauseVideo();
+      } else if (audio) {
+        audio.pause();
+      }
+    }
+  });
+}
+
+/* ══════════════════════════════
+   WISH WALL
+══════════════════════════════ */
+function initWishWall(){
+  const btn = document.getElementById('wishSendBtn');
+  const nameInput = document.getElementById('wishName');
+  const msgInput = document.getElementById('wishMsg');
+  const counterEl = document.getElementById('wishCounter');
+  let count = parseInt(counterEl.textContent, 10) || 87;
+
+  const sampleMsgs = [
+    {name:'Priya', msg:'What a beautiful story — can\'t wait for the next chapter!'},
+    {name:'Rohan', msg:'So happy for you two, always!'},
+  ];
+
+  function spawnWish(name, msg){
+    const el = document.createElement('div');
+    el.className = 'floating-wish';
+    el.style.bottom = '90px';
+    el.style.left = (46 + Math.random()*8) + '%';
+    el.innerHTML = msg.replace(/</g,'&lt;') + '<b>— ' + (name || 'A well-wisher').replace(/</g,'&lt;') + '</b>';
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 5200);
+  }
+
+  let sIdx = 0;
+  setInterval(()=>{
+    if(currentPage !== 10) return;
+    const s = sampleMsgs[sIdx % sampleMsgs.length];
+    spawnWish(s.name, s.msg);
+    sIdx++;
+  }, 8000);
+
+  btn.addEventListener('click', ()=>{
+    const msg = msgInput.value.trim();
+    if(!msg) { msgInput.focus(); return; }
+    const name = nameInput.value.trim();
+    spawnWish(name, msg);
+    count++;
+    counterEl.textContent = count;
+    msgInput.value = '';
+    nameInput.value = '';
+  });
+}
+</script>
+</body>
+</html>

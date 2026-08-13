@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PERSON1_NAME}} & {{PERSON2_NAME}} — Wedding Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blush:#fff0f5;--blush-mid:#ffe0ec;--rose:#c9808a;--rose-deep:#a0525e;--cream:#fdf8f4;--text:#3d2228;--text-soft:#8b5a62}
+html{scroll-behavior:smooth}
+body{background:var(--blush);font-family:'Jost',sans-serif;color:var(--text);overflow-x:hidden;min-height:100vh}
+#card{opacity:0;animation:fadeIn 1.2s ease .3s forwards}
+@keyframes fadeIn{to{opacity:1}}
+.floral-top{width:100%;max-height:120px;overflow:hidden;display:flex;justify-content:center;background:white}
+.hero{background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px 56px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,128,138,.06) 0%,transparent 70%)}
+.invite-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--rose);margin-bottom:20px;opacity:0;animation:fadeUp .8s ease .5s forwards}
+.photo-wrap{position:relative;margin:16px 0;opacity:0;animation:fadeUp .8s ease .7s forwards}
+.couple-photo{width:140px;height:140px;border-radius:50%;object-fit:cover;border:3px solid var(--blush-mid);box-shadow:0 4px 24px rgba(201,128,138,.2)}
+.couple-photo-placeholder{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--blush-mid),#ffd0e0);border:3px solid var(--blush-mid);display:flex;align-items:center;justify-content:center;font-size:44px}
+.couple-names{font-family:'Great Vibes';font-size:50px;color:var(--rose-deep);line-height:1.1;margin:8px 0;opacity:0;animation:fadeUp .8s ease .9s forwards}
+.divider{display:flex;align-items:center;gap:10px;margin:12px auto;width:fit-content;opacity:0;animation:fadeUp .8s ease 1s forwards}
+.divider-l{width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--rose))}
+.divider-r{width:48px;height:1px;background:linear-gradient(90deg,var(--rose),transparent)}
+.divider-icon{color:var(--rose);font-size:12px}
+.date-pill{background:var(--blush-mid);color:var(--rose-deep);font-size:12px;letter-spacing:3px;text-transform:uppercase;padding:8px 24px;border-radius:40px;margin-top:8px;opacity:0;animation:fadeUp .8s ease 1.1s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section{padding:56px 24px;max-width:480px;margin:0 auto;opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;text-align:center}
+.section.in-view{opacity:1;transform:translateY(0)}
+.sec-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--rose);margin-bottom:8px}
+.sec-title{font-family:'Playfair Display';font-size:28px;color:var(--text);margin-bottom:28px}
+.photos-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.photo-oval{width:140px;height:170px;border-radius:50%;overflow:hidden;border:3px solid var(--blush-mid);box-shadow:0 4px 16px rgba(201,128,138,.15)}
+.photo-oval img{width:100%;height:100%;object-fit:cover}
+.photo-oval-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--blush-mid),#ffd0e0);display:flex;align-items:center;justify-content:center;font-size:36px}
+.detail-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.detail-card{background:white;border:1px solid var(--blush-mid);border-radius:14px;padding:20px 14px;text-align:center;box-shadow:0 2px 12px rgba(201,128,138,.06)}
+.d-icon{font-size:22px;margin-bottom:6px}
+.d-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:4px}
+.d-value{font-family:'Playfair Display';font-size:15px;color:var(--text);line-height:1.4}
+.family-blush{background:white;border:1px solid var(--blush-mid);border-radius:16px;padding:28px 20px;margin-top:14px;box-shadow:0 2px 12px rgba(201,128,138,.06)}
+.family-blush h3{font-family:'Great Vibes';font-size:26px;color:var(--rose-deep);margin-bottom:20px}
+.family-cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:14px}
+.fam-div{background:var(--blush-mid)}
+.fam-col h4{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--rose);margin-bottom:8px}
+.fam-col p{font-family:'Playfair Display';font-size:14px;color:var(--text-soft);line-height:1.9}
+.msg-box{background:white;border-left:3px solid var(--rose);border-radius:0 12px 12px 0;padding:16px 20px;margin-top:20px;text-align:left;box-shadow:0 2px 12px rgba(201,128,138,.06)}
+.msg-box p{font-family:'Playfair Display';font-style:italic;font-size:15px;color:var(--text-soft);line-height:1.7}
+.rsvp-section{background:linear-gradient(135deg,var(--rose-deep),var(--rose));padding:48px 24px;text-align:center}
+.rsvp-section h2{font-family:'Great Vibes';font-size:38px;color:white;margin-bottom:8px}
+.rsvp-section p{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:24px}
+.rsvp-btn{display:inline-block;background:white;color:var(--rose-deep);font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:14px 40px;border-radius:40px;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:all .2s}
+.rsvp-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.card-footer{background:var(--text);padding:32px 24px 80px;text-align:center}
+.card-footer p{font-family:'Great Vibes';font-size:24px;color:#f0c0c8;margin-bottom:8px}
+.card-footer small{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.share-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:white;border-top:1px solid var(--blush-mid);padding:12px 16px;display:flex;gap:8px;justify-content:center}
+.share-btn{flex:1;max-width:160px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Jost';font-size:13px;font-weight:500;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.share-btn-wa{background:#25d366;color:white}
+.share-btn-copy{background:var(--blush);color:var(--text);border:1px solid var(--blush-mid)}
+</style>
+</head>
+<body>
+<div id="card">
+  <section class="hero">
+    <svg style="position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:.5" viewBox="0 0 480 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="20" rx="40" ry="30" fill="#ffe0ec" opacity=".4"/>
+      <ellipse cx="420" cy="15" rx="50" ry="35" fill="#ffd0e0" opacity=".3"/>
+      <ellipse cx="240" cy="5" rx="30" ry="20" fill="#ffe0ec" opacity=".35"/>
+    </svg>
+    <p class="invite-label">Wedding Invitation</p>
+    <div class="photo-wrap">
+      {{#if PHOTO_1}}<img src="{{PHOTO_1}}" alt="Couple" class="couple-photo">{{else}}<div class="couple-photo-placeholder">💑</div>{{/if}}
+    </div>
+    <h1 class="couple-names">{{PERSON1_NAME}} & {{PERSON2_NAME}}</h1>
+    <div class="divider"><div class="divider-l"></div><span class="divider-icon">✿</span><div class="divider-r"></div></div>
+    <div class="date-pill">{{EVENT_DATE}}</div>
+  </section>
+
+  <section class="section" id="sec-photos">
+    <p class="sec-eyebrow">Our Story</p>
+    <h2 class="sec-title">Beautiful Moments</h2>
+    <div class="photos-row">
+      <div class="photo-oval">{{#if PHOTO_2}}<img src="{{PHOTO_2}}" alt="">{{else}}<div class="photo-oval-placeholder">🌸</div>{{/if}}</div>
+      <div class="photo-oval">{{#if PHOTO_3}}<img src="{{PHOTO_3}}" alt="">{{else}}<div class="photo-oval-placeholder">💕</div>{{/if}}</div>
+    </div>
+  </section>
+
+  <section class="section" style="background:white;max-width:100%;padding:48px 24px" id="sec-details">
+    <div style="max-width:480px;margin:0 auto">
+      <p class="sec-eyebrow">Ceremony Details</p>
+      <h2 class="sec-title">Join Our Celebration</h2>
+      <div class="detail-row">
+        <div class="detail-card"><div class="d-icon">📅</div><div class="d-label">Date</div><div class="d-value">{{EVENT_DATE}}</div></div>
+        <div class="detail-card"><div class="d-icon">🕐</div><div class="d-label">Time</div><div class="d-value">{{EVENT_TIME}}</div></div>
+      </div>
+      <div class="detail-card" style="margin-bottom:14px">
+        <div class="d-icon">📍</div><div class="d-label">Venue</div><div class="d-value">{{VENUE_NAME}}</div>
+        <p style="font-size:13px;color:var(--text-soft);margin-top:4px">{{VENUE_ADDRESS}}</p>
+      </div>
+      <div class="family-blush">
+        <h3>With Blessings Of</h3>
+        <div class="family-cols">
+          <div class="fam-col"><h4>Bride's Family</h4><p>{{FAMILY_BRIDE_FATHER}}<br>{{FAMILY_BRIDE_MOTHER}}</p></div>
+          <div class="fam-div"></div>
+          <div class="fam-col"><h4>Groom's Family</h4><p>{{FAMILY_GROOM_FATHER}}<br>{{FAMILY_GROOM_MOTHER}}</p></div>
+        </div>
+      </div>
+      {{#if EXTRA_MESSAGE}}<div class="msg-box"><p>"{{EXTRA_MESSAGE}}"</p></div>{{/if}}
+    </div>
+  </section>
+
+  <section class="rsvp-section">
+    <h2>We hope to see you!</h2><p>Your presence is our greatest joy</p>
+    <a href="#" class="rsvp-btn">💌 RSVP Now</a>
+  </section>
+  <footer class="card-footer"><p>{{PERSON1_NAME}} & {{PERSON2_NAME}}</p><small>Made with love · WedVibe</small></footer>
+</div>
+
+<div class="share-bar" id="share-bar">
+  <a id="wa-btn" href="#" class="share-btn share-btn-wa">💬 Share</a>
+  <button onclick="copyLink()" class="share-btn share-btn-copy">🔗 Copy Link</button>
+</div>
+
+<script>
+function setupScrollReveal(){const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in-view')}),{threshold:.15});document.querySelectorAll('.section').forEach(s=>obs.observe(s))}
+function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>{const b=document.querySelector('.share-btn-copy');const o=b.textContent;b.textContent='✓ Copied!';setTimeout(()=>b.textContent=o,2000)})}
+window.addEventListener('DOMContentLoaded',()=>{setupScrollReveal();const w=document.getElementById('wa-btn');if(w)w.href='https://wa.me/?text='+encodeURIComponent("You're invited! "+window.location.href)});
+</script>
+</body>
+</html>
