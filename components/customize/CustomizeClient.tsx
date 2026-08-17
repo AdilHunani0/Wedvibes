@@ -84,29 +84,12 @@ export function CustomizeClient({ template }: { template: Template }) {
           order_id: rzpOrder.id,
           prefill: { email: userEmail, contact: '' },
           theme: { color: '#a0522d' },
-          // Force UPI (GPay/PhonePe/Paytm) to appear as the first option
-          config: {
-            display: {
-              blocks: {
-                upi: {
-                  name: 'Pay via UPI',
-                  instruments: [
-                    { method: 'upi', flows: ['collect', 'intent'] },
-                  ],
-                },
-                other: {
-                  name: 'Other Payment Methods',
-                  instruments: [
-                    { method: 'card' },
-                    { method: 'netbanking' },
-                    { method: 'wallet' },
-                    { method: 'paylater' },
-                  ],
-                },
-              },
-              sequence: ['block.upi', 'block.other'],
-              preferences: { show_default_blocks: false },
-            },
+          // Explicitly enable all payment methods so UPI & wallets appear
+          method: {
+            upi: true,
+            card: true,
+            netbanking: true,
+            wallet: true,
           },
           modal: {
             confirm_close: true,
