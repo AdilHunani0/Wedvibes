@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { createAdminClient } from '@/lib/supabase/server'
+import { createAdminClient, createServerClient } from '@/lib/supabase/server'
 
 const CREDIT_PLANS = {
   starter: { name: 'Starter', price: 299900, credits: 24 },
@@ -32,25 +32,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid verification signature' }, { status: 400 })
     }
 
-    const supabaseAdmin = createAdminClient()
-
-    // 1. Fetch Razorpay order details to find user (or query it)
-    // We can also fetch the user directly if we authenticate using cookies or pass user in,
-    // but we can query it using cookie auth here since the request is sent by an authenticated client.
-    // However, to make it completely safe, let's verify user session from cookies.
-    // Let's create server client to verify auth.
-    // Wait, let's get the auth user from request headers/cookies.
-    const { data: { user } } = await supabaseAdmin.auth.getUser()
+    const supabase = await createServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-      // Find the transaction by user notes or order_id if we want,
-      // but standard session works. Let's try getting user from header token:
       return NextResponse.json({ error: 'Auth session expired' }, { status: 401 })
     }
+
+    const supabaseAdmin = createAdminClient()
 
     // 2. Fetch current profile
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('credits')
+      .select('credits, full_name')
       .eq('id', user.id)
       .single()
 
@@ -69,13 +62,28 @@ export async function POST(req: Request) {
     if (profileUpdateError) throw profileUpdateError
 
     // 4. Record credit transaction
-    await supabaseAdmin.from('credit_transactions').insert({
+    const { error: txError } = await supabaseAdmin.from('credit_transactions').insert({
       user_id: user.id,
       type: 'purchase',
       credits_delta: plan.credits,
-      plan_id: planId,
+      amount_paid: plan.price,
       description: `Purchased ${plan.name} Credits Pack via Razorpay`,
     })
+
+    if (txError) throw txError
+
+    // 5. Send receipt email
+    if (user.email) {
+      import('@/lib/resend').then(({ sendCreditPurchaseEmail }) => {
+        sendCreditPurchaseEmail(
+          user.email as string,
+          profile.full_name || 'Planner',
+          plan.name,
+          plan.credits,
+          plan.price
+        ).catch(console.error)
+      }).catch(console.error)
+    }
 
     return NextResponse.json({ success: true, credits: finalCredits })
   } catch (err: unknown) {

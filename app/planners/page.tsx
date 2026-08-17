@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
+import { createServerClient } from '@/lib/supabase/server'
 
 const PLANS = [
   { name: 'Starter Pack', price: 299900, cards: 8,  credits: 24, save: 1000, desc: 'Ideal for independent planners starting with digital invites.' },
@@ -19,7 +20,14 @@ export const metadata = {
   description: 'Scale your event planning business by offering stunning animated invitations to your clients.',
 }
 
-export default function PlannersPage() {
+export default async function PlannersPage() {
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const actionHref = user ? '/dashboard/credits' : '/auth/signup?role=planner'
+  const actionText = user ? 'Go to Planner Wallet ✦' : 'Register as a Planner ✦'
+  const planActionText = user ? 'Buy Now' : 'Get Started'
+
   return (
     <div className="space-y-20 py-12">
       {/* Hero */}
@@ -34,10 +42,10 @@ export default function PlannersPage() {
           Unlock high-margin animated invitations for all your wedding, engagement, and anniversary clients. Buy credit packs and customize on-demand.
         </p>
         <Link
-          href="/auth/signup?role=planner"
+          href={actionHref}
           className="inline-block px-8 py-4 rounded-xl bg-[#2a1810] text-[#e8c97e] font-semibold hover:bg-[#3d2218] transition-all hover:-translate-y-0.5 shadow-lg"
         >
-          Register as a Planner ✦
+          {actionText}
         </Link>
       </section>
 
@@ -99,10 +107,10 @@ export default function PlannersPage() {
                 </div>
               </div>
               <Link
-                href="/auth/signup?role=planner"
+                href={actionHref}
                 className="block text-center mt-8 py-3 rounded-xl bg-[#2a1810] text-[#e8c97e] text-xs font-bold hover:bg-[#3d2218] transition-colors"
               >
-                Get Started
+                {planActionText}
               </Link>
             </div>
           ))}

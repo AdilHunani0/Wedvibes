@@ -29,7 +29,15 @@ export async function GET() {
       .select('amount_paid')
       .in('status', ['paid', 'generating', 'delivered'])
 
-    const totalRevenue = revData?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+    const ordersRevenue = revData?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+
+    const { data: creditRevData } = await supabaseAdmin
+      .from('credit_transactions')
+      .select('amount_paid')
+      .eq('type', 'purchase')
+
+    const creditsRevenue = creditRevData?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+    const totalRevenue = ordersRevenue + creditsRevenue
 
     // 2. Fetch orders today
     const startOfToday = new Date()
@@ -79,7 +87,16 @@ export async function GET() {
         .gte('created_at', startOfDay.toISOString())
         .lte('created_at', endOfDay.toISOString())
 
-      const dayRevenue = dailyOrders?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+      const { data: dailyCredits } = await supabaseAdmin
+        .from('credit_transactions')
+        .select('amount_paid')
+        .eq('type', 'purchase')
+        .gte('created_at', startOfDay.toISOString())
+        .lte('created_at', endOfDay.toISOString())
+
+      const ordersDayRevenue = dailyOrders?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+      const creditsDayRevenue = dailyCredits?.reduce((acc, curr) => acc + (curr.amount_paid || 0), 0) || 0
+      const dayRevenue = ordersDayRevenue + creditsDayRevenue
       revenueByDay.push({ date: dateStr, revenue: dayRevenue })
     }
 

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice } from '@/lib/utils'
 import type { TemplateTier } from '@/lib/types'
+import { MiniCardPreview } from '@/components/templates/MiniCardPreview'
 
 const FEATURED = [
   { slug: 'rose-bloom-wedding', name: 'Rose Bloom', category: 'Wedding', tier: 'premium' as TemplateTier, price: 0, emoji: '🌹', bg: 'from-rose-100 to-pink-50' },
@@ -35,29 +36,35 @@ export function FeaturedTemplates() {
           {FEATURED.map((t) => (
             <div key={t.slug} className="group bg-white rounded-3xl overflow-hidden border border-gold/10 shadow-sm hover:shadow-luxury transition-all duration-500 hover:-translate-y-2 flex flex-col">
               {/* Preview */}
-              <div className={`h-56 md:h-64 bg-gradient-to-br ${t.bg} flex items-center justify-center relative overflow-hidden`}>
-                <span className="text-7xl md:text-8xl group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-md">{t.emoji}</span>
+              <Link
+                href={`/templates/${t.slug}`}
+                className="relative block"
+              >
+                <MiniCardPreview
+                  htmlFilePath={`/templates/${t.slug}.html`}
+                  templateName={t.name}
+                  category={t.category.toLowerCase()}
+                />
                 
                 {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-maroon/0 group-hover:bg-maroon/20 transition-all duration-500 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
-                  <Link
-                    href={`/templates/${t.slug}`}
+                <div className="absolute inset-0 bg-maroon/0 group-hover:bg-maroon/20 transition-all duration-500 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm pointer-events-none z-10">
+                  <span
                     className="opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 bg-white text-maroon text-sm font-semibold px-8 py-3.5 rounded-full shadow-xl"
                   >
                     Preview Card
-                  </Link>
+                  </span>
                 </div>
                 
                 {/* Badges */}
-                <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-4 right-4 z-20 pointer-events-none">
                   <Badge tier={t.tier} className="shadow-sm backdrop-blur-md bg-white/90 border-gold/30 text-xs px-3 py-1 font-medium text-foreground uppercase tracking-wider">{t.tier}</Badge>
                 </div>
-                <div className="absolute bottom-4 left-4 z-10">
+                <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
                   <span className="text-[10px] uppercase tracking-widest px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-full text-brown-muted font-medium shadow-sm border border-white/50">
                     {t.category}
                   </span>
                 </div>
-              </div>
+              </Link>
 
               <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
                 <div className="flex items-start justify-between mb-6">

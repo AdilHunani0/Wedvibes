@@ -111,3 +111,47 @@ export async function sendWelcomeEmail(to: string, name: string) {
     `,
   })
 }
+
+export async function sendCreditPurchaseEmail(
+  to: string,
+  name: string,
+  planName: string,
+  creditsAdded: number,
+  amountPaidPaise: number
+) {
+  const amountRs = (amountPaidPaise / 100).toLocaleString('en-IN')
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Receipt: ${planName} Planner Pack 🪙`,
+    html: `
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #fdf8f4; padding: 40px; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #a0522d; font-size: 28px; margin: 0;">WedVibe Planners</h1>
+        </div>
+        <h2 style="color: #2a1810; font-size: 22px;">Thank you, ${name}! 🪙</h2>
+        <p style="color: #6b3d2a; font-size: 16px; line-height: 1.6;">
+          Your payment for the <strong>${planName}</strong> was successful. We have added <strong>${creditsAdded} credits</strong> to your wallet.
+        </p>
+        <div style="background: #fff; border: 1px solid #e8c97e; border-radius: 8px; padding: 20px; margin: 24px 0;">
+          <p style="color: #a0522d; font-weight: bold; margin: 0 0 12px;">Transaction Details</p>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #6b3d2a;">
+            <span>Amount Paid:</span>
+            <strong>₹${amountRs}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; color: #6b3d2a;">
+            <span>Credits Added:</span>
+            <strong>+${creditsAdded}</strong>
+          </div>
+        </div>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${appUrl}/dashboard/credits" style="background: #a0522d; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 16px; display: inline-block;">
+            View Your Wallet
+          </a>
+        </div>
+      </div>
+    `,
+  })
+}
