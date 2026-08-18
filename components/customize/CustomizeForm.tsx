@@ -14,6 +14,9 @@ interface CustomizeFormProps {
   currentStep: number
   setCurrentStep: (step: number) => void
   onSubmit: () => void
+  onPayWithCredits: () => void
+  userRole?: string
+  userCredits?: number
   submitting: boolean
 }
 
@@ -25,6 +28,9 @@ export function CustomizeForm({
   currentStep,
   setCurrentStep,
   onSubmit,
+  onPayWithCredits,
+  userRole,
+  userCredits,
   submitting,
 }: CustomizeFormProps) {
   const maxPhotos = TIER_MAX_PHOTOS[template.tier] || 1
@@ -168,6 +174,28 @@ export function CustomizeForm({
           >
             Next Step →
           </Button>
+        ) : userRole === 'planner' || userRole === 'admin' ? (
+          (userCredits ?? 0) >= (template.credit_cost || 0) ? (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={onPayWithCredits}
+              loading={submitting}
+              disabled={!isStepValid() || submitting}
+              className="bg-[#2a1810] text-[#e8c97e]"
+            >
+              Buy with {template.credit_cost || 0} Credits 🪙
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => window.location.href = '/dashboard/credits'}
+              className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
+            >
+              Not enough credits ({userCredits} / {template.credit_cost || 0}). Buy More
+            </Button>
+          )
         ) : (
           <Button
             type="button"

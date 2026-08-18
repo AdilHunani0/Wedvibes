@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { supabase } from '@/lib/supabase/client'
 import type { Order } from '@/lib/types'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/hooks/useAuth'
 
 interface CheckoutPageProps {
   params: Promise<{ orderId: string }>
@@ -17,6 +18,7 @@ interface CheckoutPageProps {
 export default function CheckoutPage({ params }: CheckoutPageProps) {
   const { orderId } = use(params)
   const router = useRouter()
+  const { profile } = useAuth()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
   const [paymentStatus, setPaymentStatus] = useState<'pending' | 'success' | 'failed'>('pending')
@@ -131,25 +133,29 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
 
         {/* Right Column: Checkout triggers */}
         <div className="md:col-span-5 space-y-6">
-          {/* Card/UPI Payment */}
-          <div className="bg-white rounded-2xl border border-[#e8c97e]/20 p-6 shadow-xl space-y-4">
-            <h4 className="font-semibold text-sm text-[#2a1810]">UPI / Card Payment</h4>
-            <p className="text-xs text-[#a07060]">
-              Pay securely via Razorpay using your Credit/Debit Card, UPI (Google Pay, PhonePe, Paytm), or NetBanking.
-            </p>
-            <RazorpayButton
+          {/* Card/UPI Payment (Only for non-planners and non-admins) */}
+          {profile?.role !== 'planner' && profile?.role !== 'admin' && (
+            <div className="bg-white rounded-2xl border border-[#e8c97e]/20 p-6 shadow-xl space-y-4">
+              <h4 className="font-semibold text-sm text-[#2a1810]">UPI / Card Payment</h4>
+              <p className="text-xs text-[#a07060]">
+                Pay securely via Razorpay using your Credit/Debit Card, UPI (Google Pay, PhonePe, Paytm), or NetBanking.
+              </p>
+              <RazorpayButton
+                order={order}
+                onSuccess={handlePaymentSuccess}
+                onFailure={handlePaymentFailure}
+              />
+            </div>
+          )}
+
+          {/* Planner/Admin Credits Option */}
+          {(profile?.role === 'planner' || profile?.role === 'admin') && (
+            <CreditsPayment
               order={order}
               onSuccess={handlePaymentSuccess}
               onFailure={handlePaymentFailure}
             />
-          </div>
-
-          {/* Planner Credits Option */}
-          <CreditsPayment
-            order={order}
-            onSuccess={handlePaymentSuccess}
-            onFailure={handlePaymentFailure}
-          />
+          )}
         </div>
       </div>
     </div>

@@ -1,74 +1,88 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/resend'
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createServerClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-    }
-
     const { orderId } = await req.json()
+
     if (!orderId) {
-      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 })
+      return NextResponse.json({ error: 'Missing order details' }, { status: 400 })
     }
 
-    // Get order and profile
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .select('*, template:templates(*)')
-      .eq('id', orderId)
-      .eq('user_id', user.id)
-      .single()
+    const supabase = await createServerClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-    if (orderError || !order) {
-      throw new Error(orderError?.message || 'Order not found')
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (order.status !== 'pending') {
-      return NextResponse.json({ error: 'Order is already processed' }, { status: 400 })
-    }
+    const supabaseAdmin = createAdminClient()
 
-    const creditCost = order.template?.credit_cost || 1
-
-    const { data: profile, error: profileError } = await supabase
+    // 1. Get User Profile and verify role is planner
+    const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single()
 
     if (profileError || !profile) {
-      throw new Error('Profile not found')
+      throw new Error(profileError?.message || 'Profile not found')
     }
 
+    if (profile.role !== 'planner' && profile.role !== 'admin') {
+      return NextResponse.json({ error: 'Only planners and admins can pay with credits' }, { status: 403 })
+    }
+
+    // 2. Get order info and template
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from('orders')
+      .select('*, template:templates(*)')
+      .eq('id', orderId)
+      .single()
+
+    if (orderError || !order) {
+      throw new Error(orderError?.message || 'Order not found')
+    }
+
+    // Prevent duplicate payment
+    if (order.status === 'paid') {
+      return NextResponse.json({ error: 'Order is already paid' }, { status: 400 })
+    }
+
+    const creditCost = order.template?.credit_cost || 0
+
+    // 3. Verify enough credits
     if (profile.credits < creditCost) {
-      return NextResponse.json({ error: 'Insufficient credits balance' }, { status: 400 })
+      return NextResponse.json({ error: 'Insufficient credits' }, { status: 400 })
     }
 
-    // Perform credit updates
+    // 4. Deduct credits and log transaction
     const newCredits = profile.credits - creditCost
 
-    const { error: profileUpdateError } = await supabase
+    const { error: profileUpdateError } = await supabaseAdmin
       .from('profiles')
       .update({ credits: newCredits })
-      .eq('id', user.id)
+      .eq('id', profile.id)
 
     if (profileUpdateError) throw profileUpdateError
 
-    // Record credit transaction
-    await supabase.from('credit_transactions').insert({
-      user_id: user.id,
-      type: 'use',
-      credits_delta: -creditCost,
-      order_id: order.id,
-      description: `Used credits for template: ${order.template?.name || ''}`,
-    })
+    if (creditCost > 0) {
+      const { error: txError } = await supabaseAdmin
+        .from('credit_transactions')
+        .insert({
+          user_id: profile.id,
+          type: 'use',
+          credits_delta: -creditCost,
+          order_id: orderId,
+          description: `Card Generation (${order.template?.name})`
+        })
+      if (txError) throw txError
+    }
 
-    // Update order status to paid
-    const { error: orderUpdateError } = await supabase
+    // 5. Update order status to paid
+    const { error: updateError } = await supabaseAdmin
       .from('orders')
       .update({
         status: 'paid',
@@ -77,23 +91,27 @@ export async function POST(req: Request) {
       })
       .eq('id', order.id)
 
-    if (orderUpdateError) throw orderUpdateError
+    if (updateError) {
+      throw updateError
+    }
 
-    // Send confirmation email
-    if (user.email) {
+    // 6. Send confirmation email
+    const recipientEmail = order.guest_email || profile.email || user.email || ''
+    const recipientName = profile.full_name || 'Valued Planner'
+    if (recipientEmail) {
       try {
         await sendOrderConfirmationEmail(
-          user.email,
-          profile.full_name || 'Valued Partner',
+          recipientEmail,
+          recipientName,
           order.template?.name || 'Wedding Card',
-          order.template?.tier || 'Basic'
+          order.template?.tier || 'Premium'
         )
       } catch (emailErr) {
-        console.error('Failed to send credit order confirmation email:', emailErr)
+        console.error('Failed to send order confirmation email:', emailErr)
       }
     }
 
-    // Trigger card generation in the background
+    // 7. Trigger card generation in the background
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     fetch(`${appUrl}/api/cards/generate`, {
       method: 'POST',

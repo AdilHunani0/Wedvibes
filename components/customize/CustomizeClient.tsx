@@ -9,6 +9,8 @@ import { supabase } from '@/lib/supabase/client'
 import type { Template, CustomizationFormData, RazorpayOptions, RazorpayResponse } from '@/lib/types'
 import toast from 'react-hot-toast'
 import { getSchemaForTemplate, generateInitialData } from '@/lib/template-schemas'
+import { useAuth } from '@/hooks/useAuth'
+import { useCredits } from '@/hooks/useCredits'
 
 // ─── Razorpay script loader (idempotent) ──────────────────────────────────────
 function loadRazorpayScript(): Promise<boolean> {
@@ -44,6 +46,9 @@ export function CustomizeClient({ template }: { template: Template }) {
   const [formData, setFormData] = useState<CustomizationFormData>(
     generateInitialData(schema) as CustomizationFormData
   )
+
+  const { user, profile } = useAuth()
+  const { credits, refetch: refetchCredits } = useCredits(user?.id)
 
   // ─── Generate card and redirect ───────────────────────────────────────────────
   const generateAndRedirect = useCallback(
@@ -131,7 +136,59 @@ export function CustomizeClient({ template }: { template: Template }) {
     [template]
   )
 
-  // ─── Main submit handler ───────────────────────────────────────────────────────
+  // ─── Pay with Credits handler ──────────────────────────────────────────────────
+  const handlePayWithCredits = async () => {
+    setSubmitting(true)
+    setErrorMessage(null)
+
+    try {
+      // Step A: Create order record + save customization
+      toast.loading('Saving details & processing payment...', { id: 'credit-pay' })
+
+      const orderRes = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateId: template.id,
+          customization: formData,
+        }),
+      })
+
+      const orderBody = await orderRes.json().catch(() => ({}))
+      if (!orderRes.ok) {
+        throw new Error(orderBody.error || 'Failed to create order')
+      }
+
+      const { orderId } = orderBody
+
+      // Step B: Deduct credits and mark order as paid
+      const payRes = await fetch('/api/orders/pay-with-credits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      })
+
+      const payBody = await payRes.json().catch(() => ({}))
+      if (!payRes.ok) {
+        throw new Error(payBody.error || 'Failed to process credit payment')
+      }
+
+      toast.success('Payment successful! 🪙', { id: 'credit-pay' })
+      refetchCredits()
+
+      // Step C: Generate card & redirect
+      await generateAndRedirect(orderId)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong.'
+      toast.dismiss('credit-pay')
+      toast.error(msg, { duration: 6000 })
+      setErrorMessage(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // ─── Main submit handler (Razorpay) ───────────────────────────────────────────
   const handleSubmit = async () => {
     setSubmitting(true)
     setErrorMessage(null)
@@ -139,10 +196,10 @@ export function CustomizeClient({ template }: { template: Template }) {
     try {
       // Step A: Collect guest email if not logged in
       console.log('[Pay] Step A: checking session')
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { user } } = await supabase.auth.getUser()
       let guestEmail = ''
 
-      if (!session) {
+      if (!user) {
         const emailInput = window.prompt('Please enter your email address to receive your invitation card:')
         if (!emailInput) {
           toast.error('Email is required to continue.')
@@ -207,7 +264,7 @@ export function CustomizeClient({ template }: { template: Template }) {
       }
 
       toast.dismiss('payment')
-      const userEmail = session?.user?.email || guestEmail || ''
+      const userEmail = user?.email || guestEmail || ''
 
       // Step E: Open Razorpay modal
       console.log('[Pay] Step E: opening Razorpay modal, amount=', rzpOrderBody.amount)
@@ -258,6 +315,9 @@ export function CustomizeClient({ template }: { template: Template }) {
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
             onSubmit={handleSubmit}
+            onPayWithCredits={handlePayWithCredits}
+            userRole={profile?.role}
+            userCredits={credits}
             submitting={submitting}
           />
         </div>
