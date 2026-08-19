@@ -111,13 +111,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // 7. Trigger card generation in the background
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    fetch(`${appUrl}/api/cards/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId: order.id }),
-    }).catch((err) => console.error('Background card generation start failed:', err))
+    // 7. Card generation is triggered by the client after this response.
+    // Do NOT fire a background fetch here — it causes a race condition with
+    // the client-side generateAndRedirect call, which runs immediately after.
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {

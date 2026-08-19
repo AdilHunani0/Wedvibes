@@ -29,7 +29,16 @@ export async function POST(req: Request) {
     }
 
     if (order.status === 'delivered') {
-      return NextResponse.json({ success: true, message: 'Card already generated' })
+      return NextResponse.json({ success: true, message: 'Card already generated', cardUrl: order.card_url })
+    }
+
+    if (order.status === 'generating') {
+      // Another process is already generating — return the existing card_url so client can redirect
+      return NextResponse.json({ success: true, message: 'Generation already in progress', cardUrl: order.card_url })
+    }
+
+    if (order.status !== 'paid') {
+      return NextResponse.json({ error: `Cannot generate card with status: ${order.status}` }, { status: 400 })
     }
 
     // 2. Set status to generating
