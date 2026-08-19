@@ -1,4 +1,8 @@
 import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/server'
+
+// Use Node.js runtime for Supabase admin client compatibility
+export const runtime = 'nodejs'
 
 export async function GET(req: Request, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params
@@ -8,23 +12,32 @@ export async function GET(req: Request, { params }: { params: Promise<{ filename
   }
 
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    if (!supabaseUrl) throw new Error('Missing SUPABASE_URL')
+    const supabaseAdmin = createAdminClient()
 
-    // Redirect to the public Supabase storage URL.
-    // This is fast (no server download) AND the browser renders it correctly
-    // because Supabase serves uploaded HTML files with Content-Type: text/html.
-    const publicUrl = `${supabaseUrl}/storage/v1/object/public/generated-cards/${filename}`
+    // Download the file from the generated-cards bucket
+    const { data, error } = await supabaseAdmin.storage
+      .from('generated-cards')
+      .download(filename)
 
-    return NextResponse.redirect(publicUrl, {
-      status: 302,
+    if (error || !data) {
+      console.error('[render] File not found:', filename, error?.message)
+      return new NextResponse('File not found', { status: 404 })
+    }
+
+    // Read the blob as text and return with explicit HTML content type
+    // This MUST be text/html — Supabase CDN redirect does NOT work in iframes
+    const html = await data.text()
+
+    return new NextResponse(html, {
       headers: {
-        // Tell CDN/browser to cache this redirect for 1 year since the file never changes
+        'Content-Type': 'text/html; charset=utf-8',
+        // Cache aggressively — generated cards never change (new file per generation)
         'Cache-Control': 'public, max-age=31536000, immutable',
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (err) {
-    console.error('Error rendering card:', err)
+    console.error('[render] Error rendering card:', err)
     return new NextResponse('Internal Server Error', { status: 500 })
   }
 }
