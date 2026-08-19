@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { formatDateShort } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
+import { WhatsAppShareModal } from '@/components/card/WhatsAppShareModal'
 import type { Order } from '@/lib/types'
 
 interface CardGridProps {
@@ -12,6 +13,7 @@ interface CardGridProps {
 
 export function CardGrid({ cards }: CardGridProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [shareCard, setShareCard] = useState<Order | null>(null)
 
   const handleCopyLink = (cardUrl: string, orderId: string) => {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -22,17 +24,7 @@ export function CardGrid({ cards }: CardGridProps) {
   }
 
   const handleWhatsAppShare = (card: Order) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    const link = `${appUrl}/card/${card.card_url || card.id}`
-    const p1 = card.customization?.person1_name && card.customization.person1_name !== 'null' ? card.customization.person1_name : ''
-    const p2 = card.customization?.person2_name && card.customization.person2_name !== 'null' ? card.customization.person2_name : ''
-    const names = p1 && p2 ? `${p1} & ${p2}` : ''
-    
-    const message = names 
-      ? `We are getting married! ✨\n\n${names} joyfully invite you to celebrate our special day.\n\nPlease tap the link below to view our interactive invitation for all the details:\n${link}`
-      : `You're invited! 🌸\n\nPlease tap the link below to view our interactive wedding invitation for all the details:\n${link}`
-    
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+    setShareCard(card)
   }
 
   if (cards.length === 0) {
@@ -150,6 +142,21 @@ export function CardGrid({ cards }: CardGridProps) {
           </div>
         )
       })}
+
+      {shareCard && (
+        <WhatsAppShareModal
+          isOpen={!!shareCard}
+          onClose={() => setShareCard(null)}
+          cardUrl={shareCard.card_url || shareCard.id}
+          person1Name={shareCard.customization?.person1_name || 'Groom'}
+          person2Name={shareCard.customization?.person2_name || 'Bride'}
+          eventDate={shareCard.customization?.event_date ? new Date(shareCard.customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+          eventTime={shareCard.customization?.event_time}
+          venueName={shareCard.customization?.venue_name}
+          venueAddress={shareCard.customization?.venue_address}
+          category={shareCard.template?.category || 'wedding'}
+        />
+      )}
     </div>
   )
 }

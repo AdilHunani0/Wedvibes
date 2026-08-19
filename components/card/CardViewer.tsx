@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { SharePanel } from './SharePanel'
 import type { Order } from '@/lib/types'
 
 interface CardViewerProps {
@@ -43,25 +42,6 @@ export function CardViewer({ order }: CardViewerProps) {
         />
       </div>
 
-      {/* Floating Share Button — always visible after load */}
-      {iframeLoaded && !showShare && (
-        <button
-          onClick={() => setShowShare(true)}
-          className="absolute bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-2xl hover:bg-[#128C7E] transition-all active:scale-95 animate-pulse-slow"
-        >
-          <span className="text-lg">💬</span>
-          <span>Share Invitation</span>
-        </button>
-      )}
-
-      {/* Share Panel Overlay */}
-      {showShare && (
-        <SharePanel
-          order={order}
-          customization={customization}
-          onClose={() => setShowShare(false)}
-        />
-      )}
     </div>
   )
 }
