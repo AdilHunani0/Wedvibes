@@ -37,84 +37,87 @@ export function WhatsAppShareModal({
   // ═══════════════════════════════════════
 
   const generateMessage = () => {
+    const name1 = (person1Name && person1Name !== 'null') ? person1Name : 'The Couple';
+    const name2 = (person2Name && person2Name !== 'null') ? person2Name : '';
+
     if (category === 'wedding') {
-      return `✨ *With Joy in Our Hearts* ✨
+      return `❤️ *You are Invited!* ❤️
 
-We are overjoyed to invite you to witness the beginning of our forever 💍
+We joyfully invite you to celebrate the wedding of
 
-👰🤵 *${person1Name} weds ${person2Name}*
+*${name1} weds ${name2}*
 
-🌸 We would be incomplete without you there
+🙏 We would be incomplete without your blessings
+
 📅 ${eventDate}
 ${eventTime ? `🕐 ${eventTime}` : ''}
 ${venueName ? `📍 ${venueName}` : ''}
-${venueAddress ? `   ${venueAddress}` : ''}
+${venueAddress ? `    ${venueAddress}` : ''}
 
-Open our animated wedding invitation 💌
+Open our animated wedding invitation 💐
 👇
 ${fullCardUrl}
 
-_Come, celebrate love with us_ 🎊`;
+Come, celebrate love with us! 🎉`;
     }
 
     if (category === 'engagement') {
-      return `💍 *We Said Yes!* 💍
+      return `❤️ *We Said Yes!* ❤️
 
-With hearts full of happiness, we invite you to celebrate our engagement 🌹
+With hearts full of happiness, we invite you to celebrate our engagement!
 
-💑 *${person1Name} & ${person2Name}*
+*${name1} & ${name2}*
 
 📅 ${eventDate}
 ${eventTime ? `🕐 ${eventTime}` : ''}
 ${venueName ? `📍 ${venueName}` : ''}
 
-See our engagement invitation 💌
+View our engagement invitation 💐
 👇
 ${fullCardUrl}
 
-_Your presence will make it even more special_ ✨`;
+Your presence makes it more special! 🎉`;
     }
 
     if (category === 'birthday') {
-      return `🎂 *It's Party Time!* 🎉
+      return `🎉 *It's Party Time!* 🎉
 
-${person1Name} is turning a new page and we want YOU there to celebrate! 🥳
-
-🎈 *${person1Name}'s Birthday Celebration*
+*${name1}* is celebrating and YOU are invited!
 
 📅 ${eventDate}
 ${eventTime ? `🕐 ${eventTime}` : ''}
 ${venueName ? `📍 ${venueName}` : ''}
 
-View the invitation 🎊
+View the invitation 🎂
 👇
 ${fullCardUrl}
 
-_Get ready for a night to remember!_ ✨`;
+Get ready for a wonderful time! ❤️`;
     }
 
     if (category === 'opening') {
-      return `🎊 *Grand Opening Alert!* 🎊
+      return `🎉 *Grand Opening!* 🎉
 
-We are thrilled to invite you to the grand opening of *${person1Name}*!
+You are invited to the grand opening of
 
-🌟 Celebrate this new beginning with us
+*${name1}*
+
+⭐ Come celebrate this new beginning with us!
 
 📅 ${eventDate}
 ${eventTime ? `🕐 ${eventTime}` : ''}
 ${venueName ? `📍 ${venueName}` : ''}
 
-View our grand opening invitation 🎉
-👇
+View our invitation 👇
 ${fullCardUrl}
 
-_Your presence means everything to us_ 💫`;
+Your presence means everything! 🙏`;
     }
 
     // Default fallback
-    return `💌 *You're Invited!*
+    return `❤️ *You are Invited!* ❤️
 
-*${person1Name}${person2Name ? ` & ${person2Name}` : ''}*
+*${name1}${name2 ? ` & ${name2}` : ''}*
 
 📅 ${eventDate}
 ${eventTime ? `🕐 ${eventTime}` : ''}
@@ -123,7 +126,7 @@ ${venueName ? `📍 ${venueName}` : ''}
 View our animated invitation:
 ${fullCardUrl}
 
-_We hope to see you there!_ ✨`;
+We hope to see you there! 🎉`;
   };
 
   const [message, setMessage] = useState(generateMessage);
@@ -309,6 +312,9 @@ _We hope to see you there!_ ✨`;
               tap to edit
             </div>
           </div>
+          <p style={{ fontSize: '11px', color: '#aaa', marginTop: '6px', marginBottom: '4px' }}>
+            *text* = bold in WhatsApp · _text_ = italic
+          </p>
 
           {/* Card URL preview */}
           <div style={{
