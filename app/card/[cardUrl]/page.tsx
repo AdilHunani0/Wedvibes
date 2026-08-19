@@ -93,20 +93,34 @@ export default async function CardViewerPage({ params }: PageProps) {
     notFound()
   }
 
-  // Allow 'generating' status — card may still be processing
-  if (order.status !== 'delivered' && order.status !== 'generating') {
-    console.error(`[card] Order ${order.id} has unexpected status: ${order.status}`)
-    notFound()
+  // Auto-retrigger card generation if paid but not yet delivered
+  if (order.status === 'paid') {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    try {
+      fetch(`${appUrl}/api/cards/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch(() => {})
+    } catch {}
   }
 
-  // If still generating, show a friendly waiting page
-  if (order.status === 'generating') {
+  // Show friendly status pages instead of hard 404
+  if (order.status !== 'delivered') {
+    const isFailed = order.status === 'failed'
     return (
-      <div className="min-h-screen bg-[#2a1810] flex flex-col items-center justify-center text-[#e8c97e]">
-        <p className="text-5xl animate-bounce mb-4">🌸</p>
-        <h1 className="font-playfair text-2xl font-bold mb-2">Your Invitation is Being Created</h1>
-        <p className="text-sm text-[#a07060] text-center max-w-xs">
-          This usually takes just a moment. Please refresh the page shortly.
+      <div className="min-h-screen bg-[#2a1810] flex flex-col items-center justify-center text-[#e8c97e] px-6 text-center">
+        <p className="text-5xl mb-4">{isFailed ? '⚠️' : '🌸'}</p>
+        <h1 className="font-playfair text-2xl font-bold mb-2">
+          {isFailed ? 'Card Generation Failed' : 'Your Invitation is Being Prepared'}
+        </h1>
+        <p className="text-sm text-[#a07060] max-w-xs leading-relaxed">
+          {isFailed
+            ? 'Something went wrong while creating this card. Please contact support or try purchasing again.'
+            : 'This usually takes just a moment. Please refresh the page in a few seconds.'}
+        </p>
+        <p className="text-xs text-[#a07060]/60 mt-4 font-mono">
+          Status: {order.status} · ID: {order.id.slice(0, 8)}
         </p>
       </div>
     )
