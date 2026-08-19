@@ -31,39 +31,61 @@ export async function generateMetadata({ params }: PageProps) {
     ? order.customization[0]
     : order?.customization
 
-  const names = customization
-    ? `${customization.person1_name} & ${customization.person2_name}`
-    : 'Wedding Invitation'
+  // Sanitize names — guard against null/undefined coming through as the string "null"
+  const p1 = customization?.person1_name && customization.person1_name !== 'null' ? customization.person1_name : ''
+  const p2 = customization?.person2_name && customization.person2_name !== 'null' ? customization.person2_name : ''
+  const names = p1 && p2 ? `${p1} & ${p2}` : (p1 || p2 || null)
 
   const displayDate = customization?.event_date
     ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
     : ''
 
-  const venue = customization?.venue_name || 'our wedding venue'
-  const description = displayDate
-    ? `Join us on ${displayDate} at ${venue}. Click to open our interactive invitation.`
-    : `${names} joyfully invite you to celebrate their special day at ${venue}.`
+  const venue = customization?.venue_name || ''
 
-  // Use first photo uploaded, or default
-  let ogImage = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600'
+  const ogTitle = names
+    ? `💍 You're invited to the wedding of ${names}!`
+    : `💍 You're invited to a Wedding Celebration!`
+
+  const ogDescription = [
+    displayDate ? `📅 ${displayDate}` : '',
+    venue ? `📍 ${venue}` : '',
+    'Tap to open the interactive wedding invitation.',
+  ].filter(Boolean).join('  ·  ') || 'Tap to open this beautiful interactive wedding invitation.'
+
+  // Use first uploaded photo for the WhatsApp preview image
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://wedvibe.in'
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  let ogImage = `${appUrl}/og-default.jpg`
   if (customization?.photo_urls && customization.photo_urls.length > 0) {
+    // Use Supabase public URL directly for WhatsApp compatibility
     ogImage = customization.photo_urls[0]
   }
 
   return {
-    title: `You're invited to the wedding of ${names}!`,
-    description,
+    title: ogTitle,
+    description: ogDescription,
     openGraph: {
-      title: `You're invited to the wedding of ${names}!`,
-      description,
-      images: [ogImage],
+      title: ogTitle,
+      description: ogDescription,
+      images: [{
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: names ? `${names} Wedding Invitation` : 'Wedding Invitation',
+      }],
       type: 'website',
+      siteName: 'WedVibe',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `You're invited to the wedding of ${names}!`,
-      description,
+      title: ogTitle,
+      description: ogDescription,
       images: [ogImage],
+    },
+    other: {
+      // WhatsApp specifically reads these
+      'og:image:width': '1200',
+      'og:image:height': '630',
     }
   }
 }

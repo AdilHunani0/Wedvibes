@@ -22,9 +22,9 @@ export function SharePanel({ order, customization, onClose }: SharePanelProps) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const cardLink = `${appUrl}/card/${order.card_url || order.id}`
 
-  const p1 = customization?.person1_name || ''
-  const p2 = customization?.person2_name || ''
-  const names = p1 && p2 ? `${p1} & ${p2}` : 'the couple'
+  const p1 = customization?.person1_name && customization.person1_name !== 'null' ? customization.person1_name : ''
+  const p2 = customization?.person2_name && customization.person2_name !== 'null' ? customization.person2_name : ''
+  const names = p1 && p2 ? `${p1} & ${p2}` : ''
 
   const eventDate = customization?.event_date
     ? new Date(customization.event_date).toLocaleDateString('en-IN', {
@@ -34,24 +34,12 @@ export function SharePanel({ order, customization, onClose }: SharePanelProps) {
       })
     : ''
 
-  const venue = customization?.venue_name || ''
+  const venue = customization?.venue_name && customization.venue_name !== 'null' ? customization.venue_name : ''
 
   // Craft a warm, personal WhatsApp message
-  const whatsAppMessage = [
-    `💍 You're invited to the wedding of ${names}!`,
-    '',
-    eventDate ? `📅 ${eventDate}` : '',
-    venue ? `📍 ${venue}` : '',
-    '',
-    `Open this beautiful interactive invitation to see all the details:`,
-    cardLink,
-    '',
-    `— Shared from WedVibe ✨`,
-  ]
-    .filter((line) => line !== null)
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
+  const whatsAppMessage = names
+    ? `We are getting married! ✨\n\n${names} joyfully invite you to celebrate our special day.\n\n${eventDate ? `📅 Date: ${eventDate}\n` : ''}${venue ? `📍 Venue: ${venue}\n` : ''}\nPlease tap the link below to view our interactive invitation for all the details:\n${cardLink}`
+    : `You're invited! 🌸\n\nPlease tap the link below to view our interactive wedding invitation for all the details:\n${cardLink}`
 
   const whatsAppUrl = `https://wa.me/?text=${encodeURIComponent(whatsAppMessage)}`
 
