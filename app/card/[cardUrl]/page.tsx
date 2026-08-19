@@ -58,11 +58,17 @@ export async function generateMetadata({ params }: PageProps) {
 
   // Use first uploaded photo for the WhatsApp preview image
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://wedvibe.in'
-  let ogImage = template?.preview_url || `${appUrl}/og-default.jpg`
+  
+  let rawOgImage = template?.preview_url || '/our-wedding-story-1.jpg'
   if (customization?.photo_urls && customization.photo_urls.length > 0) {
     // Use Supabase public URL directly for WhatsApp compatibility
-    ogImage = customization.photo_urls[0]
+    rawOgImage = customization.photo_urls[0]
   }
+
+  const ogImage = rawOgImage.startsWith('http') 
+    ? rawOgImage 
+    : `${appUrl}${rawOgImage.startsWith('/') ? '' : '/'}${rawOgImage}`
+
 
   return {
     title: ogTitle,
@@ -89,6 +95,8 @@ export async function generateMetadata({ params }: PageProps) {
       // WhatsApp specifically reads these
       'og:image:width': '1200',
       'og:image:height': '630',
+      'og:image:secure_url': ogImage,
+      'og:image:type': 'image/jpeg',
     }
   }
 }
