@@ -34,7 +34,15 @@ function loadRazorpayScript(): Promise<boolean> {
   })
 }
 
-export function CustomizeClient({ template }: { template: Template }) {
+export function CustomizeClient({ 
+  template, 
+  initialData, 
+  editOrderId 
+}: { 
+  template: Template
+  initialData?: any
+  editOrderId?: string
+}) {
   const router = useRouter()
 
   const schema = getSchemaForTemplate(template.slug)
@@ -44,7 +52,7 @@ export function CustomizeClient({ template }: { template: Template }) {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [formData, setFormData] = useState<CustomizationFormData>(
-    generateInitialData(schema) as CustomizationFormData
+    { ...generateInitialData(schema), ...(initialData || {}) } as CustomizationFormData
   )
 
   const { user, profile } = useAuth()
@@ -188,6 +196,45 @@ export function CustomizeClient({ template }: { template: Template }) {
     }
   }
 
+  // ─── Update existing card (Edit mode) ─────────────────────────────────────────
+  const handleUpdate = async () => {
+    if (!editOrderId) return
+    setSubmitting(true)
+    setErrorMessage(null)
+
+    try {
+      toast.loading('Saving changes...', { id: 'order-update' })
+
+      const updateRes = await fetch('/api/orders/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: editOrderId,
+          customization: formData,
+        }),
+      })
+
+      const updateBody = await updateRes.json().catch(() => ({}))
+
+      if (!updateRes.ok) {
+        throw new Error(updateBody.error || `Update failed (${updateRes.status})`)
+      }
+
+      toast.success('Changes saved successfully!', { id: 'order-update' })
+      
+      // Regenerate the card HTML
+      await generateAndRedirect(editOrderId)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong while updating.'
+      console.error('[Update] handleUpdate error:', err)
+      toast.dismiss('order-update')
+      toast.error(msg, { duration: 6000 })
+      setErrorMessage(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   // ─── Main submit handler (Razorpay) ───────────────────────────────────────────
   const handleSubmit = async () => {
     setSubmitting(true)
@@ -319,6 +366,8 @@ export function CustomizeClient({ template }: { template: Template }) {
             userRole={profile?.role}
             userCredits={credits}
             submitting={submitting}
+            isEditing={!!editOrderId}
+            onUpdate={handleUpdate}
           />
         </div>
 

@@ -21,6 +21,15 @@ export function CardGrid({ cards }: CardGridProps) {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  const handleWhatsAppShare = (card: Order) => {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const link = `${appUrl}/card/${card.card_url || card.id}`
+    const p1 = card.customization?.person1_name || 'Groom'
+    const p2 = card.customization?.person2_name || 'Bride'
+    const message = `We're getting married! 💍✨\n\n${p1} & ${p2} joyfully invite you to celebrate our special day.\n\nPlease tap the link below to view our interactive invitation for all the details:\n\n${link}`
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+  }
+
   if (cards.length === 0) {
     return (
       <div className="bg-white border border-[#e8c97e]/20 rounded-2xl p-12 text-center shadow-lg">
@@ -90,21 +99,48 @@ export function CardGrid({ cards }: CardGridProps) {
 
             {/* Actions */}
             <div className="space-y-2 mt-auto">
-              <Link
-                href={`/card/${cardUrl}`}
-                target="_blank"
-                className="block text-center py-2.5 rounded-xl bg-[#2a1810] text-[#e8c97e] text-xs font-bold hover:bg-[#3d2218] transition-colors"
-              >
-                Open Invitation ↗
-              </Link>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleCopyLink(cardUrl, card.id)}
-                className="w-full justify-center py-2 text-xs font-semibold"
-              >
-                {isCopied ? 'Copied Link! ✓' : 'Copy Share Link 🔗'}
-              </Button>
+              <div className="flex gap-2">
+                <Link
+                  href={`/card/${cardUrl}`}
+                  target="_blank"
+                  className="flex-1 text-center py-2.5 rounded-xl bg-[#2a1810] text-[#e8c97e] text-xs font-bold hover:bg-[#3d2218] transition-colors"
+                >
+                  Open ↗
+                </Link>
+                {/* 5-Day Edit Window */}
+                {new Date(card.created_at) > new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) ? (
+                  <Link
+                    href={`/customize/${template?.slug}?editOrderId=${card.id}`}
+                    className="flex-1 text-center py-2.5 rounded-xl bg-white border border-[#e8c97e]/40 text-[#2a1810] text-xs font-bold hover:bg-[#fdf8f4] transition-colors"
+                  >
+                    Edit ✎
+                  </Link>
+                ) : (
+                  <div
+                    title="Edit window (5 days) has expired"
+                    className="flex-1 text-center py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-400 text-xs font-bold cursor-not-allowed"
+                  >
+                    Locked
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleCopyLink(cardUrl, card.id)}
+                  className="flex-1 justify-center py-2 text-xs font-semibold"
+                >
+                  {isCopied ? 'Copied ✓' : 'Copy Link 🔗'}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => handleWhatsAppShare(card)}
+                  className="flex-1 justify-center py-2 text-xs font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] border-none"
+                >
+                  WhatsApp 💬
+                </Button>
+              </div>
             </div>
           </div>
         )
@@ -112,3 +148,4 @@ export function CardGrid({ cards }: CardGridProps) {
     </div>
   )
 }
+

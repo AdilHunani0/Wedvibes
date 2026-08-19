@@ -18,6 +18,8 @@ interface CustomizeFormProps {
   userRole?: string
   userCredits?: number
   submitting: boolean
+  isEditing?: boolean
+  onUpdate?: () => void
 }
 
 export function CustomizeForm({
@@ -32,6 +34,8 @@ export function CustomizeForm({
   userRole,
   userCredits,
   submitting,
+  isEditing,
+  onUpdate,
 }: CustomizeFormProps) {
   const maxPhotos = TIER_MAX_PHOTOS[template.tier] || 1
 
@@ -173,6 +177,16 @@ export function CustomizeForm({
             disabled={!isStepValid()}
           >
             Next Step →
+          </Button>
+        ) : isEditing ? (
+          <Button
+            type="button"
+            variant="primary"
+            onClick={onUpdate}
+            loading={submitting}
+            disabled={!isStepValid() || submitting}
+          >
+            Save Changes ✓
           </Button>
         ) : userRole === 'planner' || userRole === 'admin' ? (
           (userCredits ?? 0) >= (template.credit_cost || 0) ? (

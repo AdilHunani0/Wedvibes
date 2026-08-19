@@ -166,7 +166,34 @@ export async function POST(req: Request) {
     })
     html = resolveConditionals(html, conditionalData)
 
-    // 6. Save generated HTML to Supabase generated-cards bucket
+    // 6. Generate card URL early for OG Tags
+    const p1Slug = generateSlug(customization.person1_name || 'groom')
+    const p2Slug = generateSlug(customization.person2_name || 'bride')
+    const cardUrl = order.card_url || `${p1Slug}-and-${p2Slug}-${nanoid(6)}`
+    
+    // Inject Open Graph tags for previews (WhatsApp, iMessage, etc.)
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const fullCardUrl = `${appUrl}/card/${cardUrl}`
+    const ogTitle = `You're invited to the wedding of ${groomName} & ${brideName}!`
+    const displayDate = customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''
+    const ogDescription = `Join us on ${displayDate} at ${customization.venue_name || 'our wedding venue'}. Click to open our interactive invitation.`
+    const ogImage = photo_urls[0] || fallbackPhotos[0]
+    
+    const ogTags = `
+    <!-- Open Graph / Social Media Preview Tags -->
+    <meta property="og:title" content="${ogTitle}" />
+    <meta property="og:description" content="${ogDescription}" />
+    <meta property="og:image" content="${ogImage}" />
+    <meta property="og:url" content="${fullCardUrl}" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${ogTitle}" />
+    <meta name="twitter:description" content="${ogDescription}" />
+    <meta name="twitter:image" content="${ogImage}" />`
+    
+    html = html.replace('</head>', `${ogTags}\n</head>`)
+
+    // 7. Save generated HTML to Supabase generated-cards bucket
     const fileName = `${order.id}-${nanoid(8)}.html`
     const fileBuffer = Buffer.from(html, 'utf8')
 
@@ -182,12 +209,7 @@ export async function POST(req: Request) {
       throw uploadError
     }
 
-    // 6. Generate share URL slug: person1-person2-random
-    const p1Slug = generateSlug(customization.person1_name || 'groom')
-    const p2Slug = generateSlug(customization.person2_name || 'bride')
-    const cardUrl = `${p1Slug}-and-${p2Slug}-${nanoid(6)}`
-
-    // 7. Update order in Supabase
+    // 8. Update order in Supabase
     const { error: finalUpdateError } = await supabaseAdmin
       .from('orders')
       .update({
