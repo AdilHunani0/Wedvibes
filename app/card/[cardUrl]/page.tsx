@@ -167,12 +167,12 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
       <CardViewer order={order} />
       <ShareBar
         cardUrl={order.card_url}
-        person1Name={customizationData?.person1_name}
-        person2Name={customizationData?.person2_name}
+        person1Name={customizationData?.person1_name && customizationData.person1_name !== 'null' ? customizationData.person1_name : ''}
+        person2Name={customizationData?.person2_name && customizationData.person2_name !== 'null' ? customizationData.person2_name : ''}
         eventDate={customizationData?.event_date ? format(new Date(customizationData.event_date), 'dd MMMM yyyy') : ''}
-        eventTime={customizationData?.event_time}
-        venueName={customizationData?.venue_name}
-        venueAddress={customizationData?.venue_address}
+        eventTime={customizationData?.event_time && customizationData.event_time !== 'null' ? customizationData.event_time : ''}
+        venueName={customizationData?.venue_name && customizationData.venue_name !== 'null' ? customizationData.venue_name : ''}
+        venueAddress={customizationData?.venue_address && customizationData.venue_address !== 'null' ? customizationData.venue_address : ''}
         category={order.template?.category || 'wedding'}
         tier={order.template?.tier || 'Premium'}
         autoOpen={share === 'true'}

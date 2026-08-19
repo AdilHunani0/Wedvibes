@@ -37,96 +37,108 @@ export function WhatsAppShareModal({
   // ═══════════════════════════════════════
 
   const generateMessage = () => {
-    const name1 = (person1Name && person1Name !== 'null') ? person1Name : 'The Couple';
-    const name2 = (person2Name && person2Name !== 'null') ? person2Name : '';
+    const name1 = (person1Name && person1Name !== 'null' && person1Name !== 'Groom') ? person1Name : '';
+    const name2 = (person2Name && person2Name !== 'null' && person2Name !== 'Bride') ? person2Name : '';
+
+    // Build detail lines — only include non-empty ones
+    const details: string[] = [];
+    if (eventDate) details.push(`Date: ${eventDate}`);
+    if (eventTime) details.push(`Time: ${eventTime}`);
+    if (venueName) details.push(`Venue: ${venueName}`);
+    if (venueAddress) details.push(`  ${venueAddress}`);
+    const detailBlock = details.join('\n');
 
     if (category === 'wedding') {
-      return `❤️ *You are Invited!* ❤️
+      const namesLine = name1 && name2
+        ? `*${name1} weds ${name2}*`
+        : name1 ? `*${name1}'s Wedding*` : '*Our Wedding*';
 
-We joyfully invite you to celebrate the wedding of
-
-*${name1} weds ${name2}*
-
-🙏 We would be incomplete without your blessings
-
-📅 ${eventDate}
-${eventTime ? `🕐 ${eventTime}` : ''}
-${venueName ? `📍 ${venueName}` : ''}
-${venueAddress ? `    ${venueAddress}` : ''}
-
-Open our animated wedding invitation 💐
-👇
-${fullCardUrl}
-
-Come, celebrate love with us! 🎉`;
+      const lines = [
+        `*You are Invited!*`,
+        ``,
+        `We joyfully invite you to celebrate the wedding of`,
+        ``,
+        namesLine,
+        ``,
+        `We would be incomplete without your blessings.`,
+      ];
+      if (detailBlock) { lines.push(''); lines.push(detailBlock); }
+      lines.push('');
+      lines.push(`Open our wedding invitation:`);
+      lines.push(fullCardUrl);
+      lines.push('');
+      lines.push(`Come, celebrate love with us!`);
+      return lines.join('\n');
     }
 
     if (category === 'engagement') {
-      return `❤️ *We Said Yes!* ❤️
+      const namesLine = name1 && name2
+        ? `*${name1} & ${name2}*`
+        : name1 ? `*${name1}'s Engagement*` : '*Our Engagement*';
 
-With hearts full of happiness, we invite you to celebrate our engagement!
-
-*${name1} & ${name2}*
-
-📅 ${eventDate}
-${eventTime ? `🕐 ${eventTime}` : ''}
-${venueName ? `📍 ${venueName}` : ''}
-
-View our engagement invitation 💐
-👇
-${fullCardUrl}
-
-Your presence makes it more special! 🎉`;
+      const lines = [
+        `*We Said Yes!*`,
+        ``,
+        `With hearts full of happiness, we invite you to celebrate our engagement!`,
+        ``,
+        namesLine,
+      ];
+      if (detailBlock) { lines.push(''); lines.push(detailBlock); }
+      lines.push('');
+      lines.push(`View our engagement invitation:`);
+      lines.push(fullCardUrl);
+      lines.push('');
+      lines.push(`Your presence makes it more special!`);
+      return lines.join('\n');
     }
 
     if (category === 'birthday') {
-      return `🎉 *It's Party Time!* 🎉
-
-*${name1}* is celebrating and YOU are invited!
-
-📅 ${eventDate}
-${eventTime ? `🕐 ${eventTime}` : ''}
-${venueName ? `📍 ${venueName}` : ''}
-
-View the invitation 🎂
-👇
-${fullCardUrl}
-
-Get ready for a wonderful time! ❤️`;
+      const who = name1 || 'The Birthday Star';
+      const lines = [
+        `*It's Party Time!*`,
+        ``,
+        `*${who}* is celebrating and YOU are invited!`,
+      ];
+      if (detailBlock) { lines.push(''); lines.push(detailBlock); }
+      lines.push('');
+      lines.push(`View the invitation:`);
+      lines.push(fullCardUrl);
+      lines.push('');
+      lines.push(`Get ready for a wonderful time!`);
+      return lines.join('\n');
     }
 
     if (category === 'opening') {
-      return `🎉 *Grand Opening!* 🎉
-
-You are invited to the grand opening of
-
-*${name1}*
-
-⭐ Come celebrate this new beginning with us!
-
-📅 ${eventDate}
-${eventTime ? `🕐 ${eventTime}` : ''}
-${venueName ? `📍 ${venueName}` : ''}
-
-View our invitation 👇
-${fullCardUrl}
-
-Your presence means everything! 🙏`;
+      const who = name1 || 'Our Grand Opening';
+      const lines = [
+        `*Grand Opening!*`,
+        ``,
+        `You are invited to the grand opening of *${who}*`,
+        ``,
+        `Come celebrate this new beginning with us!`,
+      ];
+      if (detailBlock) { lines.push(''); lines.push(detailBlock); }
+      lines.push('');
+      lines.push(`View our invitation:`);
+      lines.push(fullCardUrl);
+      lines.push('');
+      lines.push(`Your presence means everything!`);
+      return lines.join('\n');
     }
 
     // Default fallback
-    return `❤️ *You are Invited!* ❤️
-
-*${name1}${name2 ? ` & ${name2}` : ''}*
-
-📅 ${eventDate}
-${eventTime ? `🕐 ${eventTime}` : ''}
-${venueName ? `📍 ${venueName}` : ''}
-
-View our animated invitation:
-${fullCardUrl}
-
-We hope to see you there! 🎉`;
+    const who = name1 && name2 ? `*${name1} & ${name2}*` : name1 ? `*${name1}*` : '';
+    const lines = [
+      `*You are Invited!*`,
+    ];
+    if (who) { lines.push(''); lines.push(who); }
+    if (detailBlock) { lines.push(''); lines.push(detailBlock); }
+    lines.push('');
+    lines.push(`View our invitation:`);
+    lines.push(fullCardUrl);
+    lines.push('');
+    lines.push(`We hope to see you there!`);
+    return lines.join('\n');
   };
 
   const [message, setMessage] = useState(generateMessage);
@@ -164,27 +176,28 @@ We hope to see you there! 🎉`;
       bottom: 0,
       background: 'rgba(0,0,0,0.6)',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-end',
       justifyContent: 'center',
-      padding: '20px',
+      padding: '0',
       backdropFilter: 'blur(4px)',
       zIndex: 9999,
     }}>
       <div style={{
         background: 'white',
-        borderRadius: '20px',
+        borderRadius: '20px 20px 0 0',
         width: '100%',
         maxWidth: '480px',
-        maxHeight: '90vh',
+        maxHeight: '92vh',
         overflowY: 'auto',
       }}>
 
         {/* HEADER */}
         <div style={{
           background: 'linear-gradient(135deg, #2a0d18, #4a1525)',
-          padding: '24px 24px 20px',
+          padding: '18px 20px 14px',
           position: 'relative',
           textAlign: 'center',
+          borderRadius: '20px 20px 0 0',
         }}>
           {/* Close button */}
           <button
@@ -211,31 +224,31 @@ We hope to see you there! 🎉`;
 
           {/* Animated heart/icon */}
           <div style={{
-            width: '56px',
-            height: '56px',
+            width: '44px',
+            height: '44px',
             borderRadius: '50%',
             background: 'rgba(249,184,204,0.2)',
             border: '1px solid rgba(240,160,180,0.4)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 12px',
-            fontSize: '24px',
+            margin: '0 auto 10px',
+            fontSize: '20px',
           }}>
-            {category === 'wedding' ? '💌' :
+            {category === 'wedding' ? '💒' :
              category === 'birthday' ? '🎂' :
              category === 'engagement' ? '💍' :
-             category === 'opening' ? '🎊' : '💌'}
+             category === 'opening' ? '🎊' : '💒'}
           </div>
 
           <h2 style={{
             color: 'white',
-            fontSize: '18px',
+            fontSize: '16px',
             fontWeight: '600',
             margin: '0 0 4px',
             fontFamily: 'Georgia, serif',
           }}>
-            Your card is ready! 🎉
+            Your card is ready!
           </h2>
           <p style={{
             color: 'rgba(249,184,204,0.8)',
@@ -247,7 +260,7 @@ We hope to see you there! 🎉`;
         </div>
 
         {/* BODY */}
-        <div style={{ padding: '20px 24px 24px' }}>
+        <div style={{ padding: '14px 18px 18px' }}>
 
           {/* Message label + reset */}
           <div style={{
@@ -285,14 +298,14 @@ We hope to see you there! 🎉`;
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              rows={10}
+              rows={8}
               style={{
                 width: '100%',
-                padding: '12px 14px',
-                fontSize: '13px',
-                lineHeight: '1.7',
+                padding: '10px 12px',
+                fontSize: '12px',
+                lineHeight: '1.65',
                 border: '1px solid #e8a0b8',
-                borderRadius: '12px',
+                borderRadius: '10px',
                 background: '#fff9fb',
                 color: '#2a1810',
                 resize: 'none',
@@ -402,8 +415,11 @@ We hope to see you there! 🎉`;
             <button
               onClick={() => {
                 if (navigator.share) {
-                  navigator.share({
-                    title: `${person1Name}${person2Name ? ` & ${person2Name}` : ''}'s Invitation`,
+                    const n1 = (person1Name && person1Name !== 'null') ? person1Name : '';
+                    const n2 = (person2Name && person2Name !== 'null') ? person2Name : '';
+                    const shareTitle = n1 && n2 ? `${n1} & ${n2}'s Invitation` : n1 ? `${n1}'s Invitation` : 'Wedding Invitation';
+                    navigator.share({
+                    title: shareTitle,
                     text: message,
                     url: fullCardUrl,
                   });
@@ -437,7 +453,7 @@ We hope to see you there! 🎉`;
             marginTop: '14px',
             marginBottom: 0,
           }}>
-            Made with love on wedvibe.in 💌
+            Made with love on wedvibe.in
           </p>
 
         </div>
