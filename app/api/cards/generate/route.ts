@@ -8,8 +8,10 @@ import fs from 'fs'
 import path from 'path'
 
 export async function POST(req: Request) {
+  let orderId: string | null = null
   try {
-    const { orderId } = await req.json()
+    const body = await req.json()
+    orderId = body.orderId
 
     if (!orderId) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 })
@@ -41,8 +43,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Cannot generate card with status: ${order.status}` }, { status: 400 })
     }
 
-    // 2. Set status to generating
-    await supabaseAdmin.from('orders').update({ status: 'generating' }).eq('id', order.id)
+    // 2. Generate card_url FIRST and save immediately so it's always recoverable
+    // even if the rest of the generation times out
+    const customizationData = Array.isArray(order.customization) ? order.customization[0] : order.customization
+    const p1Slug = generateSlug(customizationData?.person1_name || 'groom')
+    const p2Slug = generateSlug(customizationData?.person2_name || 'bride')
+    const cardUrl = order.card_url || `${p1Slug}-and-${p2Slug}-${nanoid(6)}`
+
+    // Save card_url and set status to 'generating' atomically
+    await supabaseAdmin.from('orders').update({ 
+      status: 'generating',
+      card_url: cardUrl,   // Save URL immediately — even if rest fails, URL is registered
+    }).eq('id', order.id)
 
     const template = order.template
     const customization = order.customization
@@ -175,11 +187,7 @@ export async function POST(req: Request) {
     })
     html = resolveConditionals(html, conditionalData)
 
-    // 6. Generate card URL early for OG Tags
-    const p1Slug = generateSlug(customization.person1_name || 'groom')
-    const p2Slug = generateSlug(customization.person2_name || 'bride')
-    const cardUrl = order.card_url || `${p1Slug}-and-${p2Slug}-${nanoid(6)}`
-    
+    // 6. Build OG tags (card_url already determined above)
     // Inject Open Graph tags for previews (WhatsApp, iMessage, etc.)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     const fullCardUrl = `${appUrl}/card/${cardUrl}`
@@ -246,14 +254,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, cardUrl })
   } catch (err: unknown) {
     console.error('Card generation error:', err)
-    // Mark order as failed in Supabase
-    try {
-      const supabaseAdmin = createAdminClient()
-      const { orderId } = await req.json().catch(() => ({}))
-      if (orderId) {
+    // Mark order as failed — orderId is captured in closure above, NOT from req.json() again
+    if (orderId) {
+      try {
+        const supabaseAdmin = createAdminClient()
         await supabaseAdmin.from('orders').update({ status: 'failed' }).eq('id', orderId)
+      } catch (markErr) {
+        console.error('Failed to mark order as failed:', markErr)
       }
-    } catch {}
+    }
     
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Internal Server Error' },
