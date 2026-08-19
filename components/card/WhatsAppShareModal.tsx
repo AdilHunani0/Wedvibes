@@ -380,7 +380,7 @@ _We hope to see you there!_ ✨`;
                 padding: '11px',
                 background: copied ? '#f0fdf4' : '#f9f9f9',
                 color: copied ? '#16a34a' : '#555',
-                border: \`1px solid \${copied ? '#86efac' : '#e5e7eb'}\`,
+                border: `1px solid ${copied ? '#86efac' : '#e5e7eb'}`,
                 borderRadius: '10px',
                 fontSize: '13px',
                 cursor: 'pointer',
@@ -397,7 +397,7 @@ _We hope to see you there!_ ✨`;
               onClick={() => {
                 if (navigator.share) {
                   navigator.share({
-                    title: \`\${person1Name}\${person2Name ? \` & \${person2Name}\` : ''}'s Invitation\`,
+                    title: `${person1Name}${person2Name ? ` & ${person2Name}` : ''}'s Invitation`,
                     text: message,
                     url: fullCardUrl,
                   });

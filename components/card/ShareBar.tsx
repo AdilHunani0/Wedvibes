@@ -91,7 +91,7 @@ export function ShareBar(props: ShareBarProps) {
             padding: '13px 16px',
             background: linkCopied ? '#f0fdf4' : '#f5f5f5',
             color: linkCopied ? '#16a34a' : '#555',
-            border: \`1px solid \${linkCopied ? '#86efac' : '#e5e7eb'}\`,
+            border: `1px solid ${linkCopied ? '#86efac' : '#e5e7eb'}`,
             borderRadius: '12px',
             fontSize: '13px',
             cursor: 'pointer',
