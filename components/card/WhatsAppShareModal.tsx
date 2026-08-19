@@ -42,10 +42,10 @@ export function WhatsAppShareModal({
 
     // Build detail lines — only include non-empty ones
     const details: string[] = [];
-    if (eventDate) details.push(`Date: ${eventDate}`);
-    if (eventTime) details.push(`Time: ${eventTime}`);
-    if (venueName) details.push(`Venue: ${venueName}`);
-    if (venueAddress) details.push(`  ${venueAddress}`);
+    if (eventDate) details.push(`📅 ${eventDate}`);
+    if (eventTime) details.push(`🕐 ${eventTime}`);
+    if (venueName) details.push(`📍 ${venueName}`);
+    if (venueAddress) details.push(`   ${venueAddress}`);
     const detailBlock = details.join('\n');
 
     if (category === 'wedding') {
@@ -54,7 +54,7 @@ export function WhatsAppShareModal({
         : name1 ? `*${name1}'s Wedding*` : '*Our Wedding*';
 
       const lines = [
-        `*You are Invited!*`,
+        `🎉 *You are Invited!* 🎉`,
         ``,
         `We joyfully invite you to celebrate the wedding of`,
         ``,
@@ -64,10 +64,10 @@ export function WhatsAppShareModal({
       ];
       if (detailBlock) { lines.push(''); lines.push(detailBlock); }
       lines.push('');
-      lines.push(`Open our wedding invitation:`);
+      lines.push(`Open our wedding invitation 👇`);
       lines.push(fullCardUrl);
       lines.push('');
-      lines.push(`Come, celebrate love with us!`);
+      lines.push(`Come, celebrate love with us! 🎉`);
       return lines.join('\n');
     }
 
@@ -77,7 +77,7 @@ export function WhatsAppShareModal({
         : name1 ? `*${name1}'s Engagement*` : '*Our Engagement*';
 
       const lines = [
-        `*We Said Yes!*`,
+        `🎉 *We Said Yes!* 🎉`,
         ``,
         `With hearts full of happiness, we invite you to celebrate our engagement!`,
         ``,
@@ -85,33 +85,33 @@ export function WhatsAppShareModal({
       ];
       if (detailBlock) { lines.push(''); lines.push(detailBlock); }
       lines.push('');
-      lines.push(`View our engagement invitation:`);
+      lines.push(`View our engagement invitation 👇`);
       lines.push(fullCardUrl);
       lines.push('');
-      lines.push(`Your presence makes it more special!`);
+      lines.push(`Your presence makes it more special! 🎉`);
       return lines.join('\n');
     }
 
     if (category === 'birthday') {
       const who = name1 || 'The Birthday Star';
       const lines = [
-        `*It's Party Time!*`,
+        `🎂 *It's Party Time!* 🎉`,
         ``,
         `*${who}* is celebrating and YOU are invited!`,
       ];
       if (detailBlock) { lines.push(''); lines.push(detailBlock); }
       lines.push('');
-      lines.push(`View the invitation:`);
+      lines.push(`View the invitation 👇`);
       lines.push(fullCardUrl);
       lines.push('');
-      lines.push(`Get ready for a wonderful time!`);
+      lines.push(`Get ready for a wonderful time! 🎉`);
       return lines.join('\n');
     }
 
     if (category === 'opening') {
       const who = name1 || 'Our Grand Opening';
       const lines = [
-        `*Grand Opening!*`,
+        `🎉 *Grand Opening!* 🎉`,
         ``,
         `You are invited to the grand opening of *${who}*`,
         ``,
@@ -119,25 +119,25 @@ export function WhatsAppShareModal({
       ];
       if (detailBlock) { lines.push(''); lines.push(detailBlock); }
       lines.push('');
-      lines.push(`View our invitation:`);
+      lines.push(`View our invitation 👇`);
       lines.push(fullCardUrl);
       lines.push('');
-      lines.push(`Your presence means everything!`);
+      lines.push(`Your presence means everything! 🎉`);
       return lines.join('\n');
     }
 
     // Default fallback
     const who = name1 && name2 ? `*${name1} & ${name2}*` : name1 ? `*${name1}*` : '';
     const lines = [
-      `*You are Invited!*`,
+      `🎉 *You are Invited!* 🎉`,
     ];
     if (who) { lines.push(''); lines.push(who); }
     if (detailBlock) { lines.push(''); lines.push(detailBlock); }
     lines.push('');
-    lines.push(`View our invitation:`);
+    lines.push(`View our invitation 👇`);
     lines.push(fullCardUrl);
     lines.push('');
-    lines.push(`We hope to see you there!`);
+    lines.push(`We hope to see you there! 🎉`);
     return lines.join('\n');
   };
 
