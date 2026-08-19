@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/server'
 import { CardViewer } from '@/components/card/CardViewer'
-
+import { ShareBar } from '@/components/card/ShareBar'
+import { format } from 'date-fns'
 interface PageProps {
   params: Promise<{ cardUrl: string }>
+  searchParams: Promise<{ share?: string }>
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -13,14 +15,14 @@ export async function generateMetadata({ params }: PageProps) {
   // Try fetching by card_url first, fallback to id
   let { data: order } = await supabase
     .from('orders')
-    .select('*, customization:customizations(*)')
+    .select('*, customization:customizations(*), template:templates(*)')
     .eq('card_url', cardUrl)
     .single()
 
   if (!order) {
     const { data: fallbackOrder } = await supabase
       .from('orders')
-      .select('*, customization:customizations(*)')
+      .select('*, customization:customizations(*), template:templates(*)')
       .eq('id', cardUrl)
       .single()
     order = fallbackOrder
@@ -42,20 +44,21 @@ export async function generateMetadata({ params }: PageProps) {
 
   const venue = customization?.venue_name || ''
 
+  const template = order?.template
+
   const ogTitle = names
-    ? `💍 You're invited to the wedding of ${names}!`
-    : `💍 You're invited to a Wedding Celebration!`
+    ? `${names}'s ${template?.category === 'wedding' ? 'Wedding' : template?.category === 'birthday' ? 'Birthday' : template?.category === 'engagement' ? 'Engagement' : template?.category || ''} Invitation`
+    : `You're invited to a ${template?.category || 'Wedding'} Celebration!`
 
   const ogDescription = [
     displayDate ? `📅 ${displayDate}` : '',
     venue ? `📍 ${venue}` : '',
-    'Tap to open the interactive wedding invitation.',
-  ].filter(Boolean).join('  ·  ') || 'Tap to open this beautiful interactive wedding invitation.'
+    'Tap to open our interactive invitation.',
+  ].filter(Boolean).join('  ·  ') || 'Tap to open this beautiful interactive invitation.'
 
   // Use first uploaded photo for the WhatsApp preview image
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://wedvibe.in'
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  let ogImage = `${appUrl}/og-default.jpg`
+  let ogImage = template?.preview_url || `${appUrl}/og-default.jpg`
   if (customization?.photo_urls && customization.photo_urls.length > 0) {
     // Use Supabase public URL directly for WhatsApp compatibility
     ogImage = customization.photo_urls[0]
@@ -90,8 +93,9 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function CardViewerPage({ params }: PageProps) {
+export default async function CardViewerPage({ params, searchParams }: PageProps) {
   const { cardUrl } = await params
+  const { share } = await searchParams
   const supabase = createAdminClient()
 
   // Query order with customizations
@@ -148,5 +152,23 @@ export default async function CardViewerPage({ params }: PageProps) {
     )
   }
 
-  return <CardViewer order={order} />
+  const customizationData = Array.isArray(order.customization) ? order.customization[0] : order.customization
+
+  return (
+    <div className="relative min-h-screen bg-black">
+      <CardViewer order={order} />
+      <ShareBar
+        cardUrl={order.card_url}
+        person1Name={customizationData?.person1_name}
+        person2Name={customizationData?.person2_name}
+        eventDate={customizationData?.event_date ? format(new Date(customizationData.event_date), 'dd MMMM yyyy') : ''}
+        eventTime={customizationData?.event_time}
+        venueName={customizationData?.venue_name}
+        venueAddress={customizationData?.venue_address}
+        category={order.template?.category || 'wedding'}
+        tier={order.template?.tier || 'Premium'}
+        autoOpen={share === 'true'}
+      />
+    </div>
+  )
 }

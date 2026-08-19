@@ -76,7 +76,7 @@ export function CustomizeClient({
 
         const genData = await genResponse.json()
         toast.success('Your card is ready! 🎉', { id: 'generating' })
-        router.push(`/card/${genData.cardUrl || orderId}`)
+        router.push(`/card/${genData.cardUrl || orderId}?share=true`)
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : 'Failed to generate card.', { id: 'generating' })
       }
