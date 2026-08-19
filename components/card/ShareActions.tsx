@@ -12,9 +12,15 @@ export function ShareActions({ order }: ShareActionsProps) {
   const [copied, setCopied] = useState(false)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const cardLink = `${appUrl}/card/${order.card_url || order.id}`
-  const names = order.customization
-    ? `${order.customization.person1_name} & ${order.customization.person2_name}`
-    : ''
+
+  // Supabase one-to-many join returns an array — normalize it
+  const customization = Array.isArray(order.customization)
+    ? order.customization[0]
+    : order.customization
+
+  const p1 = customization?.person1_name || ''
+  const p2 = customization?.person2_name || ''
+  const names = p1 && p2 ? `${p1} & ${p2}` : ''
 
   const handleCopy = () => {
     navigator.clipboard.writeText(cardLink)
@@ -34,11 +40,13 @@ export function ShareActions({ order }: ShareActionsProps) {
     }
   }
 
+  const whatsAppUrl = getWhatsAppShareUrl(order.card_url || order.id, names)
+
   return (
     <div className="flex items-center gap-6">
       {/* WhatsApp Share */}
       <a
-        href={getWhatsAppShareUrl(order.card_url || order.id, names)}
+        href={whatsAppUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="flex flex-col items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer group"

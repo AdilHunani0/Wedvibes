@@ -45,9 +45,10 @@ export function formatDateShort(dateString: string): string {
 
 export function getWhatsAppShareUrl(cardUrl: string, names?: string): string {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const link = `${appUrl}/card/${cardUrl}`
   const message = names
-    ? `You're invited to celebrate ${names}! View the invitation: ${appUrl}/card/${cardUrl}`
-    : `You're invited! View our animated card: ${appUrl}/card/${cardUrl}`
+    ? `We're getting married! 💍✨\n\n${names} joyfully invite you to celebrate our special day.\n\nTap the link below to view our interactive invitation:\n\n${link}`
+    : `You're invited! 🌸\n\nTap the link below to view our interactive wedding invitation:\n\n${link}`
   return `https://wa.me/?text=${encodeURIComponent(message)}`
 }
 
