@@ -13,9 +13,9 @@ export function CardViewer({ order }: CardViewerProps) {
   const [showShare, setShowShare] = useState(false)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 
-  // Load directly from Supabase CDN — bypasses /api/render proxy for instant load
+  // Use /api/render which sets Content-Type: text/html so the browser renders correctly
   const generatedPath = order.generated_card_path || `${order.id}.html`
-  const cardSrc = `${supabaseUrl}/storage/v1/object/public/generated-cards/${generatedPath}`
+  const cardSrc = `/api/render/${generatedPath}`
 
   // Normalize customization (Supabase returns array for joins)
   const customization = Array.isArray(order.customization)

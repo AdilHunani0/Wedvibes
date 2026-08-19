@@ -88,8 +88,28 @@ export default async function CardViewerPage({ params }: PageProps) {
     order = fallbackOrder
   }
 
-  if (!order || order.status !== 'delivered') {
+  if (!order) {
+    console.error(`[card] No order found for cardUrl: ${cardUrl}`)
     notFound()
+  }
+
+  // Allow 'generating' status — card may still be processing
+  if (order.status !== 'delivered' && order.status !== 'generating') {
+    console.error(`[card] Order ${order.id} has unexpected status: ${order.status}`)
+    notFound()
+  }
+
+  // If still generating, show a friendly waiting page
+  if (order.status === 'generating') {
+    return (
+      <div className="min-h-screen bg-[#2a1810] flex flex-col items-center justify-center text-[#e8c97e]">
+        <p className="text-5xl animate-bounce mb-4">🌸</p>
+        <h1 className="font-playfair text-2xl font-bold mb-2">Your Invitation is Being Created</h1>
+        <p className="text-sm text-[#a07060] text-center max-w-xs">
+          This usually takes just a moment. Please refresh the page shortly.
+        </p>
+      </div>
+    )
   }
 
   return <CardViewer order={order} />
