@@ -73,13 +73,14 @@ export async function POST(req: Request) {
 
     // 3. Load template HTML file
     // Templates are stored in public/templates/[slug].html
-    const templateFilePath = path.join(process.cwd(), 'public', 'templates', `${template.slug}.html`)
-
-    if (!fs.existsSync(templateFilePath)) {
-      throw new Error(`Template HTML file not found at ${templateFilePath}`)
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const templateResponse = await fetch(`${appUrl}/templates/${template.slug}.html`)
+    
+    if (!templateResponse.ok) {
+      throw new Error(`Template HTML file not found for ${template.slug}`)
     }
 
-    let html = fs.readFileSync(templateFilePath, 'utf8')
+    let html = await templateResponse.text()
 
     // 4. Substitution logic
     const extraFields = customization.extra_fields || {}
