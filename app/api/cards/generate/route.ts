@@ -198,7 +198,6 @@ export async function POST(req: Request) {
 
     // 6. Build OG tags (card_url already determined above)
     // Inject Open Graph tags for previews (WhatsApp, iMessage, etc.)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     const fullCardUrl = `${appUrl}/card/${cardUrl}`
     const ogTitle = `You're invited to the wedding of ${groomName} & ${brideName}!`
     const displayDate = customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''
