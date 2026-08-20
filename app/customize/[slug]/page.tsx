@@ -61,7 +61,7 @@ export default async function CustomizePage({ params, searchParams }: CustomizeP
     <CustomizeClient 
       template={template} 
       initialData={editOrderData} 
-      editOrderId={isEditValid ? editOrderId : undefined} 
+      editOrderId={isEditValid ? (editOrderId as string) : undefined} 
     />
   )
 }

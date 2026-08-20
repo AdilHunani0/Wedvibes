@@ -7,11 +7,21 @@ import { nanoid } from 'nanoid'
 import fs from 'fs'
 import path from 'path'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function POST(req: Request) {
   let orderId: string | null = null
   try {
     const body = await req.json()
     orderId = body.orderId
+    const forceRegenerate = body.forceRegenerate === true
 
     if (!orderId) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 })
@@ -30,7 +40,7 @@ export async function POST(req: Request) {
       throw new Error('Order not found')
     }
 
-    if (order.status === 'delivered') {
+    if (order.status === 'delivered' && !forceRegenerate) {
       return NextResponse.json({ success: true, message: 'Card already generated', cardUrl: order.card_url })
     }
 
@@ -39,25 +49,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Generation already in progress', cardUrl: order.card_url })
     }
 
-    if (order.status !== 'paid') {
+    if (order.status !== 'paid' && !forceRegenerate) {
       return NextResponse.json({ error: `Cannot generate card with status: ${order.status}` }, { status: 400 })
     }
 
     // 2. Generate card_url FIRST and save immediately so it's always recoverable
     // even if the rest of the generation times out
-    const customizationData = Array.isArray(order.customization) ? order.customization[0] : order.customization
-    const p1Slug = generateSlug(customizationData?.person1_name || 'groom')
-    const p2Slug = generateSlug(customizationData?.person2_name || 'bride')
+    const template = Array.isArray(order.template) ? order.template[0] : order.template
+    const customization = Array.isArray(order.customization) ? order.customization[0] : order.customization
+    const p1Slug = generateSlug(customization?.person1_name || 'groom')
+    const p2Slug = generateSlug(customization?.person2_name || 'bride')
     const cardUrl = order.card_url || `${p1Slug}-and-${p2Slug}-${nanoid(6)}`
 
     // Save card_url and set status to 'generating' atomically
-    await supabaseAdmin.from('orders').update({ 
+    await supabaseAdmin.from('orders').update({
       status: 'generating',
       card_url: cardUrl,   // Save URL immediately — even if rest fails, URL is registered
     }).eq('id', order.id)
-
-    const template = order.template
-    const customization = order.customization
 
     if (!template || !customization) {
       throw new Error('Template or customization details are missing')
@@ -66,7 +74,7 @@ export async function POST(req: Request) {
     // 3. Load template HTML file
     // Templates are stored in public/templates/[slug].html
     const templateFilePath = path.join(process.cwd(), 'public', 'templates', `${template.slug}.html`)
-    
+
     if (!fs.existsSync(templateFilePath)) {
       throw new Error(`Template HTML file not found at ${templateFilePath}`)
     }
@@ -96,21 +104,21 @@ export async function POST(req: Request) {
 
     const fallbackPhotos = (template.slug === 'our-wedding-story' || template.slug === 'royal-dark-wedding')
       ? [
-          '/our-wedding-story-1.jpg',
-          '/our-wedding-story-2.jpg',
-          'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600',
-          'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600',
-          'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600',
-          'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600',
-        ]
+        '/our-wedding-story-1.jpg',
+        '/our-wedding-story-2.jpg',
+        'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600',
+        'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600',
+        'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600',
+        'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600',
+      ]
       : template.slug === 'engagement-navy-story'
-      ? [
+        ? [
           '/eng-cartoon.jpg',        // PHOTO_1 — unused (envelope hardcoded), kept as slot
           'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600', // PHOTO_2
           'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600', // PHOTO_3
           'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600', // PHOTO_4
         ]
-      : [
+        : [
           'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600',
           'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600',
           'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600',
@@ -141,8 +149,8 @@ export async function POST(req: Request) {
         }
       } else if (typeof value === 'string') {
         let displayValue = value || ''
-        if (key.includes('date') && value && /^\\d{4}-\\d{2}-\\d{2}$/.test(value)) {
-           displayValue = new Date(value).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        if (key.includes('date') && value && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+          displayValue = new Date(value).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
         }
         if (!nameAliases.has(key)) {
           html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), displayValue)
@@ -174,7 +182,7 @@ export async function POST(req: Request) {
           : typeof v === 'boolean'
             ? v ? 'true' : ''
             : ''
-      
+
       conditionalData[key] = resolved
 
       if (Array.isArray(resolved)) {
@@ -195,23 +203,29 @@ export async function POST(req: Request) {
     const displayDate = customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''
     const ogDescription = `Join us on ${displayDate} at ${customization.venue_name || 'our wedding venue'}. Click to open our interactive invitation.`
     const ogImage = photo_urls[0] || fallbackPhotos[0]
-    
+
+    const safeOgTitle = escapeHtml(ogTitle)
+    const safeOgDescription = escapeHtml(ogDescription)
+    const safeOgImage = escapeHtml(ogImage)
+    const safeFullCardUrl = escapeHtml(fullCardUrl)
+
     const ogTags = `
     <!-- Open Graph / Social Media Preview Tags -->
-    <meta property="og:title" content="${ogTitle}" />
-    <meta property="og:description" content="${ogDescription}" />
-    <meta property="og:image" content="${ogImage}" />
-    <meta property="og:url" content="${fullCardUrl}" />
+    <meta property="og:title" content="${safeOgTitle}" />
+    <meta property="og:description" content="${safeOgDescription}" />
+    <meta property="og:image" content="${safeOgImage}" />
+    <meta property="og:url" content="${safeFullCardUrl}" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${ogTitle}" />
-    <meta name="twitter:description" content="${ogDescription}" />
-    <meta name="twitter:image" content="${ogImage}" />`
-    
+    <meta name="twitter:title" content="${safeOgTitle}" />
+    <meta name="twitter:description" content="${safeOgDescription}" />
+    <meta name="twitter:image" content="${safeOgImage}" />`
+
     html = html.replace('</head>', `${ogTags}\n</head>`)
 
     // 7. Save generated HTML to Supabase generated-cards bucket
     const fileName = `${order.id}-${nanoid(8)}.html`
+    // @ts-ignore
     const fileBuffer = Buffer.from(html, 'utf8')
 
     const { error: uploadError } = await supabaseAdmin.storage
@@ -263,7 +277,7 @@ export async function POST(req: Request) {
         console.error('Failed to mark order as failed:', markErr)
       }
     }
-    
+
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Internal Server Error' },
       { status: 500 }

@@ -61,6 +61,7 @@ export async function POST(req: Request) {
 
         // Save file to public/templates/
         const bytes = await htmlFile.arrayBuffer()
+        // @ts-ignore
         const buffer = Buffer.from(bytes)
         
         // Always save as the slug for consistency

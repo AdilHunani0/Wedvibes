@@ -60,13 +60,13 @@ export function CustomizeClient({
 
   // ─── Generate card and redirect ───────────────────────────────────────────────
   const generateAndRedirect = useCallback(
-    async (orderId: string) => {
+    async (orderId: string, forceRegenerate = false) => {
       toast.loading('Generating your invitation card…', { id: 'generating' })
       try {
         const genResponse = await fetch('/api/cards/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId }),
+          body: JSON.stringify({ orderId, forceRegenerate }),
         })
 
         if (!genResponse.ok) {
@@ -223,7 +223,7 @@ export function CustomizeClient({
       toast.success('Changes saved successfully!', { id: 'order-update' })
       
       // Regenerate the card HTML
-      await generateAndRedirect(editOrderId)
+      await generateAndRedirect(editOrderId, true)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Something went wrong while updating.'
       console.error('[Update] handleUpdate error:', err)

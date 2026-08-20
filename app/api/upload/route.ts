@@ -10,6 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
+    // @ts-ignore
     const buffer = Buffer.from(await file.arrayBuffer())
     const fileExt = file.name.split('.').pop()
     const fileName = `${crypto.randomUUID()}.${fileExt}`
