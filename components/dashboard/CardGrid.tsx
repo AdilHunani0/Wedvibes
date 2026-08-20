@@ -143,20 +143,28 @@ export function CardGrid({ cards }: CardGridProps) {
         )
       })}
 
-      {shareCard && (
-        <WhatsAppShareModal
-          isOpen={!!shareCard}
-          onClose={() => setShareCard(null)}
-          cardUrl={shareCard.card_url || shareCard.id}
-          person1Name={shareCard.customization?.person1_name || 'Groom'}
-          person2Name={shareCard.customization?.person2_name || 'Bride'}
-          eventDate={shareCard.customization?.event_date ? new Date(shareCard.customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''}
-          eventTime={shareCard.customization?.event_time}
-          venueName={shareCard.customization?.venue_name}
-          venueAddress={shareCard.customization?.venue_address}
-          category={shareCard.template?.category || 'wedding'}
-        />
-      )}
+      {shareCard && (() => {
+        const cust = shareCard.customization
+        const ef = (cust?.extra_fields || {}) as Record<string, string>
+        const clean = (v: string | null | undefined) => (v && v !== 'null' && v !== 'undefined') ? v : ''
+        const p1 = clean(cust?.person1_name) || clean(ef.groom_name)
+        const p2 = clean(cust?.person2_name) || clean(ef.bride_name)
+        const date = cust?.event_date || ef.wedding_date || ef.scratch_date || ''
+        return (
+          <WhatsAppShareModal
+            isOpen={!!shareCard}
+            onClose={() => setShareCard(null)}
+            cardUrl={shareCard.card_url || shareCard.id}
+            person1Name={p1}
+            person2Name={p2}
+            eventDate={date ? new Date(date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+            eventTime={clean(cust?.event_time) || clean(ef.wedding_time)}
+            venueName={clean(cust?.venue_name) || clean(ef.wedding_venue_name)}
+            venueAddress={clean(cust?.venue_address) || clean(ef.wedding_venue_address)}
+            category={shareCard.template?.category || 'wedding'}
+          />
+        )
+      })()}
     </div>
   )
 }

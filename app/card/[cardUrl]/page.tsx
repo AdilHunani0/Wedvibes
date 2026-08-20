@@ -33,16 +33,20 @@ export async function generateMetadata({ params }: PageProps) {
     ? order.customization[0]
     : order?.customization
 
-  // Sanitize names — guard against null/undefined coming through as the string "null"
-  const p1 = customization?.person1_name && customization.person1_name !== 'null' ? customization.person1_name : ''
-  const p2 = customization?.person2_name && customization.person2_name !== 'null' ? customization.person2_name : ''
+  const extraFields = (customization?.extra_fields || {}) as Record<string, string>
+
+  // Resolve names: standard fields → extra_fields → empty
+  const cleanVal = (v: string | null | undefined) => (v && v !== 'null' && v !== 'undefined') ? v : ''
+  const p1 = cleanVal(customization?.person1_name) || cleanVal(extraFields.groom_name)
+  const p2 = cleanVal(customization?.person2_name) || cleanVal(extraFields.bride_name)
   const names = p1 && p2 ? `${p1} & ${p2}` : (p1 || p2 || null)
 
-  const displayDate = customization?.event_date
-    ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  const resolvedDate = customization?.event_date || extraFields.wedding_date || extraFields.scratch_date || ''
+  const displayDate = resolvedDate
+    ? new Date(resolvedDate).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
     : ''
 
-  const venue = customization?.venue_name || ''
+  const venue = cleanVal(customization?.venue_name) || cleanVal(extraFields.wedding_venue_name)
 
   const template = order?.template
 
@@ -161,18 +165,31 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
   }
 
   const customizationData = Array.isArray(order.customization) ? order.customization[0] : order.customization
+  const extraFields = (customizationData?.extra_fields || {}) as Record<string, string>
+
+  // Resolve names: standard fields first, then fall back to template-specific extra_fields
+  // This mirrors the exact logic in api/cards/generate/route.ts lines 80-81
+  const resolvedPerson1 = customizationData?.person1_name || extraFields.groom_name || ''
+  const resolvedPerson2 = customizationData?.person2_name || extraFields.bride_name || ''
+  const resolvedDate = customizationData?.event_date || extraFields.wedding_date || extraFields.scratch_date || ''
+  const resolvedTime = customizationData?.event_time || extraFields.wedding_time || ''
+  const resolvedVenue = customizationData?.venue_name || extraFields.wedding_venue_name || ''
+  const resolvedAddress = customizationData?.venue_address || extraFields.wedding_venue_address || ''
+
+  // Sanitize — guard against literal string "null"
+  const clean = (v: string) => (v && v !== 'null' && v !== 'undefined') ? v : ''
 
   return (
     <div className="relative min-h-screen bg-black">
       <CardViewer order={order} />
       <ShareBar
         cardUrl={order.card_url}
-        person1Name={customizationData?.person1_name && customizationData.person1_name !== 'null' ? customizationData.person1_name : ''}
-        person2Name={customizationData?.person2_name && customizationData.person2_name !== 'null' ? customizationData.person2_name : ''}
-        eventDate={customizationData?.event_date ? format(new Date(customizationData.event_date), 'dd MMMM yyyy') : ''}
-        eventTime={customizationData?.event_time && customizationData.event_time !== 'null' ? customizationData.event_time : ''}
-        venueName={customizationData?.venue_name && customizationData.venue_name !== 'null' ? customizationData.venue_name : ''}
-        venueAddress={customizationData?.venue_address && customizationData.venue_address !== 'null' ? customizationData.venue_address : ''}
+        person1Name={clean(resolvedPerson1)}
+        person2Name={clean(resolvedPerson2)}
+        eventDate={resolvedDate ? format(new Date(resolvedDate), 'dd MMMM yyyy') : ''}
+        eventTime={clean(resolvedTime)}
+        venueName={clean(resolvedVenue)}
+        venueAddress={clean(resolvedAddress)}
         category={order.template?.category || 'wedding'}
         tier={order.template?.tier || 'Premium'}
         autoOpen={share === 'true'}

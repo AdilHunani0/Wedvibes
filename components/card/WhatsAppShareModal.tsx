@@ -50,24 +50,33 @@ export function WhatsAppShareModal({
 
     if (category === 'wedding') {
       const namesLine = name1 && name2
-        ? `*${name1} weds ${name2}*`
-        : name1 ? `*${name1}'s Wedding*` : '*Our Wedding*';
+        ? `*${name1} weds ${name2}* 💑`
+        : name1
+        ? `*${name1}'s Wedding* 👰`
+        : '*Our Wedding* 💒';
 
       const lines = [
-        `🎉 *You are Invited!* 🎉`,
+        `🎉 *You are Invited!*`,
         ``,
-        `We joyfully invite you to celebrate the wedding of`,
+        `With love and joy, we invite you to celebrate`,
+        `the most beautiful day of our lives`,
         ``,
         namesLine,
         ``,
-        `We would be incomplete without your blessings.`,
+        `❤️ We would be incomplete without you there`,
       ];
-      if (detailBlock) { lines.push(''); lines.push(detailBlock); }
-      lines.push('');
-      lines.push(`Open our wedding invitation 👇`);
+
+      if (eventDate) lines.push(``, `📅 *Date:* ${eventDate}`);
+      if (eventTime) lines.push(`🕐 *Time:* ${eventTime}`);
+      if (venueName) lines.push(`📍 *Venue:* ${venueName}`);
+      if (venueAddress) lines.push(`    ${venueAddress}`);
+
+      lines.push(``);
+      lines.push(`Tap to view our animated invitation 👇`);
       lines.push(fullCardUrl);
-      lines.push('');
-      lines.push(`Come, celebrate love with us! 🎉`);
+      lines.push(``);
+      lines.push(`See you there! 🎊`);
+
       return lines.join('\n');
     }
 
@@ -245,14 +254,27 @@ export function WhatsAppShareModal({
             color: 'white',
             fontSize: '16px',
             fontWeight: '600',
-            margin: '0 0 4px',
+            margin: '0 0 2px',
             fontFamily: 'Georgia, serif',
           }}>
-            Your card is ready!
+            Your card is ready! 🎉
           </h2>
+          {(person1Name || person2Name) && (
+            <p style={{
+              color: 'rgba(249,184,204,0.9)',
+              fontSize: '14px',
+              margin: '2px 0 4px',
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+            }}>
+              {person1Name && person2Name
+                ? `${person1Name} & ${person2Name}`
+                : person1Name || person2Name}
+            </p>
+          )}
           <p style={{
-            color: 'rgba(249,184,204,0.8)',
-            fontSize: '13px',
+            color: 'rgba(249,184,204,0.7)',
+            fontSize: '12px',
             margin: 0,
           }}>
             Share this beautiful invitation with your guests
