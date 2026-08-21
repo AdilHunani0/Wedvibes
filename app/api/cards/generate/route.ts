@@ -202,7 +202,21 @@ export async function POST(req: Request) {
     const ogTitle = `You're invited to the wedding of ${groomName} & ${brideName}!`
     const displayDate = customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''
     const ogDescription = `Join us on ${displayDate} at ${customization.venue_name || 'our wedding venue'}. Click to open our interactive invitation.`
-    const ogImage = photo_urls[0] || fallbackPhotos[0]
+    // Find the first available uploaded photo across all photo fields
+    let firstUploadedPhoto = null
+    if (photo_urls && photo_urls.length > 0) {
+      firstUploadedPhoto = photo_urls[0]
+    } else {
+      for (const key of Object.keys(extraFields)) {
+        const val = (extraFields as Record<string, unknown>)[key]
+        if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'string' && val[0].startsWith('http')) {
+          firstUploadedPhoto = val[0]
+          break
+        }
+      }
+    }
+
+    const ogImage = firstUploadedPhoto || fallbackPhotos[0]
 
     const safeOgTitle = escapeHtml(ogTitle)
     const safeOgDescription = escapeHtml(ogDescription)

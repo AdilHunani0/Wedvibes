@@ -67,6 +67,15 @@ export async function generateMetadata({ params }: PageProps) {
   if (customization?.photo_urls && customization.photo_urls.length > 0) {
     // Use Supabase public URL directly for WhatsApp compatibility
     rawOgImage = customization.photo_urls[0]
+  } else if (extraFields) {
+    // Check extraFields for arrays (like couple_photos, gallery_photos)
+    for (const key of Object.keys(extraFields)) {
+      const val = extraFields[key]
+      if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'string' && val[0].startsWith('http')) {
+        rawOgImage = val[0]
+        break
+      }
+    }
   }
 
   const ogImage = rawOgImage.startsWith('http') 
