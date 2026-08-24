@@ -20,8 +20,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://wedvibe.in'),
   title: 'WedVibe — Premium Animated Wedding Invitations',
   description: 'India\'s most stunning digital animated wedding cards. Select from elegant templates, customise instantly, and share on WhatsApp.',
+  verification: {
+    google: 'Z_sTPil6SjDVIP7NWKF0-BGeyVukNqMdj1ugPJxsm-E',
+  },
 }
 
 export default function RootLayout({
