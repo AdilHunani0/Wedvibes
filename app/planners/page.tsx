@@ -16,8 +16,8 @@ const PERKS = [
 ]
 
 export const metadata = {
-  title: 'Planner Program | WedVibe',
-  description: 'Scale your event planning business by offering stunning animated invitations to your clients.',
+  title: 'Wedding Planners — Bulk Credit Plans | WedVibe',
+  description: 'Bulk credit packages for wedding planners and event agencies. Get premium cards at a fraction of retail. Packages starting from ₹2,999.',
 }
 
 export default async function PlannersPage() {

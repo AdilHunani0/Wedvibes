@@ -21,8 +21,29 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://wedvibe.in'),
-  title: 'WedVibe — Premium Animated Wedding Invitations',
-  description: 'India\'s most stunning digital animated wedding cards. Select from elegant templates, customise instantly, and share on WhatsApp.',
+  title: {
+    default: 'WedVibe — Premium Animated Wedding Invitations',
+    template: '%s | WedVibe'
+  },
+  description: 'India\'s most stunning digital animated wedding cards. Select from elegant templates, customise instantly, and share on WhatsApp. Free trial available.',
+  keywords: [
+    'digital wedding invitation',
+    'animated wedding card india',
+    'whatsapp wedding invitation',
+    'online wedding card',
+    'digital invitation card india',
+    'animated invitation india',
+    'wedding card whatsapp share',
+    'digital shaadi card',
+    'premium wedding e-card'
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://wedvibe.in',
+    siteName: 'WedVibe',
+    images: [{ url: '/engagement-hero.png', width: 1200, height: 630 }],
+  },
   verification: {
     google: 'Z_sTPil6SjDVIP7NWKF0-BGeyVukNqMdj1ugPJxsm-E',
   },

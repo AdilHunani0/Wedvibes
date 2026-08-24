@@ -1,8 +1,8 @@
 import { TemplateGrid } from '@/components/templates/TemplateGrid'
 
 export const metadata = {
-  title: 'Templates Gallery | WedVibe',
-  description: 'Browse our collection of premium, standard, and basic animated invitation cards.',
+  title: 'Wedding Invitation Templates — Animated Digital Cards',
+  description: 'Browse our collection of premium animated wedding, engagement, and event invitation templates. Start for free or get Premium access for ₹499. Instant WhatsApp sharing.',
 }
 
 export default function TemplatesPage() {

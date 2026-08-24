@@ -63,12 +63,19 @@ export async function generateMetadata({ params }: PageProps) {
   const supabase = createAdminClient()
   const { data: template } = await supabase
     .from('templates')
-    .select('name')
+    .select('name, price, category')
     .eq('slug', slug)
     .single()
 
+  if (!template) {
+    return { title: 'Template Not Found | WedVibe' }
+  }
+
+  const priceText = template.price > 0 ? `Premium cards at ₹${template.price / 100}` : 'Free trial available'
+
   return {
-    title: template ? `${template.name} - Invitation Template | WedVibe` : 'Template Details',
+    title: `${template.name} — Animated ${template.category || 'Wedding'} Invitation | WedVibe`,
+    description: `Customise the ${template.name} animated invitation card. Share instantly via WhatsApp. ${priceText}.`,
   }
 }
 
