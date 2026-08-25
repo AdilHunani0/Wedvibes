@@ -52,7 +52,7 @@ export function CustomizeClient({
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { user, profile, loading: authLoading } = useAuth()
-  const { credits, loading: creditsLoading } = useCredits(user?.id)
+  const { credits, loading: creditsLoading, refetch: refetchCredits } = useCredits(user?.id)
 
   const storageKey = `wedvibe-draft-${template.slug}`
   const [formData, setFormData] = useState<CustomizationFormData>(() => {

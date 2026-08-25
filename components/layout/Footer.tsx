@@ -12,7 +12,7 @@ export function Footer() {
               <img 
                 src="/logo.png" 
                 alt="WedVibe" 
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-32 md:h-40 w-auto max-w-none object-contain brightness-0 invert origin-left scale-110 md:scale-125" 
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-32 md:h-40 w-auto max-w-none object-contain invert mix-blend-screen origin-left scale-110 md:scale-125" 
               />
             </Link>
             <p className="text-sm leading-relaxed text-[#a07060] mb-4 sm:mb-6">
