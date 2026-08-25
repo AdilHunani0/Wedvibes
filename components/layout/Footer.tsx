@@ -8,9 +8,9 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand — full width on mobile */}
           <div className="col-span-2 md:col-span-1">
-            <p className="font-playfair text-xl sm:text-2xl text-white mb-2 sm:mb-3">
-              Wed<span className="text-[#c9a96e]">Vibe</span>
-            </p>
+            <Link href="/" className="inline-block mb-3 sm:mb-4">
+              <img src="/logo.png" alt="WedVibe" className="h-10 w-auto object-contain brightness-0 invert" />
+            </Link>
             <p className="text-sm leading-relaxed text-[#a07060] mb-4 sm:mb-6">
               India&apos;s finest animated digital wedding invitations. Share your love story with the world.
             </p>

@@ -15,9 +15,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-xl font-playfair text-[#2a1810] group-hover:text-[#a0522d] transition-colors">
-              Wed<span className="text-[#c9a96e]">Vibe</span>
-            </span>
+            <img src="/logo.png" alt="WedVibe" className="h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop nav */}

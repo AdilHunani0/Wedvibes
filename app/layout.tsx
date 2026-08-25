@@ -44,6 +44,10 @@ export const metadata: Metadata = {
     siteName: 'WedVibe',
     images: [{ url: '/engagement-hero.png', width: 1200, height: 630 }],
   },
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   verification: {
     google: 'Z_sTPil6SjDVIP7NWKF0-BGeyVukNqMdj1ugPJxsm-E',
   },
@@ -54,11 +58,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'WedVibe',
+    url: 'https://wedvibe.in',
+    logo: 'https://wedvibe.in/logo.png',
+  }
+
   return (
     <html
       lang="en"
       className={`${playfair.variable} ${inter.variable} h-full antialiased font-sans`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[#fffaf5] text-[#2a1810]">
         <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
         <MainLayoutWrapper>{children}</MainLayoutWrapper>

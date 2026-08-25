@@ -591,7 +591,7 @@ document.getElementById('crescentTap').addEventListener('click', function(){
     initCarousel();
     initFloatingParallax();
     initWishWall();
-    {{#if ADD_MUSIC}}initMusicToggle();{{/if}}
+    if(document.getElementById('music-toggle')) { initMusicToggle(); }
   }, 2500);
 });
 
@@ -877,7 +877,7 @@ function initWishWall(){
   });
 }
 
-{{#if ADD_MUSIC}}
+
 function initMusicToggle(){
   var btn=document.getElementById('music-toggle');
   if(!btn) return;
@@ -974,7 +974,7 @@ function initMusicToggle(){
     }
   });
 }
-{{/if}}
+
 </script>
 </body>
 </html>

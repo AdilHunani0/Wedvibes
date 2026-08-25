@@ -23,7 +23,7 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   const d = f as any
   const bride = d.person2_name || d.bride_name || 'Bride'
   const groom = d.person1_name || d.groom_name || 'Groom'
-  const wDate = formatDate(d.event_date || d.wedding_date, 'Saturday, 12 December 2026')
+
   const wTime = d.event_time || d.wedding_time || '11:00 AM onwards'
   const venue = d.venue_name || d.wedding_venue_name || 'Grand Palace Hall'
   const addr  = d.venue_address || d.wedding_venue_address || 'Palace Road, Bengaluru'
@@ -66,13 +66,17 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{PERSON2_NAME\}\}/g, bride)
 
   // Dates
+  const fallbackDate = 'Saturday, 12 December 2026'
+  const wDate = formatDate(d.event_date || d.wedding_date || d.end_date, fallbackDate)
   html = html.replace(/\{\{WEDDING_DATE\}\}/g, wDate)
   html = html.replace(/\{\{EVENT_DATE\}\}/g, wDate)
   try {
-    const dayLabel = d.event_date ? new Date(d.event_date).toLocaleDateString('en-IN', { weekday: 'long' }) : 'Saturday'
+    const dayLabel = (d.event_date || d.wedding_date || d.end_date) 
+      ? new Date(d.event_date || d.wedding_date || d.end_date).toLocaleDateString('en-IN', { weekday: 'long' }) 
+      : 'Saturday'
     html = html.replace(/\{\{WEDDING_DATE_LABEL\}\}/g, dayLabel)
   } catch { html = html.replace(/\{\{WEDDING_DATE_LABEL\}\}/g, 'Saturday') }
-  html = html.replace(/\{\{END_DATE\}\}/g, wDate)
+  html = html.replace(/\{\{END_DATE\}\}/g, formatDate(d.end_date, wDate))
   html = html.replace(/\{\{WEDDING_CEREMONY_DATE\}\}/g, formatDate(d.wedding_ceremony_date || d.event_date, wDate))
   html = html.replace(/\{\{HALDI_DATE\}\}/g, formatDate(d.haldi_date, wDate))
   html = html.replace(/\{\{RECEPTION_DATE\}\}/g, formatDate(d.reception_date, wDate))
@@ -126,8 +130,12 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{FAMILY_BRIDE_MOTHER\}\}/g, d.family_bride_mother || 'Mrs. Savitha Sharma')
   html = html.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, d.family_groom_father || 'Mr. Suresh Kumar')
   html = html.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, d.family_groom_mother || 'Mrs. Sunitha Kumar')
+  html = html.replace(/\{\{BRIDE_FATHER_NAME\}\}/g, d.bride_father_name || d.family_bride_father || 'Mr. Ramesh Sharma')
+  html = html.replace(/\{\{BRIDE_MOTHER_NAME\}\}/g, d.bride_mother_name || d.family_bride_mother || 'Mrs. Savitha Sharma')
+  html = html.replace(/\{\{GROOM_FATHER_NAME\}\}/g, d.groom_father_name || d.family_groom_father || 'Mr. Suresh Kumar')
+  html = html.replace(/\{\{GROOM_MOTHER_NAME\}\}/g, d.groom_mother_name || d.family_groom_mother || 'Mrs. Sunitha Kumar')
 
-  // Photos
+  // Photos & Captions
   const photos: string[] = (d.photo_urls && d.photo_urls.length > 0) ? d.photo_urls : (d.couple_photos || [])
   const galleryPhotos: string[] = (d.gallery_photos && d.gallery_photos.length > 0) ? d.gallery_photos : []
   for (let i = 1; i <= 6; i++) {
@@ -136,6 +144,7 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
     html = html.replace(new RegExp(`\\{\\{COUPLE_PHOTOS_${i}\\}\\}`, 'g'), url)
     html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), url)
     html = html.replace(new RegExp(`\\{\\{GALLERY_PHOTOS_${i}\\}\\}`, 'g'), galleryUrl)
+    html = html.replace(new RegExp(`\\{\\{GALLERY_CAPTION_${i}\\}\\}`, 'g'), d[`gallery_caption_${i}`] || '')
   }
 
   const brideFamilyPhoto = (d.bride_family_photo && d.bride_family_photo[0]) || FALLBACK_PHOTOS[0]

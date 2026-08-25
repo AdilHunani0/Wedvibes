@@ -457,7 +457,7 @@ function openBook(){
     initScrollReveal();
     startAmbient();
     mirrorHeroToEventsMotif();
-    {{#if ADD_MUSIC}}initMusicToggle();{{/if}}
+    if(document.getElementById('music-toggle')) { initMusicToggle(); }
   },1700);
 }
 
@@ -504,7 +504,7 @@ function startAmbient(){
   window.addEventListener('resize',function(){canvas.height=window.innerHeight;});
 }
 
-{{#if ADD_MUSIC}}
+
 function initMusicToggle(){
   var btn=document.getElementById('music-toggle');
   if(!btn) return;
@@ -601,7 +601,7 @@ function initMusicToggle(){
     }
   });
 }
-{{/if}}
+
 </script>
 </body>
 </html>

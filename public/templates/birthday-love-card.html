@@ -528,7 +528,7 @@ document.getElementById('giftTap').addEventListener('click',function(){
     initCandleBlowing();
     initLoveBtn();
     initFloatDecor();
-    {{#if ADD_MUSIC}}initMusicToggle();{{/if}}
+    if(document.getElementById('music-toggle')) { initMusicToggle(); }
   },2000);
 });
 
@@ -663,7 +663,7 @@ function initFloatDecor(){
 }
 
 /* ── MUSIC TOGGLE ── */
-{{#if ADD_MUSIC}}
+
 function initMusicToggle(){
   var tog=document.getElementById('music-toggle');
   var audio=document.getElementById('bgMusic');
@@ -762,7 +762,7 @@ function initMusicToggle(){
     document.getElementById('noteIcon').style.display=playing?'block':'none';
   });
 }
-{{/if}}
+
 
 /* ── TOAST ── */
 function showToast(msg){
