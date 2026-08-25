@@ -14,8 +14,14 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="WedVibe" className="h-10 w-auto object-contain" />
+          <Link href="/" className="flex items-center gap-2 md:gap-3 group h-16">
+            <div className="relative w-40 md:w-48 h-full flex items-center overflow-hidden">
+              <img 
+                src="/logo.png" 
+                alt="WedVibe" 
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-32 md:h-40 w-auto max-w-none object-contain mix-blend-multiply origin-left scale-110 md:scale-125" 
+              />
+            </div>
           </Link>
 
           {/* Desktop nav */}

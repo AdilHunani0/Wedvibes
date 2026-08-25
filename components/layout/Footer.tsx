@@ -8,8 +8,12 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand — full width on mobile */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-block mb-3 sm:mb-4">
-              <img src="/logo.png" alt="WedVibe" className="h-10 w-auto object-contain brightness-0 invert" />
+            <Link href="/" className="inline-block mb-3 sm:mb-4 h-16 w-40 md:w-48 relative overflow-hidden">
+              <img 
+                src="/logo.png" 
+                alt="WedVibe" 
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-32 md:h-40 w-auto max-w-none object-contain brightness-0 invert origin-left scale-110 md:scale-125" 
+              />
             </Link>
             <p className="text-sm leading-relaxed text-[#a07060] mb-4 sm:mb-6">
               India&apos;s finest animated digital wedding invitations. Share your love story with the world.
