@@ -17,6 +17,7 @@ interface CustomizeFormProps {
   onPayWithCredits: () => void
   userRole?: string
   userCredits?: number
+  authLoading?: boolean
   submitting: boolean
   isEditing?: boolean
   onUpdate?: () => void
@@ -33,6 +34,7 @@ export function CustomizeForm({
   onPayWithCredits,
   userRole,
   userCredits,
+  authLoading,
   submitting,
   isEditing,
   onUpdate,
@@ -187,6 +189,15 @@ export function CustomizeForm({
             disabled={!isStepValid() || submitting}
           >
             Save Changes ✓
+          </Button>
+        ) : authLoading ? (
+          <Button
+            type="button"
+            variant="primary"
+            loading={true}
+            disabled={true}
+          >
+            Loading...
           </Button>
         ) : userRole === 'planner' || userRole === 'admin' ? (
           (userCredits ?? 0) >= (template.credit_cost || 0) ? (

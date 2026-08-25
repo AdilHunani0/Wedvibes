@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { StepIndicator } from '@/components/customize/StepIndicator'
 import { CustomizeForm } from '@/components/customize/CustomizeForm'
@@ -51,12 +51,27 @@ export function CustomizeClient({
   const [currentStep, setCurrentStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [formData, setFormData] = useState<CustomizationFormData>(
-    { ...generateInitialData(schema), ...(initialData || {}) } as CustomizationFormData
-  )
+  const { user, profile, loading: authLoading } = useAuth()
+  const { credits, loading: creditsLoading } = useCredits(user?.id)
 
-  const { user, profile } = useAuth()
-  const { credits, refetch: refetchCredits } = useCredits(user?.id)
+  const storageKey = `wedvibe-draft-${template.slug}`
+  const [formData, setFormData] = useState<CustomizationFormData>(() => {
+    if (typeof window !== 'undefined' && !initialData) {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        try { return { ...generateInitialData(schema), ...JSON.parse(saved) } as CustomizationFormData }
+        catch { /* ignore */ }
+      }
+    }
+    return { ...generateInitialData(schema), ...(initialData || {}) } as CustomizationFormData
+  })
+
+  // Save to localStorage when form changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !initialData) {
+      localStorage.setItem(storageKey, JSON.stringify(formData))
+    }
+  }, [formData, storageKey, initialData])
 
   // ─── Generate card and redirect ───────────────────────────────────────────────
   const generateAndRedirect = useCallback(
@@ -365,6 +380,7 @@ export function CustomizeClient({
             onPayWithCredits={handlePayWithCredits}
             userRole={profile?.role}
             userCredits={credits}
+            authLoading={authLoading || creditsLoading}
             submitting={submitting}
             isEditing={!!editOrderId}
             onUpdate={handleUpdate}
