@@ -189,20 +189,24 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
   const clean = (v: string) => (v && v !== 'null' && v !== 'undefined') ? v : ''
 
   return (
-    <div className="relative min-h-screen bg-black">
-      <CardViewer order={order} />
-      <ShareBar
-        cardUrl={order.card_url}
-        person1Name={clean(resolvedPerson1)}
-        person2Name={clean(resolvedPerson2)}
-        eventDate={resolvedDate ? format(new Date(resolvedDate), 'dd MMMM yyyy') : ''}
-        eventTime={clean(resolvedTime)}
-        venueName={clean(resolvedVenue)}
-        venueAddress={clean(resolvedAddress)}
-        category={order.template?.category || 'wedding'}
-        tier={order.template?.tier || 'Premium'}
-        autoOpen={share === 'true'}
-      />
+    <div className="flex flex-col h-screen bg-black overflow-hidden">
+      <div className="flex-1 relative overflow-hidden">
+        <CardViewer order={order} />
+      </div>
+      <div className="flex-none z-50">
+        <ShareBar
+          cardUrl={order.card_url}
+          person1Name={clean(resolvedPerson1)}
+          person2Name={clean(resolvedPerson2)}
+          eventDate={resolvedDate ? format(new Date(resolvedDate), 'dd MMMM yyyy') : ''}
+          eventTime={clean(resolvedTime)}
+          venueName={clean(resolvedVenue)}
+          venueAddress={clean(resolvedAddress)}
+          category={order.template?.category || 'wedding'}
+          tier={order.template?.tier || 'Premium'}
+          autoOpen={share === 'true'}
+        />
+      </div>
     </div>
   )
 }

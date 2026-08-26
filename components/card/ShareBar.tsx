@@ -40,8 +40,8 @@ export function ShareBar(props: ShareBarProps) {
 
   return (
     <>
-      {/* Compact floating bar at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 py-2 flex gap-2 items-center z-[100] shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
+      {/* Compact bar at bottom, no longer fixed so it doesn't overlap content */}
+      <div className="w-full bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 py-2 flex gap-2 items-center z-[100] shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
 
         {/* WhatsApp share */}
         <button
