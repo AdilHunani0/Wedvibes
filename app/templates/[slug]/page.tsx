@@ -6,6 +6,18 @@ import { Badge } from '@/components/ui/Badge'
 import { TIER_LABELS, PRICING_FEATURES } from '@/lib/constants'
 import fs from 'fs/promises'
 import path from 'path'
+import { cache } from 'react'
+
+const getTemplate = cache(async (slug: string) => {
+  const supabase = createAdminClient()
+  const { data: template } = await supabase
+    .from('templates')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single()
+  return template
+})
 
 /**
  * Resolves {{#if KEY}}...{{else}}...{{/if}} and {{#if KEY}}...{{/if}} blocks
@@ -58,14 +70,23 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+export async function generateStaticParams() {
+  const supabase = createAdminClient()
+  const { data: templates } = await supabase
+    .from('templates')
+    .select('slug')
+    .eq('is_active', true)
+  
+  return templates?.map((t) => ({
+    slug: t.slug,
+  })) || []
+}
+
+export const revalidate = 3600 // Revalidate every hour
+
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
-  const supabase = createAdminClient()
-  const { data: template } = await supabase
-    .from('templates')
-    .select('name, price, category')
-    .eq('slug', slug)
-    .single()
+  const template = await getTemplate(slug)
 
   if (!template) {
     return { title: 'Template Not Found | WedVibe' }
@@ -81,14 +102,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function TemplateDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const supabase = createAdminClient()
-
-  const { data: template } = await supabase
-    .from('templates')
-    .select('*')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .single()
+  const template = await getTemplate(slug)
 
   if (!template) {
     notFound()
