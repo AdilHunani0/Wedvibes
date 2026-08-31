@@ -212,7 +212,6 @@ export function LivePreview({ templateSlug, formData }: LivePreviewProps) {
                 srcDoc={previewHtml}
                 className="w-full h-full border-none bg-white"
                 title="Live Card Preview"
-                sandbox="allow-scripts allow-same-origin"
                 style={{ display: 'block' }}
               />
             </div>

@@ -15,6 +15,14 @@ const nextConfig = {
       }
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/digital-wedding-invitation-:city',
+        destination: '/city/:city',
+      },
+    ]
+  },
 };
 
 export default nextConfig;

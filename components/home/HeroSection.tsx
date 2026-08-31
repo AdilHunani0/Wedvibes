@@ -56,9 +56,9 @@ export function HeroSection() {
             {/* Stats */}
             <div className="flex items-center justify-center md:justify-start gap-8 sm:gap-12 w-full md:w-auto border-t border-gold/20 pt-8">
               {[
-                { value: '2,400+', label: 'Cards sent' },
-                { value: '6+', label: 'Templates' },
-                { value: '98%', label: 'Happy couples' },
+                { value: 'Launch', label: 'Edition' },
+                { value: '10+', label: 'Premium Templates' },
+                { value: '100%', label: 'Customisable' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center md:text-left">
                   <p className="text-xl sm:text-3xl font-playfair text-maroon font-semibold mb-1">{stat.value}</p>

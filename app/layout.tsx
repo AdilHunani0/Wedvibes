@@ -64,6 +64,11 @@ export default function RootLayout({
     name: 'WedVibe',
     url: 'https://wedvibe.in',
     logo: 'https://wedvibe.in/logo.png',
+    description: "India's most stunning digital animated wedding cards.",
+    sameAs: [
+      'https://instagram.com/wedvibe.in',
+      'https://facebook.com/wedvibe.in'
+    ]
   }
 
   return (

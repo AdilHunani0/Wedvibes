@@ -95,8 +95,11 @@ export async function generateMetadata({ params }: PageProps) {
   const priceText = template.price > 0 ? `Premium cards at ₹${template.price / 100}` : 'Free trial available'
 
   return {
-    title: `${template.name} — Animated ${template.category || 'Wedding'} Invitation | WedVibe`,
-    description: `Customise the ${template.name} animated invitation card. Share instantly via WhatsApp. ${priceText}.`,
+    title: `${template.name} Animated Invitation | WedVibe`,
+    description: `Customise the ${template.name} animated card online. Share via WhatsApp. ${priceText}.`,
+    alternates: {
+      canonical: `/templates/${template.slug}`,
+    }
   }
 }
 
@@ -274,8 +277,27 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     console.error('Failed to load template html:', e)
   }
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `${template.name} Animated Invitation`,
+    image: `https://wedvibe.in/templates/${template.slug}.html`, // Ideally a thumbnail image, fallback to URL
+    description: template.description || `Beautiful animated ${template.category} digital invitation template.`,
+    offers: {
+      '@type': 'Offer',
+      price: template.price / 100,
+      priceCurrency: 'INR',
+      availability: 'https://schema.org/InStock',
+      url: `https://wedvibe.in/templates/${template.slug}`
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Left Side: Interactive Normal Preview */}
         <div className="flex justify-center items-center bg-[#fdf8f4]/60 border border-[#e8c97e]/20 rounded-3xl shadow-inner py-8 h-[80vh] min-h-[600px]">
@@ -285,7 +307,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
               srcDoc={templateHtml || undefined}
               src={templateHtml ? undefined : `/templates/${template.slug}.html`}
               className="w-full h-full border-none bg-white"
-              title="Interactive Card Demo"
+              title={`${template.name} Animated Wedding Invitation Preview`}
             />
           </div>
         </div>
@@ -305,7 +327,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
 
           <div className="space-y-3">
             <h1 className="font-playfair text-3xl sm:text-4xl font-extrabold text-[#2a1810]">
-              {template.name}
+              {template.name} <span className="block text-xl text-[#a07060] font-medium mt-1">Animated Digital Invitation</span>
             </h1>
             <div className="flex items-center gap-3">
               <Badge tier={template.tier}>

@@ -15,7 +15,36 @@ export function MiniCardPreview({
   const [isHovered, setIsHovered] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [iframeHtml, setIframeHtml] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fetch and prepare HTML to prevent 404s from unreplaced placeholders
+  useEffect(() => {
+    if (isVisible && !iframeHtml) {
+      fetch(htmlFilePath)
+        .then(res => res.text())
+        .then(html => {
+          let h = html;
+          // Provide generic fallbacks for images so they don't 404
+          const genericImg = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600';
+          h = h.replace(/\{\{COUPLE_PHOTOS_\d+\}\}/g, genericImg);
+          h = h.replace(/\{\{GALLERY_PHOTOS_\d+\}\}/g, genericImg);
+          h = h.replace(/\{\{PHOTO_\d+\}\}/g, genericImg);
+          h = h.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, genericImg);
+          h = h.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, genericImg);
+          
+          h = h.replace(/\{\{BRIDE_NAME\}\}/g, 'Bride');
+          h = h.replace(/\{\{GROOM_NAME\}\}/g, 'Groom');
+          
+          // Strip logic blocks and remaining placeholders
+          h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
+          h = h.replace(/\{\{[^}]+\}\}/g, '');
+          
+          setIframeHtml(h);
+        })
+        .catch(err => console.error('MiniPreview fetch err:', err));
+    }
+  }, [isVisible, htmlFilePath, iframeHtml]);
 
   // Only load iframe when card scrolls into view — performance
   useEffect(() => {
@@ -150,10 +179,10 @@ export function MiniCardPreview({
           )}
 
           {/* THE ACTUAL CARD IFRAME */}
-          {isVisible && (
+          {isVisible && iframeHtml && (
             <iframe
               key={htmlFilePath}
-              src={htmlFilePath}
+              srcDoc={iframeHtml}
               loading="lazy"
               title={`${templateName} animated preview`}
               onLoad={() => setIframeLoaded(true)}
@@ -169,7 +198,6 @@ export function MiniCardPreview({
                 opacity: iframeLoaded ? 1 : 0,
                 transition: 'opacity 0.3s ease',
               }}
-              sandbox="allow-scripts allow-same-origin"
             />
           )}
 

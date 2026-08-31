@@ -16,8 +16,11 @@ const PERKS = [
 ]
 
 export const metadata = {
-  title: 'Wedding Planners — Bulk Credit Plans | WedVibe',
-  description: 'Bulk credit packages for wedding planners and event agencies. Get premium cards at a fraction of retail. Packages starting from ₹2,999.',
+  title: 'Wedding Planner Digital Invitation Credits India | Bulk Wedding Invites',
+  description: 'Bulk digital wedding invitations for event planners in India. Get high-margin animated cards, manage client invites effortlessly, and scale your agency.',
+  alternates: {
+    canonical: '/planners',
+  }
 }
 
 export default async function PlannersPage() {
@@ -28,8 +31,35 @@ export default async function PlannersPage() {
   const actionText = user ? 'Go to Planner Wallet ✦' : 'Register as a Planner ✦'
   const planActionText = user ? 'Buy Now' : 'Get Started'
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do wedding planner digital invitation credits work?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'You purchase credits in bulk at a discounted rate. Each time you customize and activate a premium digital wedding invitation for a client, one credit is deducted from your wallet.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Do WedVibe credits expire?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No, our bulk digital wedding invitations credits never expire. You can use them across multiple wedding seasons.'
+        }
+      }
+    ]
+  }
+
   return (
     <div className="space-y-20 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <span className="text-xs uppercase tracking-widest font-bold text-[#a0522d] bg-[#fdf8f4] border border-[#e8c97e]/40 px-3.5 py-1 rounded-full">
@@ -114,6 +144,35 @@ export default async function PlannersPage() {
               </Link>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* SEO Content Section */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="space-y-6 text-[#6b3d2a] leading-relaxed">
+          <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+            The Best Bulk Digital Wedding Invitations for Event Planners in India
+          </h2>
+          <p>
+            As a wedding planner or event agency in India, offering <strong>digital wedding invitations</strong> is no longer just a trend—it's an expectation. Couples want high-quality, animated digital cards that they can instantly share via WhatsApp. However, buying individual premium cards for every client cuts into your margins and slows down your workflow.
+          </p>
+          <p>
+            With WedVibe's <strong>wedding planner digital invitation credits</strong>, you can unlock agency-level pricing on India's most stunning animated wedding cards. Purchase in bulk, customize on-demand, and manage all your clients' invitations from a single, centralized dashboard.
+          </p>
+
+          <h3 className="font-playfair text-xl sm:text-2xl font-bold text-[#2a1810] mt-8">
+            Frequently Asked Questions
+          </h3>
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-bold text-[#2a1810]">How do wedding planner digital invitation credits work?</h4>
+              <p className="mt-2">You purchase credits in bulk at a discounted rate. Each time you customize and activate a premium digital wedding invitation for a client, one credit is deducted from your wallet.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-[#2a1810]">Do WedVibe credits expire?</h4>
+              <p className="mt-2">No, our bulk digital wedding invitations credits never expire. You can use them across multiple wedding seasons without worrying about losing your investment.</p>
+            </div>
+          </div>
         </div>
       </section>
     </div>

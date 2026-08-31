@@ -5,11 +5,15 @@ import { FeaturedTemplates } from '@/components/home/FeaturedTemplates'
 import { PricingSection } from '@/components/home/PricingSection'
 import { PlannerTeaser } from '@/components/home/PlannerTeaser'
 import { Testimonials } from '@/components/home/Testimonials'
+import { CityLinks } from '@/components/home/CityLinks'
 import { CTABanner } from '@/components/home/CTABanner'
 
 export const metadata = {
   title: 'WedVibe — Premium Animated Digital Wedding Invitations India',
   description: 'Stunning animated wedding invitations. Start for free or upgrade to Premium for just ₹499. Share on WhatsApp instantly. No app needed.',
+  alternates: {
+    canonical: '/',
+  },
 }
 
 export default function Home() {
@@ -22,6 +26,7 @@ export default function Home() {
       <PricingSection />
       <PlannerTeaser />
       <Testimonials />
+      <CityLinks />
       <CTABanner />
     </div>
   )
