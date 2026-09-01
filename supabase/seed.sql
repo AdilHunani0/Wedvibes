@@ -77,6 +77,17 @@ INSERT INTO templates (name, slug, category, tier, price, credit_cost, html_file
   '/templates/our-wedding-story.html',
   ARRAY['Cinematic dark theme', 'Book style animation', 'Interactive photo wall', 'Multi-day events', 'RSVP section'],
   8
+),
+(
+  'Crimson Door Wedding',
+  'crimson-door-wedding',
+  'wedding',
+  'premium',
+  49900,
+  3,
+  '/templates/crimson-door-wedding.html',
+  ARRAY['Double door opening', 'Scratch card date reveal', 'Events timeline', 'Story with photo collage', 'Countdown timer'],
+  9
 );
 
 INSERT INTO credit_plans (name, description, basic_credits, standard_credits, premium_credits, price, discount_percent, sort_order) VALUES

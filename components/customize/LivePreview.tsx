@@ -135,6 +135,22 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{GROOM_FATHER_NAME\}\}/g, d.groom_father_name || d.family_groom_father || 'Mr. Suresh Kumar')
   html = html.replace(/\{\{GROOM_MOTHER_NAME\}\}/g, d.groom_mother_name || d.family_groom_mother || 'Mrs. Sunitha Kumar')
 
+  // Crimson Door extra fields
+  html = html.replace(/\{\{COUPLE_INITIALS\}\}/g, `${groom.charAt(0)}&${bride.charAt(0)}`)
+  html = html.replace(/\{\{BRIDE_PARENTS\}\}/g, d.bride_parents || 'D/o Mr. & Mrs. Sharma')
+  html = html.replace(/\{\{GROOM_PARENTS\}\}/g, d.groom_parents || 'S/o Mr. & Mrs. Singh')
+  html = html.replace(/\{\{BRIDE_BIO\}\}/g, d.bride_bio || 'A beautiful soul')
+  html = html.replace(/\{\{GROOM_BIO\}\}/g, d.groom_bio || 'A handsome prince')
+  html = html.replace(/\{\{STORY_YEAR_1\}\}/g, d.story_year_1 || '2021')
+  html = html.replace(/\{\{STORY_HEADING_1\}\}/g, d.story_heading_1 || 'First Met')
+  html = html.replace(/\{\{STORY_TEXT_1\}\}/g, d.story_text_1 || 'We met at a coffee shop...')
+  html = html.replace(/\{\{STORY_YEAR_2\}\}/g, d.story_year_2 || '2023')
+  html = html.replace(/\{\{STORY_HEADING_2\}\}/g, d.story_heading_2 || 'The Proposal')
+  html = html.replace(/\{\{STORY_TEXT_2\}\}/g, d.story_text_2 || 'He got down on one knee...')
+  html = html.replace(/\{\{STORY_YEAR_3\}\}/g, d.story_year_3 || '2026')
+  html = html.replace(/\{\{STORY_HEADING_3\}\}/g, d.story_heading_3 || 'Forever')
+  html = html.replace(/\{\{STORY_TEXT_3\}\}/g, d.story_text_3 || 'Tying the knot...')
+
   // Photos & Captions
   const photos: string[] = (d.photo_urls && d.photo_urls.length > 0) ? d.photo_urls : (d.couple_photos || [])
   const galleryPhotos: string[] = (d.gallery_photos && d.gallery_photos.length > 0) ? d.gallery_photos : []

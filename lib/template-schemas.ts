@@ -611,6 +611,92 @@ export const birthdayLoveCardSchema: TemplateFormConfig = {
   ],
 }
 
+export const crimsonDoorWeddingSchema: TemplateFormConfig = {
+  slug: 'crimson-door-wedding',
+  steps: [
+    {
+      title: 'Couple Details',
+      fields: [
+        { name: 'bride_name', label: "Bride's Name 👰", type: 'text', placeholder: 'First Name', required: true },
+        { name: 'groom_name', label: "Groom's Name 🤵", type: 'text', placeholder: 'First Name', required: true },
+        { name: 'bride_parents', label: "Bride's Parents", type: 'text', placeholder: 'e.g. D/o Mr. & Mrs. Sharma' },
+        { name: 'groom_parents', label: "Groom's Parents", type: 'text', placeholder: 'e.g. S/o Mr. & Mrs. Singh' },
+        { name: 'bride_bio', label: "Bride's Bio", type: 'text', placeholder: 'e.g. A beautiful soul' },
+        { name: 'groom_bio', label: "Groom's Bio", type: 'text', placeholder: 'e.g. A handsome prince' },
+        { name: 'add_music', label: 'Add Background Music 🎵', type: 'checkbox' },
+        { name: 'music_url', label: 'Custom Music URL (MP3 Link) 🔗', type: 'text', placeholder: 'e.g. https://example.com/song.mp3 (optional)' },
+        { name: 'couple_photos', label: 'Couple Photos (up to 2) 📸', type: 'photo', maxPhotos: 2 },
+      ],
+    },
+    {
+      title: 'Save the Date',
+      fields: [
+        { name: 'scratch_date', label: 'Scratch Reveal Date 📅', type: 'date', required: true },
+        { name: 'scratch_location', label: 'Scratch Reveal Subtitle', type: 'text', placeholder: 'e.g. Mumbai' },
+        { name: 'countdown_target', label: 'Countdown Target (ISO datetime) ⏱️', type: 'text', placeholder: 'e.g. 2026-11-21T17:00:00+05:30' },
+      ],
+    },
+    {
+      title: 'Function 1 — Haldi',
+      fields: [
+        { name: 'haldi_date', label: 'Haldi Date 📅', type: 'date' },
+        { name: 'haldi_time', label: 'Haldi Time ⏰', type: 'text', placeholder: 'e.g. 10:00 AM' },
+        { name: 'haldi_venue_name', label: 'Haldi Venue Name 🏰', type: 'text' },
+        { name: 'haldi_venue_address', label: 'Haldi Venue Address 📍', type: 'textarea', rows: 2 },
+        { name: 'haldi_dress_code', label: 'Dress Code 👗', type: 'text', placeholder: 'e.g. Yellow attire welcomed 🌼' },
+      ],
+    },
+    {
+      title: 'Function 2 — Wedding',
+      fields: [
+        { name: 'wedding_date', label: 'Ceremony Date 📅', type: 'date', required: true },
+        { name: 'wedding_time', label: 'Ceremony Time ⏰', type: 'text', placeholder: 'e.g. 5:00 PM' },
+        { name: 'wedding_venue_name', label: 'Ceremony Venue Name 🏰', type: 'text' },
+        { name: 'wedding_venue_address', label: 'Ceremony Venue Address 📍', type: 'textarea', rows: 2 },
+        { name: 'wedding_muhurat_note', label: 'Muhurat Note 📝', type: 'text', placeholder: 'e.g. Auspicious muhurat as per panditji' },
+      ],
+    },
+    {
+      title: 'Function 3 — Reception',
+      fields: [
+        { name: 'reception_date', label: 'Reception Date 📅', type: 'date' },
+        { name: 'reception_time', label: 'Reception Time ⏰', type: 'text', placeholder: 'e.g. 8:00 PM' },
+        { name: 'reception_note', label: 'Note 📝', type: 'text', placeholder: 'e.g. Dinner, dance & celebrations till late' },
+      ],
+    },
+    {
+      title: 'Our Story',
+      fields: [
+        { name: 'story_year_1', label: 'Story Year 1', type: 'text', placeholder: 'e.g. 2021' },
+        { name: 'story_heading_1', label: 'Story Heading 1', type: 'text', placeholder: 'e.g. First Met' },
+        { name: 'story_text_1', label: 'Story Text 1', type: 'textarea', rows: 2, placeholder: 'e.g. We met at a coffee shop...' },
+        { name: 'story_year_2', label: 'Story Year 2', type: 'text', placeholder: 'e.g. 2023' },
+        { name: 'story_heading_2', label: 'Story Heading 2', type: 'text', placeholder: 'e.g. The Proposal' },
+        { name: 'story_text_2', label: 'Story Text 2', type: 'textarea', rows: 2, placeholder: 'e.g. He got down on one knee...' },
+        { name: 'story_year_3', label: 'Story Year 3', type: 'text', placeholder: 'e.g. 2026' },
+        { name: 'story_heading_3', label: 'Story Heading 3', type: 'text', placeholder: 'e.g. Forever' },
+        { name: 'story_text_3', label: 'Story Text 3', type: 'textarea', rows: 2, placeholder: 'e.g. Tying the knot...' },
+      ],
+    },
+    {
+      title: 'Family Details',
+      fields: [
+        { name: 'bride_father_name', label: "Bride's Father", type: 'text' },
+        { name: 'bride_mother_name', label: "Bride's Mother", type: 'text' },
+        { name: 'groom_father_name', label: "Groom's Father", type: 'text' },
+        { name: 'groom_mother_name', label: "Groom's Mother", type: 'text' },
+      ],
+    },
+    {
+      title: 'Gallery',
+      description: 'Upload up to 4 memorable photos.',
+      fields: [
+        { name: 'gallery_photos', label: 'Gallery Photos (up to 4) 📸', type: 'photo', maxPhotos: 4 },
+      ],
+    },
+  ],
+}
+
 export const templateSchemas: Record<string, TemplateFormConfig> = {
   'royal-dark-wedding': royalDarkWeddingSchema,
   'destination-beach-wedding': destinationBeachWeddingSchema,
@@ -620,6 +706,7 @@ export const templateSchemas: Record<string, TemplateFormConfig> = {
   'our-wedding-story': ourWeddingStorySchema,
   'engagement-navy-story': engagementNavyStorySchema,
   'birthday-love-card': birthdayLoveCardSchema,
+  'crimson-door-wedding': crimsonDoorWeddingSchema,
 }
 
 export function getSchemaForTemplate(slug: string): TemplateFormConfig {

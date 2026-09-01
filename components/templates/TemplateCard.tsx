@@ -16,6 +16,7 @@ const EMOJI_MAP: Record<string, string> = {
   'classic-maroon-wedding': '🍷',
   'our-wedding-story': '🎞️',
   'engagement-navy-story': '💍',
+  'crimson-door-wedding': '🚪',
 }
 
 const BG_MAP: Record<string, string> = {
@@ -27,6 +28,7 @@ const BG_MAP: Record<string, string> = {
   'classic-maroon-wedding': 'from-red-950 to-rose-950',
   'our-wedding-story': 'from-slate-900 to-[#0d1526]',
   'engagement-navy-story': 'from-[#0d1526] to-[#16233d]',
+  'crimson-door-wedding': 'from-[#4a0e18] to-[#2a0a10]',
 }
 
 interface TemplateCardProps {
