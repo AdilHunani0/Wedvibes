@@ -150,7 +150,10 @@ export async function POST(req: Request) {
         }
       } else if (typeof value === 'string') {
         let displayValue = value || ''
-        if (key.includes('date') && value && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        // countdown_target must stay as raw ISO string for JS countdown — do NOT format it
+        const isIsoDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value)
+        const isDateField = key.includes('date') && key !== 'countdown_target'
+        if (isDateField && value && isIsoDateOnly) {
           displayValue = new Date(value).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
         }
         if (!nameAliases.has(key)) {
