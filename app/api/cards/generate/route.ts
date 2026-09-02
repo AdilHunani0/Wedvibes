@@ -138,6 +138,21 @@ export async function POST(req: Request) {
       html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), photoUrl)
     }
 
+    // Auto-derive countdown_target if the user left it blank
+    // Prefer: scratch_date → nikkah_date → wedding_date → wedding_ceremony_date → haldi_date
+    const ef = extraFields as Record<string, unknown>
+    const rawCountdown = typeof ef['countdown_target'] === 'string' ? (ef['countdown_target'] as string).trim() : ''
+    if (!rawCountdown) {
+      const fallbackDateKey = ['scratch_date', 'nikkah_date', 'wedding_date', 'wedding_ceremony_date', 'haldi_date']
+        .find(k => typeof ef[k] === 'string' && (ef[k] as string).trim())
+      if (fallbackDateKey) {
+        const d = (ef[fallbackDateKey] as string).trim()
+        // Build ISO datetime at noon IST
+        const derivedIso = `${d}T12:00:00+05:30`
+        html = html.replace(/\{\{COUNTDOWN_TARGET\}\}/g, derivedIso)
+      }
+    }
+
     // Dynamic field replacement from extra_fields
     // Skip groom_name/bride_name — already handled above as PERSON1/PERSON2/GROOM/BRIDE_NAME
     const nameAliases = new Set(['groom_name', 'bride_name'])
@@ -161,6 +176,7 @@ export async function POST(req: Request) {
         }
       }
     })
+
 
     // 5. Resolve conditional blocks — strip sections whose key fields are empty
     const conditionalData: Record<string, string | string[] | undefined | null> = {}
