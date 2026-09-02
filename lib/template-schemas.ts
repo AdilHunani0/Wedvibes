@@ -297,7 +297,7 @@ export const emeraldNikkahWeddingSchema: TemplateFormConfig = {
         { name: 'groom_name', label: "Groom's Name 🤵", type: 'text', placeholder: 'First Name', required: true },
         { name: 'add_music', label: 'Add Background Music 🎵', type: 'checkbox' },
         { name: 'music_url', label: 'Custom Music URL (MP3 Link) 🔗', type: 'text', placeholder: 'e.g. https://example.com/song.mp3 (optional)' },
-        { name: 'couple_photos', label: 'Couple Photos (up to 3) 📸', type: 'photo', maxPhotos: 3 },
+        { name: 'couple_photos', label: 'Couple Photos (up to 3) 📸 — also appear as floating polaroids', type: 'photo', maxPhotos: 3 },
       ],
     },
     {
@@ -344,7 +344,7 @@ export const emeraldNikkahWeddingSchema: TemplateFormConfig = {
       title: 'Gallery & Ending',
       description: 'Upload up to 6 memorable photos for the scrapbook.',
       fields: [
-        { name: 'gallery_photos', label: 'Gallery Photos (up to 6) 📸', type: 'photo', maxPhotos: 6 },
+        { name: 'gallery_photos', label: 'Gallery Photos (up to 6) 📸 — first 2 also appear as floating polaroids', type: 'photo', maxPhotos: 6 },
         { name: 'gallery_caption_1', label: 'Caption 1', type: 'text', placeholder: 'e.g. Where it began' },
         { name: 'gallery_caption_2', label: 'Caption 2', type: 'text', placeholder: 'e.g. Family duas' },
         { name: 'gallery_caption_3', label: 'Caption 3', type: 'text', placeholder: 'e.g. Haldi morning' },
