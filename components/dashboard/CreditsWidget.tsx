@@ -125,7 +125,7 @@ export function CreditsWidget() {
         <div>
           <span className="text-xs uppercase tracking-wider text-[#c9a96e] font-bold">Credits Balance</span>
           <h2 className="text-4xl font-extrabold text-[#e8c97e] mt-1 font-playfair">{credits} Credit{credits !== 1 ? 's' : ''}</h2>
-          <p className="text-xs text-[#a07060] mt-1.5">Used to generate premium invitations instantly. Each premium card costs 3 credits.</p>
+          <p className="text-xs text-[#a07060] mt-1.5">Used to generate invitations instantly. Premium cards cost up to 3 credits (Rose Bloom is free).</p>
         </div>
         <div className="text-xs border border-[#e8c97e]/20 rounded-xl px-4 py-3 bg-white/5 backdrop-blur-md">
           <span className="font-bold text-[#c9a96e] block uppercase mb-1">Planner Perks</span>

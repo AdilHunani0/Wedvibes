@@ -200,7 +200,18 @@ export function CustomizeForm({
             Loading...
           </Button>
         ) : userRole === 'planner' || userRole === 'admin' ? (
-          (userCredits ?? 0) >= (template.credit_cost || 0) ? (
+          (template.credit_cost || 0) === 0 || template.price === 0 ? (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={onPayWithCredits}
+              loading={submitting}
+              disabled={!isStepValid() || submitting}
+              className="bg-[#2a1810] text-[#e8c97e]"
+            >
+              Generate Free Card ✦
+            </Button>
+          ) : (userCredits ?? 0) >= (template.credit_cost || 0) ? (
             <Button
               type="button"
               variant="primary"
@@ -221,6 +232,16 @@ export function CustomizeForm({
               Not enough credits ({userCredits} / {template.credit_cost || 0}). Buy More
             </Button>
           )
+        ) : template.price === 0 ? (
+          <Button
+            type="button"
+            variant="primary"
+            onClick={onSubmit}
+            loading={submitting}
+            disabled={!isStepValid() || submitting}
+          >
+            Generate Free Card 🌸
+          </Button>
         ) : (
           <Button
             type="button"

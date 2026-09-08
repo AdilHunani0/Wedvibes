@@ -300,7 +300,12 @@ export function CustomizeClient({
       const { orderId } = orderBody
       toast.success('Details saved!', { id: 'order-save' })
 
-      // Step C: Load Razorpay SDK
+      // Free template — skip Razorpay payment gateway
+      if (template.price === 0) {
+        console.log('[Pay] Free template: skipping payment gateway, generating card directly')
+        await generateAndRedirect(orderId)
+        return
+      }
       console.log('[Pay] Step C: loading Razorpay script')
       const scriptLoaded = await loadRazorpayScript()
       console.log('[Pay] Step C: script loaded=', scriptLoaded)

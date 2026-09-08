@@ -24,6 +24,15 @@ export async function POST(req: Request) {
 
     const adminSupabase = createAdminClient()
 
+    // Get template info to check if price is 0 (free)
+    const { data: tData } = await adminSupabase
+      .from('templates')
+      .select('price')
+      .eq('id', templateId)
+      .single()
+
+    const isFree = (tData?.price || 0) === 0
+
     // Insert order (bypass RLS)
     const { data: order, error: orderError } = await adminSupabase
       .from('orders')
@@ -31,7 +40,9 @@ export async function POST(req: Request) {
         user_id: user?.id || null,
         guest_email: guestEmail || null,
         template_id: templateId,
-        status: 'pending', 
+        status: isFree ? 'paid' : 'pending',
+        payment_method: isFree ? 'free' : null,
+        amount_paid: 0,
       })
       .select()
       .single()

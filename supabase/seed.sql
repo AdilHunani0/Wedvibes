@@ -5,9 +5,9 @@ INSERT INTO templates (name, slug, category, tier, price, credit_cost, html_file
   'Rose Bloom',
   'rose-bloom-wedding',
   'wedding',
-  'premium',
+  'basic',
   0,
-  3,
+  0,
   '/templates/rose-bloom-wedding.html',
   ARRAY['Door opening animation', 'Floating petals', 'Polaroid rope section', '4 photo slots', 'Scroll reveal', 'RSVP button'],
   1

@@ -16,7 +16,7 @@ export function CreditsPayment({ order, onSuccess, onFailure }: CreditsPaymentPr
   const { user, profile } = useAuth()
   const [loading, setLoading] = useState(false)
 
-  const creditCost = order.template?.credit_cost || 1
+  const creditCost = order.template?.credit_cost ?? 0
   const availableCredits = profile?.credits || 0
   const hasEnoughCredits = availableCredits >= creditCost
 
@@ -64,7 +64,7 @@ export function CreditsPayment({ order, onSuccess, onFailure }: CreditsPaymentPr
         <div className="text-right">
           <span className="text-xs font-bold text-[#6b3d2a] block">Cost</span>
           <span className="text-[#a0522d] font-extrabold text-lg">
-            {creditCost} Credit{creditCost > 1 ? 's' : ''}
+            {creditCost === 0 ? 'Free (0 Credits)' : `${creditCost} Credit${creditCost > 1 ? 's' : ''}`}
           </span>
         </div>
       </div>

@@ -5,7 +5,7 @@ import type { TemplateTier } from '@/lib/types'
 import { MiniCardPreview } from '@/components/templates/MiniCardPreview'
 
 const FEATURED = [
-  { slug: 'rose-bloom-wedding', name: 'Rose Bloom', category: 'Wedding', tier: 'premium' as TemplateTier, price: 0, emoji: '🌹', bg: 'from-rose-100 to-pink-50' },
+  { slug: 'rose-bloom-wedding', name: 'Rose Bloom', category: 'Wedding', tier: 'basic' as TemplateTier, price: 0, emoji: '🌹', bg: 'from-rose-100 to-pink-50' },
   { slug: 'royal-dark-wedding', name: 'Royal Dark', category: 'Wedding', tier: 'premium' as TemplateTier, price: 49900, emoji: '👑', bg: 'from-amber-900 to-stone-900' },
   { slug: 'destination-beach-wedding', name: 'Destination Beach', category: 'Wedding', tier: 'premium' as TemplateTier, price: 49900, emoji: '🌊', bg: 'from-teal-700 to-cyan-900' },
   { slug: 'emerald-nikkah-wedding', name: 'Emerald Nikkah', category: 'Wedding', tier: 'premium' as TemplateTier, price: 49900, emoji: '🌙', bg: 'from-emerald-900 to-teal-900' },

@@ -56,7 +56,7 @@ export function TemplatesTable({ templates, onToggleActive }: TemplatesTableProp
                   {formatPrice(template.price)}
                 </td>
                 <td className="px-6 py-4 font-medium">
-                  {template.credit_cost} credit{template.credit_cost !== 1 ? 's' : ''}
+                  {template.credit_cost === 0 ? 'Free (0 credits)' : `${template.credit_cost} credit${template.credit_cost !== 1 ? 's' : ''}`}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
