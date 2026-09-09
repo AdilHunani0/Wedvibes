@@ -1899,8 +1899,19 @@
 
     /* ═══ COUNTDOWN ═══ */
     function startCountdown() {
-      var target = new Date('{{#if countdown_target}}{{COUNTDOWN_TARGET}}{{else}}2026-02-13T11:00:00+05:30{{/if}}').getTime();
+      var rawTarget = '{{COUNTDOWN_TARGET}}';
+      var defaultTarget = '2026-11-21T17:30:00+05:30';
+      var targetStr = (rawTarget && !rawTarget.startsWith('{{')) ? rawTarget : defaultTarget;
+      if (targetStr.indexOf('{{#if') !== -1) {
+        targetStr = targetStr.replace(/\{\{#if.*?\}\}(.*?)\{\{else\}\}.*?\{\{\/if\}\}/g, '$1').trim();
+        if (!targetStr || targetStr.startsWith('{{')) targetStr = defaultTarget;
+      }
+      var target = new Date(targetStr).getTime();
+      if (isNaN(target)) {
+        target = new Date(defaultTarget).getTime();
+      }
       var dEl = document.getElementById('cdDays'), hEl = document.getElementById('cdHours'), mEl = document.getElementById('cdMins'), sEl = document.getElementById('cdSecs');
+      if (!dEl || !hEl || !mEl || !sEl) return;
       function tick() {
         var now = Date.now(), diff = target - now; if (diff < 0) diff = 0;
         dEl.textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
