@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { formatPrice } from '@/lib/utils'
 import { Badge } from '@/components/ui/Badge'
 import { TIER_LABELS, PRICING_FEATURES } from '@/lib/constants'
+import { TemplatePreviewIframe } from '@/components/templates/TemplatePreviewIframe'
 import fs from 'fs/promises'
 import path from 'path'
 import { cache } from 'react'
@@ -315,39 +316,11 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Left Side: Interactive Normal Preview */}
         <div className="flex justify-center items-center bg-[#fdf8f4]/60 border border-[#e8c97e]/20 rounded-3xl shadow-inner py-8 h-[80vh] min-h-[600px]">
-          <div className="w-full max-w-[390px] h-full shadow-lg rounded-2xl overflow-hidden border border-neutral-200 relative">
-            {/* Shimmer skeleton shown while iframe loads */}
-            <div
-              id="iframe-skeleton"
-              className="absolute inset-0 z-10 pointer-events-none"
-              style={{
-                background: 'linear-gradient(135deg, #1a0609 0%, #2a0a10 40%, #1a0609 100%)',
-              }}
-            >
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(90deg, transparent 0%, rgba(201,162,39,0.08) 50%, transparent 100%)',
-                animation: 'shimmer 1.6s infinite',
-              }}/>
-              <div style={{
-                position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%,-50%)',
-                textAlign: 'center', color: 'rgba(232,207,154,0.5)', fontSize: '13px',
-                fontFamily: 'serif', letterSpacing: '0.15em',
-              }}>
-                ✦ Loading Preview ✦
-              </div>
-              <style>{`@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}`}</style>
-            </div>
-            {/* Content preview iframe */}
-            <iframe
-              srcDoc={templateHtml || undefined}
-              src={templateHtml ? undefined : `/templates/${template.slug}.html`}
-              className="w-full h-full border-none bg-transparent relative z-0"
+          <div className="w-full max-w-[390px] h-full shadow-lg rounded-2xl overflow-hidden border border-neutral-200">
+            <TemplatePreviewIframe
+              srcDoc={templateHtml}
+              src={`/templates/${template.slug}.html`}
               title={`${template.name} Animated Wedding Invitation Preview`}
-              onLoad={() => {
-                const s = document.getElementById('iframe-skeleton')
-                if (s) { s.style.opacity = '0'; s.style.transition = 'opacity 0.4s'; setTimeout(() => s.remove(), 400) }
-              }}
             />
           </div>
         </div>
