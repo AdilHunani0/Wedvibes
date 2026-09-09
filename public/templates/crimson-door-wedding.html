@@ -1,11 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>{{GROOM_NAME}} &amp; {{BRIDE_NAME}} â€” Wedding Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Italiana:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&display=swap" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Italiana:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&display=swap"/></noscript>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Italiana:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --crimson-deep:#4a0e18;--crimson:#7a1f2b;--rose-red:#b23a45;--rose-soft:#d4707a;
@@ -53,7 +56,7 @@ body{background:#0d0305;display:flex;flex-direction:column;align-items:center;ju
 .door-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:#c9a227;pointer-events:none;z-index:100;opacity:0;}
 #video-hero{position:relative;width:390px;height:100vh;min-height:700px;margin:0 auto;overflow:hidden;opacity:0;transition:opacity 1.2s ease;}
 #video-hero.visible{opacity:1;}
-#hero-photo{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+#hero-photo, #hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;}
 .video-gradient{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(42,10,16,0.5) 0%,rgba(42,10,16,0.2) 20%,rgba(42,10,16,0.15) 40%,rgba(42,10,16,0.4) 65%,rgba(42,10,16,0.92) 100%);}
 .hero-block{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 32px 60px;text-align:center;}
 .hero-welcome-line{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:14px;color:rgba(244,230,208,0.9);line-height:2;opacity:0;max-width:300px;letter-spacing:0.5px;}
@@ -238,7 +241,9 @@ body{background:#0d0305;display:flex;flex-direction:column;align-items:center;ju
   </div>
 </div>
 <div id="video-hero">
-  <img id="hero-photo" src="{{COUPLE_PHOTOS_1}}" alt="{{GROOM_NAME}} and {{BRIDE_NAME}}"/>
+  <video id="hero-video" autoplay loop muted playsinline poster="{{COUPLE_PHOTOS_1}}">
+    <source src="/crimson-door-bg.mp4" type="video/mp4"/>
+  </video>
   <div class="video-gradient"></div>
   <div class="hero-block">
     <p class="hero-welcome-line" id="hwLine1">We are honored to welcome you to<br/>the wedding ceremony of</p>
@@ -414,15 +419,24 @@ function openDoors() {
   if (doorOpened) return; doorOpened = true;
   var wrap=document.getElementById('doorWrap'); var screen=document.getElementById('door-screen');
   wrap.classList.add('door-opened');
-  document.getElementById('monogramPlaque').style.opacity='0'; document.getElementById('monogramPlaque').style.transform='scale(0.7)';
-  document.getElementById('plaqueLabel').style.opacity='0';
+  var plaque = document.getElementById('monogramPlaque');
+  var label = document.getElementById('plaqueLabel');
+  if (plaque) { plaque.style.opacity='0'; plaque.style.transform='scale(0.7)'; }
+  if (label) { label.style.opacity='0'; }
   createDoorParticles(screen);
   setTimeout(function(){
     screen.classList.add('door-hidden');
-    document.getElementById('video-hero').classList.add('visible');
+    var videoHero = document.getElementById('video-hero');
+    if (videoHero) videoHero.classList.add('visible');
+    var video = document.getElementById('hero-video');
+    if (video) { video.play().catch(function(){}); }
     sequenceHeroText(); startAmbient(); initScrollReveal(); startCountdown();
     if(document.getElementById('music-toggle')) initMusicToggle();
   }, 2000);
+}
+// Auto open in iframe/preview mode
+if (window.location.search.indexOf('auto=1') !== -1 || window.location.search.indexOf('preview=1') !== -1 || window.self !== window.top) {
+  setTimeout(openDoors, 300);
 }
 function createDoorParticles(container) {
   for(var i=0;i<24;i++){(function(){

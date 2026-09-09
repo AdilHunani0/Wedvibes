@@ -93,6 +93,8 @@ export async function POST(req: Request) {
     html = html.replace(/\{\{PERSON2_NAME\}\}/g, brideName)
     html = html.replace(/\{\{GROOM_NAME\}\}/g, groomName)
     html = html.replace(/\{\{BRIDE_NAME\}\}/g, brideName)
+    const coupleInitials = `${groomName.trim().charAt(0)}&${brideName.trim().charAt(0)}`
+    html = html.replace(/\{\{COUPLE_INITIALS\}\}/g, coupleInitials)
     html = html.replace(/\{\{EVENT_DATE\}\}/g, customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '')
     html = html.replace(/\{\{EVENT_TIME\}\}/g, customization.event_time || '')
     html = html.replace(/\{\{VENUE_NAME\}\}/g, customization.venue_name || '')

@@ -130,7 +130,21 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     templateHtml = templateHtml.replace(/\{\{COUNTDOWN_TARGET\}\}/g, '2026-11-21T17:30:00+05:30')
     templateHtml = templateHtml.replace(/\{\{FOOTER_DATE\}\}/g, '20–22 · November · 2026 · Goa')
 
-    // Royal Dark specific
+    // Royal Dark & Crimson Door specific
+    templateHtml = templateHtml.replace(/\{\{COUPLE_INITIALS\}\}/g, 'K&S')
+    templateHtml = templateHtml.replace(/\{\{BRIDE_PARENTS\}\}/g, 'D/o Mr. & Mrs. Singh')
+    templateHtml = templateHtml.replace(/\{\{GROOM_PARENTS\}\}/g, 'S/o Mr. & Mrs. Kapoor')
+    templateHtml = templateHtml.replace(/\{\{BRIDE_BIO\}\}/g, 'A beautiful soul')
+    templateHtml = templateHtml.replace(/\{\{GROOM_BIO\}\}/g, 'A handsome prince')
+    templateHtml = templateHtml.replace(/\{\{STORY_YEAR_1\}\}/g, '2021')
+    templateHtml = templateHtml.replace(/\{\{STORY_HEADING_1\}\}/g, 'First Met')
+    templateHtml = templateHtml.replace(/\{\{STORY_TEXT_1\}\}/g, 'We met at a coffee shop...')
+    templateHtml = templateHtml.replace(/\{\{STORY_YEAR_2\}\}/g, '2023')
+    templateHtml = templateHtml.replace(/\{\{STORY_HEADING_2\}\}/g, 'The Proposal')
+    templateHtml = templateHtml.replace(/\{\{STORY_TEXT_2\}\}/g, 'He got down on one knee...')
+    templateHtml = templateHtml.replace(/\{\{STORY_YEAR_3\}\}/g, '2026')
+    templateHtml = templateHtml.replace(/\{\{STORY_HEADING_3\}\}/g, 'Forever')
+    templateHtml = templateHtml.replace(/\{\{STORY_TEXT_3\}\}/g, 'Tying the knot...')
     templateHtml = templateHtml.replace(/\{\{SCRATCH_DATE\}\}/g, '21 — 23 NOVEMBER 2026')
     templateHtml = templateHtml.replace(/\{\{SCRATCH_LOCATION\}\}/g, 'Friday through Sunday · Udaipur')
     
@@ -301,13 +315,39 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Left Side: Interactive Normal Preview */}
         <div className="flex justify-center items-center bg-[#fdf8f4]/60 border border-[#e8c97e]/20 rounded-3xl shadow-inner py-8 h-[80vh] min-h-[600px]">
-          <div className="w-full max-w-[390px] h-full shadow-lg rounded-2xl overflow-hidden border border-neutral-200">
+          <div className="w-full max-w-[390px] h-full shadow-lg rounded-2xl overflow-hidden border border-neutral-200 relative">
+            {/* Shimmer skeleton shown while iframe loads */}
+            <div
+              id="iframe-skeleton"
+              className="absolute inset-0 z-10 pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, #1a0609 0%, #2a0a10 40%, #1a0609 100%)',
+              }}
+            >
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(90deg, transparent 0%, rgba(201,162,39,0.08) 50%, transparent 100%)',
+                animation: 'shimmer 1.6s infinite',
+              }}/>
+              <div style={{
+                position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%,-50%)',
+                textAlign: 'center', color: 'rgba(232,207,154,0.5)', fontSize: '13px',
+                fontFamily: 'serif', letterSpacing: '0.15em',
+              }}>
+                ✦ Loading Preview ✦
+              </div>
+              <style>{`@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}`}</style>
+            </div>
             {/* Content preview iframe */}
             <iframe
               srcDoc={templateHtml || undefined}
               src={templateHtml ? undefined : `/templates/${template.slug}.html`}
-              className="w-full h-full border-none bg-white"
+              className="w-full h-full border-none bg-transparent relative z-0"
               title={`${template.name} Animated Wedding Invitation Preview`}
+              onLoad={() => {
+                const s = document.getElementById('iframe-skeleton')
+                if (s) { s.style.opacity = '0'; s.style.transition = 'opacity 0.4s'; setTimeout(() => s.remove(), 400) }
+              }}
             />
           </div>
         </div>

@@ -33,12 +33,36 @@ export function MiniCardPreview({
           h = h.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, genericImg);
           h = h.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, genericImg);
           
-          h = h.replace(/\{\{BRIDE_NAME\}\}/g, 'Bride');
-          h = h.replace(/\{\{GROOM_NAME\}\}/g, 'Groom');
+          h = h.replace(/\{\{COUPLE_INITIALS\}\}/g, 'G&B');
+          h = h.replace(/\{\{BRIDE_PARENTS\}\}/g, 'D/o Mr. & Mrs. Sharma');
+          h = h.replace(/\{\{GROOM_PARENTS\}\}/g, 'S/o Mr. & Mrs. Singh');
+          h = h.replace(/\{\{BRIDE_BIO\}\}/g, 'A beautiful soul');
+          h = h.replace(/\{\{GROOM_BIO\}\}/g, 'A handsome prince');
+          h = h.replace(/\{\{STORY_YEAR_1\}\}/g, '2021');
+          h = h.replace(/\{\{STORY_HEADING_1\}\}/g, 'First Met');
+          h = h.replace(/\{\{STORY_TEXT_1\}\}/g, 'We met at a coffee shop...');
+          h = h.replace(/\{\{STORY_YEAR_2\}\}/g, '2023');
+          h = h.replace(/\{\{STORY_HEADING_2\}\}/g, 'The Proposal');
+          h = h.replace(/\{\{STORY_TEXT_2\}\}/g, 'He got down on one knee...');
+          h = h.replace(/\{\{STORY_YEAR_3\}\}/g, '2026');
+          h = h.replace(/\{\{STORY_HEADING_3\}\}/g, 'Forever');
+          h = h.replace(/\{\{STORY_TEXT_3\}\}/g, 'Tying the knot...');
+          h = h.replace(/\{\{SCRATCH_DATE\}\}/g, '21 — 23 NOVEMBER 2026');
+          h = h.replace(/\{\{SCRATCH_LOCATION\}\}/g, 'Udaipur');
+          h = h.replace(/\{\{COUNTDOWN_TARGET\}\}/g, '2026-11-21T17:30:00+05:30');
+          h = h.replace(/\{\{WEDDING_DATE\}\}/g, '21st Nov 2026');
+          h = h.replace(/\{\{HALDI_DATE\}\}/g, '20th Nov 2026');
+          h = h.replace(/\{\{RECEPTION_DATE\}\}/g, '22nd Nov 2026');
+          h = h.replace(/\{\{EVENT_DATE\}\}/g, '21st Nov 2026');
+          h = h.replace(/\{\{EVENT_TIME\}\}/g, '11:00 AM');
+          h = h.replace(/\{\{VENUE_NAME\}\}/g, 'Grand Palace Hall');
           
           // Strip logic blocks and remaining placeholders
           h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
           h = h.replace(/\{\{[^}]+\}\}/g, '');
+
+          // Auto open doors in mini preview so animated interior & video are visible
+          h = h.replace('</body>', '<script>setTimeout(function(){ if(typeof openDoors==="function") openDoors(); }, 700);</script></body>');
           
           setIframeHtml(h);
         })
