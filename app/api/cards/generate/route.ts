@@ -140,6 +140,19 @@ export async function POST(req: Request) {
       html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), photoUrl)
     }
 
+    // Assign user uploaded photos (or fallbacks) to floating parallax photo placeholders
+    const userPhotos = [
+      ...photo_urls,
+      ...(Array.isArray(ef.couple_photos) ? ef.couple_photos as string[] : []),
+      ...(Array.isArray(ef.gallery_photos) ? ef.gallery_photos as string[] : []),
+    ].filter(p => typeof p === 'string' && p.trim() && !p.startsWith('{{'))
+    const photoPool = userPhotos.length > 0 ? userPhotos : fallbackPhotos
+
+    for (let i = 1; i <= 6; i++) {
+      const floatUrl = photoPool[(i - 1) % photoPool.length]
+      html = html.replace(new RegExp(`\\{\\{FLOAT_PHOTOS_${i}\\}\\}`, 'g'), floatUrl)
+    }
+
     // Auto-derive countdown_target if the user left it blank
     // Prefer: countdown_target → scratch_date → nikkah_date → wedding_date → wedding_ceremony_date → haldi_date → customization.event_date
     const ef = extraFields as Record<string, unknown>

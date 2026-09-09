@@ -260,6 +260,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     for (let i = 1; i <= 6; i++) {
       templateHtml = templateHtml.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), fallbackPhotos[i - 1])
       templateHtml = templateHtml.replace(new RegExp(`\\{\\{GALLERY_PHOTOS_${i}\\}\\}`, 'g'), fallbackPhotos[i - 1])
+      templateHtml = templateHtml.replace(new RegExp(`\\{\\{FLOAT_PHOTOS_${i}\\}\\}`, 'g'), fallbackPhotos[(i - 1) % fallbackPhotos.length])
       if (i <= 3) {
         templateHtml = templateHtml.replace(new RegExp(`\\{\\{COUPLE_PHOTOS_${i}\\}\\}`, 'g'), fallbackPhotos[i - 1])
       }
