@@ -140,6 +140,9 @@ export async function POST(req: Request) {
       html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), photoUrl)
     }
 
+    // ef must be declared before any usage of couple_photos / gallery_photos below
+    const ef = extraFields as Record<string, unknown>
+
     // Assign user uploaded photos (or fallbacks) to floating parallax photo placeholders
     const userPhotos = [
       ...photo_urls,
@@ -155,7 +158,6 @@ export async function POST(req: Request) {
 
     // Auto-derive countdown_target if the user left it blank
     // Prefer: countdown_target → scratch_date → nikkah_date → wedding_date → wedding_ceremony_date → haldi_date → customization.event_date
-    const ef = extraFields as Record<string, unknown>
     const rawCountdown = typeof ef['countdown_target'] === 'string' ? (ef['countdown_target'] as string).trim() : ''
     let derivedIso = ''
     if (rawCountdown) {
@@ -196,6 +198,9 @@ export async function POST(req: Request) {
         if (!nameAliases.has(key)) {
           html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), displayValue)
         }
+      } else if (typeof value === 'boolean') {
+        // Checkbox fields (e.g. add_music) — substitute 'true' or '' so {{#if}} conditionals resolve correctly
+        html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), value ? 'true' : '')
       }
     })
 
