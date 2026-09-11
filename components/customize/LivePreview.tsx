@@ -200,10 +200,26 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, brideFamilyPhoto)
   html = html.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, groomFamilyPhoto)
 
-  // Resolve {{#if FIELD}}...{{else}}...{{/if}} blocks based on actual field values
+  // Resolve {{#if FIELD}}...{{else}}...{{/if}} blocks based on actual field values.
+  // Handles both plain keys (e.g. add_music) and indexed array keys (e.g. couple_photos_0,
+  // gallery_photos_2) by looking up the parent array when the direct key is not found.
   html = html.replace(/\{\{#if ([^}]+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (_match, key: string, content: string) => {
     const fieldKey = key.trim().toLowerCase()
-    const fieldValue = d[fieldKey]
+    let fieldValue = d[fieldKey]
+
+    // If no direct match, try to resolve indexed array keys like "couple_photos_0"
+    if (fieldValue === undefined || fieldValue === null) {
+      const lastUnder = fieldKey.lastIndexOf('_')
+      if (lastUnder > 0) {
+        const parentKey = fieldKey.slice(0, lastUnder)
+        const idx = parseInt(fieldKey.slice(lastUnder + 1), 10)
+        const parentArr = d[parentKey]
+        if (Array.isArray(parentArr) && !isNaN(idx)) {
+          fieldValue = parentArr[idx] ?? undefined
+        }
+      }
+    }
+
     const isTruthy = Array.isArray(fieldValue)
       ? fieldValue.length > 0
       : typeof fieldValue === 'boolean'
