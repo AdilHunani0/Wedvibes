@@ -151,6 +151,38 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{STORY_HEADING_3\}\}/g, d.story_heading_3 || 'Forever')
   html = html.replace(/\{\{STORY_TEXT_3\}\}/g, d.story_text_3 || 'Tying the knot...')
 
+  // ── Birthday Love Card fields ──────────────────────────────────────────────
+  if (isBirthdayCard) {
+    html = html.replace(/\{\{RECIPIENT_NAME\}\}/g, d.recipient_name || 'My Love')
+    html = html.replace(/\{\{SENDER_NAME\}\}/g, d.sender_name || 'Your Love')
+    html = html.replace(/\{\{BIRTHDAY_DATE\}\}/g, formatDate(d.birthday_date, 'A Special Day'))
+    html = html.replace(/\{\{HERO_EYEBROW\}\}/g, d.hero_eyebrow || 'A little something for you')
+    html = html.replace(/\{\{HERO_TAGLINE\}\}/g, d.hero_tagline || 'To the one who makes my heart skip a beat\u2026')
+    html = html.replace(/\{\{LETTER_GREETING\}\}/g, d.letter_greeting || 'My Dearest Love,')
+    html = html.replace(/\{\{LETTER_BODY\}\}/g, d.letter_body || '')
+    html = html.replace(/\{\{LETTER_SIGN\}\}/g, d.letter_sign || 'Forever yours, with all my love')
+    html = html.replace(/\{\{REASON_1\}\}/g, d.reason_1 || 'The way your eyes light up\u2026')
+    html = html.replace(/\{\{REASON_2\}\}/g, d.reason_2 || 'How you remember every tiny detail\u2026')
+    html = html.replace(/\{\{REASON_3\}\}/g, d.reason_3 || 'Your hugs that make the world feel safe\u2026')
+    html = html.replace(/\{\{REASON_4\}\}/g, d.reason_4 || 'Just\u2026 you. All of you.')
+    html = html.replace(/\{\{MEM1_CAPTION\}\}/g, d.mem1_caption || 'The Day We Met')
+    html = html.replace(/\{\{MEM1_DATE\}\}/g, d.mem1_date || 'Where it all began')
+    html = html.replace(/\{\{MEM2_CAPTION\}\}/g, d.mem2_caption || 'Our First Date')
+    html = html.replace(/\{\{MEM2_DATE\}\}/g, d.mem2_date || 'Nervous laughs & stolen glances')
+    html = html.replace(/\{\{MEM3_CAPTION\}\}/g, d.mem3_caption || 'That Coffee Shop')
+    html = html.replace(/\{\{MEM3_DATE\}\}/g, d.mem3_date || 'Our little corner of the world')
+    html = html.replace(/\{\{MEM4_CAPTION\}\}/g, d.mem4_caption || 'Our First Trip')
+    html = html.replace(/\{\{MEM4_DATE\}\}/g, d.mem4_date || 'Getting lost & finding ourselves')
+    html = html.replace(/\{\{MEM5_CAPTION\}\}/g, d.mem5_caption || 'Sunset Together')
+    html = html.replace(/\{\{MEM5_DATE\}\}/g, d.mem5_date || 'Golden hour with you')
+    html = html.replace(/\{\{MEM6_CAPTION\}\}/g, d.mem6_caption || 'Just Us, Always')
+    html = html.replace(/\{\{MEM6_DATE\}\}/g, d.mem6_date || 'My favourite photo in the world')
+    html = html.replace(/\{\{CANDLE_WISH\}\}/g, d.candle_wish || 'May this year bring you all the joy you deserve\u2026')
+    html = html.replace(/\{\{PROMISE_ICON\}\}/g, d.promise_icon || '\uD83D\uDC8D')
+    html = html.replace(/\{\{PROMISE_TEXT\}\}/g, d.promise_text || 'I promise to be there for every birthday, every adventure\u2026')
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
   // Photos & Captions
   const photos: string[] = (d.photo_urls && d.photo_urls.length > 0) ? d.photo_urls : (d.couple_photos || [])
   const galleryPhotos: string[] = (d.gallery_photos && d.gallery_photos.length > 0) ? d.gallery_photos : []
@@ -168,10 +200,21 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, brideFamilyPhoto)
   html = html.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, groomFamilyPhoto)
 
-  // Strip remaining {{#if}}...{{/if}} blocks — show the "if" content, drop "else" branch
-  html = html.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, (_match, content: string) => {
+  // Resolve {{#if FIELD}}...{{else}}...{{/if}} blocks based on actual field values
+  html = html.replace(/\{\{#if ([^}]+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (_match, key: string, content: string) => {
+    const fieldKey = key.trim().toLowerCase()
+    const fieldValue = d[fieldKey]
+    const isTruthy = Array.isArray(fieldValue)
+      ? fieldValue.length > 0
+      : typeof fieldValue === 'boolean'
+        ? fieldValue
+        : !!(fieldValue && String(fieldValue).trim())
     const elseIdx = content.indexOf('{{else}}')
-    return elseIdx >= 0 ? content.slice(0, elseIdx) : content
+    if (isTruthy) {
+      return elseIdx >= 0 ? content.slice(0, elseIdx) : content
+    } else {
+      return elseIdx >= 0 ? content.slice(elseIdx + 8) : ''
+    }
   })
 
   // Strip any remaining raw {{PLACEHOLDER}} tokens
