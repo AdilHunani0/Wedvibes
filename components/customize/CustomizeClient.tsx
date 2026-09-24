@@ -51,6 +51,8 @@ export function CustomizeClient({
   const [currentStep, setCurrentStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  // Mobile tab: 'form' | 'preview'
+  const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form')
   const { user, profile, loading: authLoading } = useAuth()
   const { credits, loading: creditsLoading, refetch: refetchCredits } = useCredits(user?.id)
 
@@ -358,7 +360,7 @@ export function CustomizeClient({
 
       {/* Persistent error banner */}
       {errorMessage && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full mt-3">
           <div className="bg-red-50 border border-red-300 text-red-800 text-sm px-4 py-3 rounded-xl flex items-start gap-3">
             <span className="text-lg">⚠️</span>
             <div>
@@ -371,9 +373,40 @@ export function CustomizeClient({
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow grid lg:grid-cols-12 gap-8 items-start">
+      {/* ── Mobile tab switcher (hidden on lg+) ─────────────────────── */}
+      <div className="lg:hidden sticky top-14 z-10 flex border-b border-[#e8c97e]/30 bg-[#fdf8f4] shadow-sm">
+        <button
+          onClick={() => setMobileTab('form')}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors duration-200 flex items-center justify-center gap-1.5 ${
+            mobileTab === 'form'
+              ? 'text-[#4a0e18] border-b-2 border-[#4a0e18]'
+              : 'text-[#a07060] border-b-2 border-transparent'
+          }`}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Edit Details
+        </button>
+        <button
+          onClick={() => setMobileTab('preview')}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors duration-200 flex items-center justify-center gap-1.5 ${
+            mobileTab === 'preview'
+              ? 'text-[#4a0e18] border-b-2 border-[#4a0e18]'
+              : 'text-[#a07060] border-b-2 border-transparent'
+          }`}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+          </svg>
+          Preview Card
+        </button>
+      </div>
+
+      {/* ── Main content area ──────────────────────────────────────────── */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 w-full flex-grow lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
         {/* Left Column: Form */}
-        <div className="lg:col-span-5 h-full">
+        <div className={`lg:col-span-5 h-full ${mobileTab === 'preview' ? 'hidden lg:block' : 'block'}`}>
           <CustomizeForm
             template={template}
             formData={formData}
@@ -393,7 +426,7 @@ export function CustomizeClient({
         </div>
 
         {/* Right Column: Live Preview — loads lazily, doesn't block form */}
-        <div className="lg:col-span-7 lg:sticky lg:top-24">
+        <div className={`lg:col-span-7 lg:sticky lg:top-24 ${mobileTab === 'form' ? 'hidden lg:block' : 'block'}`}>
           <LivePreview templateSlug={template.slug} formData={formData} />
         </div>
       </div>

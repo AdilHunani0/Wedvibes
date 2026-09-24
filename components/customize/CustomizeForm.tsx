@@ -86,20 +86,22 @@ export function CustomizeForm({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white p-6 rounded-2xl border border-[#e8c97e]/20 shadow-xl">
-      <div className="mb-6">
-        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#a0522d] bg-[#fdf8f4] px-2.5 py-1 rounded-full border border-[#e8c97e]/50">
+    <div className="flex flex-col bg-white rounded-2xl border border-[#e8c97e]/20 shadow-xl overflow-hidden">
+      {/* Form header */}
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-[#e8c97e]/20 bg-gradient-to-br from-[#fdf8f4] to-[#faf4ec]">
+        <span className="inline-flex text-[10px] uppercase tracking-wider font-semibold text-[#a0522d] bg-[#4a0e18]/5 px-2.5 py-1 rounded-full border border-[#a0522d]/20">
           Step {currentStep} of {schema.steps.length} · {currentStepConfig.title}
         </span>
-        <h2 className="font-playfair text-xl font-bold text-[#2a1810] mt-3">
+        <h2 className="font-playfair text-lg sm:text-xl font-bold text-[#2a1810] mt-2">
           Customise {template.name}
         </h2>
-        <p className="text-xs text-[#a07060] mt-1">
+        <p className="text-xs text-[#a07060] mt-1 leading-relaxed">
           {currentStepConfig.description || 'Enter your details below. Changes reflect instantly in the preview.'}
         </p>
       </div>
 
-      <div className="flex-1 space-y-5 overflow-y-auto pr-2 pb-4">
+      {/* Scrollable fields */}
+      <div className="flex-1 space-y-4 overflow-y-auto px-4 sm:px-6 py-4 pb-2" style={{ maxHeight: 'calc(100svh - 280px)' }}>
         {currentStepConfig?.fields.map((field) => {
           if (field.type === 'textarea') {
             return (
@@ -162,7 +164,8 @@ export function CustomizeForm({
         })}
       </div>
 
-      <div className="mt-8 pt-4 border-t border-[#e8c97e]/20 flex justify-between gap-4">
+      {/* Navigation buttons */}
+      <div className="px-4 sm:px-6 py-4 border-t border-[#e8c97e]/20 bg-[#fdf8f4]/60 flex justify-between gap-3">
         {currentStep > 1 ? (
           <Button type="button" variant="outline" onClick={prevStep}>
             ← Back
