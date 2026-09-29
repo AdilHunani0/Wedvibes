@@ -435,7 +435,7 @@ function openDoors() {
   }, 2000);
 }
 // Auto open in iframe/preview mode
-if (window.location.search.indexOf('auto=1') !== -1 || window.location.search.indexOf('preview=1') !== -1 || window.self !== window.top) {
+if (window.location.search.indexOf('auto=1') !== -1 || window.location.search.indexOf('preview=1') !== -1) {
   setTimeout(openDoors, 300);
 }
 function createDoorParticles(container) {
