@@ -490,10 +490,11 @@ function initScratchCard() {
   ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
   for(var i=0;i<6000;i++){ctx.fillStyle=Math.random()>0.6?'rgba(255,255,255,'+(Math.random()*0.12)+')':'rgba(0,0,0,'+(Math.random()*0.04)+')';ctx.fillRect(Math.random()*w,Math.random()*h,1,1);}
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font='600 11px "Nunito Sans",sans-serif';ctx.fillStyle='rgba(74,14,24,0.28)';ctx.fillText('âœ¦  SCRATCH HERE  âœ¦',w/2,h/2-8);
+  ctx.font='600 11px "Nunito Sans",sans-serif';ctx.fillStyle='rgba(74,14,24,0.28)';ctx.fillText('✦  SCRATCH HERE  ✦',w/2,h/2-8);
   ctx.font='300 8px "Nunito Sans",sans-serif';ctx.fillStyle='rgba(74,14,24,0.18)';ctx.fillText('to reveal the date',w/2,h/2+10);
   function getPos(e){var r=canvas.getBoundingClientRect();var t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
-  function scratch(pos){if(scratchCompleted)return;ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(pos.x,pos.y,22,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';checkScratchProgress(canvas,ctx,w,h);}
+  var scratchCount = 0;
+  function scratch(pos){if(scratchCompleted)return;ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(pos.x,pos.y,22,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';scratchCount++;if(scratchCount%3===0)checkScratchProgress(canvas,ctx,w,h);}
   canvas.addEventListener('mousedown',function(e){isScratching=true;scratch(getPos(e));});
   canvas.addEventListener('mousemove',function(e){if(isScratching){e.preventDefault();scratch(getPos(e));}});
   canvas.addEventListener('mouseup',function(){isScratching=false;});
@@ -514,6 +515,10 @@ function checkScratchProgress(canvas,ctx,w,h){
       var hint=document.getElementById('scratchHintInline'); var prog=document.getElementById('scratchProgressInline'); var badge=document.getElementById('scratchBadge');
       if(hint)hint.classList.add('hidden'); if(prog)prog.classList.add('hidden');
       setTimeout(function(){if(badge)badge.classList.add('show');},300);
+      canvas.style.transition = 'opacity 0.6s ease';
+      canvas.style.opacity = '0';
+      canvas.style.pointerEvents = 'none';
+      setTimeout(function(){ canvas.style.display = 'none'; }, 600);
       celebrateWithFlowers();
     }
   }catch(e){}
