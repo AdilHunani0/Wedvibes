@@ -16,7 +16,7 @@ const steps = [
     description:
       "Explore our collection of premium animated wedding invitation templates — from classic floral to modern geometric. Each template is crafted by professional designers and fully animated. Filter by style, colour palette, or occasion (wedding, engagement, reception) to find your perfect match.",
     highlights: ['6+ premium animated templates', 'Filter by style & occasion', 'Free preview before you buy'],
-    image: '/hiw-step1.jpg',
+    image: '/hiw-step1.png',
     imageAlt: 'WedVibe template gallery showing animated wedding card options',
     accent: 'from-gold/10 to-gold/5',
     badgeColor: 'bg-gold/10 text-[#8b6914] border-gold/30',
@@ -29,7 +29,7 @@ const steps = [
     description:
       'Our live editor lets you customise every detail in real-time — see changes instantly on the preview. Add bride & groom names, wedding date, venue, a personal message, and even your couple photo. The card updates live as you type, making it feel truly yours.',
     highlights: ['Live real-time preview', 'Add couple photo & names', 'Custom message & venue details'],
-    image: '/hiw-step2.jpg',
+    image: '/hiw-step2.png',
     imageAlt: 'WedVibe customization editor with live preview of wedding card',
     accent: 'from-maroon/5 to-maroon/10',
     badgeColor: 'bg-maroon/10 text-maroon border-maroon/20',
@@ -42,7 +42,7 @@ const steps = [
     description:
       "Once your card is perfect, pay securely via UPI, credit/debit card or net banking. You'll instantly get a shareable link to your animated wedding card. Share directly on WhatsApp, copy the link, or even embed it. Your guests will be amazed when they open it!",
     highlights: ['Instant shareable link', 'WhatsApp & social sharing', 'Secure UPI & card payment'],
-    image: '/hiw-step3.jpg',
+    image: '/hiw-step3.png',
     imageAlt: 'WedVibe sharing page with WhatsApp share button and card preview',
     accent: 'from-gold/10 to-gold/5',
     badgeColor: 'bg-gold/10 text-[#8b6914] border-gold/30',
@@ -271,6 +271,9 @@ export default function HowItWorksPage() {
                 View Plans
               </Link>
             </div>
+            <p className="mt-8 text-white/80 text-sm">
+              Prefer we do it? Click on the WhatsApp icon if you want us to make the card for you.
+            </p>
           </div>
         </div>
       </section>
