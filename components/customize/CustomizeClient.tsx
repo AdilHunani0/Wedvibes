@@ -57,16 +57,45 @@ export function CustomizeClient({
   const { credits, loading: creditsLoading, refetch: refetchCredits } = useCredits(user?.id)
 
   const storageKey = `wedvibe-draft-${template.slug}`
+  const [isDraftRestored, setIsDraftRestored] = useState(false)
+
   const [formData, setFormData] = useState<CustomizationFormData>(() => {
     if (typeof window !== 'undefined' && !initialData) {
-      const saved = localStorage.getItem(storageKey)
-      if (saved) {
-        try { return { ...generateInitialData(schema), ...JSON.parse(saved) } as CustomizationFormData }
-        catch { /* ignore */ }
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('new') === 'true' || urlParams.get('new') === '1') {
+        try { localStorage.removeItem(storageKey) } catch { /* ignore */ }
+      } else {
+        const saved = localStorage.getItem(storageKey)
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved)
+            if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+              return { ...generateInitialData(schema), ...parsed } as CustomizationFormData
+            }
+          } catch { /* ignore */ }
+        }
       }
     }
     return { ...generateInitialData(schema), ...(initialData || {}) } as CustomizationFormData
   })
+
+  // Detect whether a draft was restored on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !initialData) {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('new') !== 'true' && urlParams.get('new') !== '1') {
+        const saved = localStorage.getItem(storageKey)
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved)
+            if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+              setIsDraftRestored(true)
+            }
+          } catch { /* ignore */ }
+        }
+      }
+    }
+  }, [storageKey, initialData])
 
   // Save to localStorage when form changes
   useEffect(() => {
@@ -74,6 +103,17 @@ export function CustomizeClient({
       localStorage.setItem(storageKey, JSON.stringify(formData))
     }
   }, [formData, storageKey, initialData])
+
+  // Reset draft to clean defaults
+  const handleResetDraft = useCallback(() => {
+    try {
+      localStorage.removeItem(storageKey)
+    } catch { /* ignore */ }
+    setFormData(generateInitialData(schema) as CustomizationFormData)
+    setIsDraftRestored(false)
+    setCurrentStep(1)
+    toast.success('Form cleared! Ready for a new card. ✨')
+  }, [storageKey, schema])
 
   // ─── Generate card and redirect ───────────────────────────────────────────────
   const generateAndRedirect = useCallback(
@@ -92,13 +132,19 @@ export function CustomizeClient({
         }
 
         const genData = await genResponse.json()
+        
+        // Card generation succeeded! Clear draft so subsequent cards start fresh
+        try {
+          localStorage.removeItem(storageKey)
+        } catch { /* ignore */ }
+
         toast.success('Your card is ready! 🎉', { id: 'generating' })
         window.location.href = `/card/${genData.cardUrl || orderId}?share=true`
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : 'Failed to generate card.', { id: 'generating' })
       }
     },
-    [router]
+    [router, storageKey]
   )
 
   // ─── Open Razorpay modal ───────────────────────────────────────────────────────
@@ -418,10 +464,13 @@ export function CustomizeClient({
             onPayWithCredits={handlePayWithCredits}
             userRole={profile?.role}
             userCredits={credits}
-            authLoading={authLoading || creditsLoading}
+            authLoading={authLoading}
+            creditsLoading={creditsLoading}
             submitting={submitting}
             isEditing={!!editOrderId}
             onUpdate={handleUpdate}
+            onResetDraft={handleResetDraft}
+            isDraftRestored={isDraftRestored}
           />
         </div>
 

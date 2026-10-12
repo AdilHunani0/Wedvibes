@@ -10,15 +10,23 @@ export function useCredits(userId?: string) {
   const [loading, setLoading] = useState(false)
 
   const loadData = useCallback(async () => {
-    if (!userId) return
-    setTimeout(() => setLoading(true), 0)
-    const [profileRes, txRes] = await Promise.all([
-      supabase.from('profiles').select('credits').eq('id', userId).single(),
-      supabase.from('credit_transactions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(50)
-    ])
-    if (profileRes.data) setCredits(profileRes.data.credits)
-    if (txRes.data) setTransactions(txRes.data)
-    setLoading(false)
+    if (!userId) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    try {
+      const [profileRes, txRes] = await Promise.all([
+        supabase.from('profiles').select('credits').eq('id', userId).single(),
+        supabase.from('credit_transactions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(50)
+      ])
+      if (profileRes.data) setCredits(profileRes.data.credits)
+      if (txRes.data) setTransactions(txRes.data)
+    } catch (err) {
+      console.error('Failed to load user credits:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [userId])
 
   useEffect(() => {

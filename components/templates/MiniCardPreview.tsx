@@ -1,6 +1,9 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 
+// Global in-memory cache to prevent re-fetching and re-parsing template HTML files
+const previewHtmlCache = new Map<string, string>();
+
 interface MiniCardPreviewProps {
   htmlFilePath: string;
   templateName: string;
@@ -14,73 +17,81 @@ export function MiniCardPreview({
 }: MiniCardPreviewProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [iframeHtml, setIframeHtml] = useState<string | null>(null);
+  const [shouldRenderIframe, setShouldRenderIframe] = useState(false);
+  const [iframeHtml, setIframeHtml] = useState<string | null>(() => previewHtmlCache.get(htmlFilePath) || null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch and prepare HTML to prevent 404s from unreplaced placeholders
-  useEffect(() => {
-    if (isVisible && !iframeHtml) {
-      fetch(htmlFilePath)
-        .then(res => res.text())
-        .then(html => {
-          let h = html;
-          // Provide generic fallbacks for images so they don't 404
-          const genericImg = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600';
-          h = h.replace(/\{\{COUPLE_PHOTOS_\d+\}\}/g, genericImg);
-          h = h.replace(/\{\{GALLERY_PHOTOS_\d+\}\}/g, genericImg);
-          h = h.replace(/\{\{PHOTO_\d+\}\}/g, genericImg);
-          h = h.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, genericImg);
-          h = h.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, genericImg);
-          
-          h = h.replace(/\{\{COUPLE_INITIALS\}\}/g, 'G&B');
-          h = h.replace(/\{\{BRIDE_PARENTS\}\}/g, 'D/o Mr. & Mrs. Sharma');
-          h = h.replace(/\{\{GROOM_PARENTS\}\}/g, 'S/o Mr. & Mrs. Singh');
-          h = h.replace(/\{\{BRIDE_BIO\}\}/g, 'A beautiful soul');
-          h = h.replace(/\{\{GROOM_BIO\}\}/g, 'A handsome prince');
-          h = h.replace(/\{\{STORY_YEAR_1\}\}/g, '2021');
-          h = h.replace(/\{\{STORY_HEADING_1\}\}/g, 'First Met');
-          h = h.replace(/\{\{STORY_TEXT_1\}\}/g, 'We met at a coffee shop...');
-          h = h.replace(/\{\{STORY_YEAR_2\}\}/g, '2023');
-          h = h.replace(/\{\{STORY_HEADING_2\}\}/g, 'The Proposal');
-          h = h.replace(/\{\{STORY_TEXT_2\}\}/g, 'He got down on one knee...');
-          h = h.replace(/\{\{STORY_YEAR_3\}\}/g, '2026');
-          h = h.replace(/\{\{STORY_HEADING_3\}\}/g, 'Forever');
-          h = h.replace(/\{\{STORY_TEXT_3\}\}/g, 'Tying the knot...');
-          h = h.replace(/\{\{SCRATCH_DATE\}\}/g, '21 — 23 NOVEMBER 2026');
-          h = h.replace(/\{\{SCRATCH_LOCATION\}\}/g, 'Udaipur');
-          h = h.replace(/\{\{COUNTDOWN_TARGET\}\}/g, '2026-11-21T17:30:00+05:30');
-          h = h.replace(/\{\{WEDDING_DATE\}\}/g, '21st Nov 2026');
-          h = h.replace(/\{\{HALDI_DATE\}\}/g, '20th Nov 2026');
-          h = h.replace(/\{\{RECEPTION_DATE\}\}/g, '22nd Nov 2026');
-          h = h.replace(/\{\{EVENT_DATE\}\}/g, '21st Nov 2026');
-          h = h.replace(/\{\{EVENT_TIME\}\}/g, '11:00 AM');
-          h = h.replace(/\{\{VENUE_NAME\}\}/g, 'Grand Palace Hall');
-          
-          // Strip logic blocks and remaining placeholders
-          h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
-          h = h.replace(/\{\{[^}]+\}\}/g, '');
-
-          // Auto open doors in mini preview so animated interior & video are visible
-          h = h.replace('</body>', '<script>setTimeout(function(){ if(typeof openDoors==="function") openDoors(); }, 700);</script></body>');
-          
-          setIframeHtml(h);
-        })
-        .catch(err => console.error('MiniPreview fetch err:', err));
+  // Activate iframe rendering on hover or user interaction
+  const handleInteraction = () => {
+    setIsHovered(true);
+    if (!shouldRenderIframe) {
+      setShouldRenderIframe(true);
     }
-  }, [isVisible, htmlFilePath, iframeHtml]);
+  };
 
-  // Only load iframe when card scrolls into view — performance
+  // Fetch and prepare HTML only when needed (on hover / interaction)
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
+    if (!shouldRenderIframe) return;
+
+    if (previewHtmlCache.has(htmlFilePath)) {
+      setIframeHtml(previewHtmlCache.get(htmlFilePath)!);
+      return;
+    }
+
+    let isMounted = true;
+    fetch(htmlFilePath)
+      .then(res => res.text())
+      .then(html => {
+        if (!isMounted) return;
+        let h = html;
+        // Generic fallbacks for placeholders so assets don't 404
+        const genericImg = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600';
+        h = h.replace(/\{\{COUPLE_PHOTOS_\d+\}\}/g, genericImg);
+        h = h.replace(/\{\{GALLERY_PHOTOS_\d+\}\}/g, genericImg);
+        h = h.replace(/\{\{PHOTO_\d+\}\}/g, genericImg);
+        h = h.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, genericImg);
+        h = h.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, genericImg);
+        
+        h = h.replace(/\{\{COUPLE_INITIALS\}\}/g, 'G&B');
+        h = h.replace(/\{\{BRIDE_PARENTS\}\}/g, 'D/o Mr. & Mrs. Sharma');
+        h = h.replace(/\{\{GROOM_PARENTS\}\}/g, 'S/o Mr. & Mrs. Singh');
+        h = h.replace(/\{\{BRIDE_BIO\}\}/g, 'A beautiful soul');
+        h = h.replace(/\{\{GROOM_BIO\}\}/g, 'A handsome prince');
+        h = h.replace(/\{\{STORY_YEAR_1\}\}/g, '2021');
+        h = h.replace(/\{\{STORY_HEADING_1\}\}/g, 'First Met');
+        h = h.replace(/\{\{STORY_TEXT_1\}\}/g, 'We met at a coffee shop...');
+        h = h.replace(/\{\{STORY_YEAR_2\}\}/g, '2023');
+        h = h.replace(/\{\{STORY_HEADING_2\}\}/g, 'The Proposal');
+        h = h.replace(/\{\{STORY_TEXT_2\}\}/g, 'He got down on one knee...');
+        h = h.replace(/\{\{STORY_YEAR_3\}\}/g, '2026');
+        h = h.replace(/\{\{STORY_HEADING_3\}\}/g, 'Forever');
+        h = h.replace(/\{\{STORY_TEXT_3\}\}/g, 'Tying the knot...');
+        h = h.replace(/\{\{SCRATCH_DATE\}\}/g, '21 — 23 NOVEMBER 2026');
+        h = h.replace(/\{\{SCRATCH_LOCATION\}\}/g, 'Udaipur');
+        h = h.replace(/\{\{COUNTDOWN_TARGET\}\}/g, '2026-11-21T17:30:00+05:30');
+        h = h.replace(/\{\{WEDDING_DATE\}\}/g, '21st Nov 2026');
+        h = h.replace(/\{\{HALDI_DATE\}\}/g, '20th Nov 2026');
+        h = h.replace(/\{\{RECEPTION_DATE\}\}/g, '22nd Nov 2026');
+        h = h.replace(/\{\{EVENT_DATE\}\}/g, '21st Nov 2026');
+        h = h.replace(/\{\{EVENT_TIME\}\}/g, '11:00 AM');
+        h = h.replace(/\{\{VENUE_NAME\}\}/g, 'Grand Palace Hall');
+        
+        // Strip logic blocks and remaining placeholders
+        h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
+        h = h.replace(/\{\{[^}]+\}\}/g, '');
+
+        // Auto open doors in mini preview so animated interior & video are visible
+        h = h.replace('</body>', '<script>setTimeout(function(){ if(typeof openDoors==="function") openDoors(); }, 700);</script></body>');
+        
+        previewHtmlCache.set(htmlFilePath, h);
+        setIframeHtml(h);
+      })
+      .catch(err => console.error('MiniPreview fetch err:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, [shouldRenderIframe, htmlFilePath]);
 
   // Category background colors
   const categoryBg: Record<string, string> = {
@@ -91,7 +102,16 @@ export function MiniCardPreview({
     anniversary: 'linear-gradient(145deg, #eff6ff, #dbeafe)',
   };
 
+  const categoryEmoji: Record<string, string> = {
+    wedding: '💍',
+    birthday: '🎂',
+    engagement: '✨',
+    opening: '🎉',
+    anniversary: '🥂',
+  };
+
   const bg = categoryBg[category] || 'linear-gradient(145deg, #f9fafb, #f3f4f6)';
+  const emoji = categoryEmoji[category] || '💌';
 
   return (
     <div
@@ -101,8 +121,9 @@ export function MiniCardPreview({
         height: '300px',
         background: bg,
       }}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleInteraction}
       onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={handleInteraction}
     >
       {/* Outer phone frame wrapper — subtle scale on hover */}
       <div
@@ -118,7 +139,7 @@ export function MiniCardPreview({
             height: '290px',
             borderRadius: '24px',
             border: '3px solid #1a1a1a',
-            background: '#000000',
+            background: '#0d0705',
             position: 'relative',
             overflow: 'hidden',
             boxShadow: isHovered
@@ -138,7 +159,7 @@ export function MiniCardPreview({
               height: '8px',
               background: '#1a1a1a',
               borderRadius: '0 0 8px 8px',
-              zIndex: 10,
+              zIndex: 20,
             }}
           />
 
@@ -171,39 +192,50 @@ export function MiniCardPreview({
             borderRadius: '2px 0 0 2px',
           }}/>
 
-          {/* Loading skeleton — shown while iframe loads */}
-          {!iframeLoaded && isVisible && (
+          {/* INSTANT LUXURY POSTER (Visible before hover and while iframe fades in) */}
+          {(!iframeLoaded || !shouldRenderIframe) && (
             <div
-              className="absolute inset-0 animate-pulse"
+              className="absolute inset-0 flex flex-col justify-between items-center p-3 text-center select-none"
               style={{
-                background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)',
-                backgroundSize: '200% 200%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                background: 'linear-gradient(170deg, #1f110c 0%, #120906 50%, #29150d 100%)',
               }}
             >
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                border: '2px solid rgba(255,255,255,0.1)',
-                borderTop: '2px solid rgba(255,255,255,0.4)',
-                animation: 'spin 1s linear infinite',
-              }}/>
+              {/* Header motif */}
+              <div className="w-full flex justify-between text-[#e8c97e]/40 text-[9px] pt-2">
+                <span>✦</span>
+                <span className="text-[10px] text-[#e8c97e]/60 font-serif">WedVibe</span>
+                <span>✦</span>
+              </div>
+
+              {/* Center card info */}
+              <div className="flex flex-col items-center my-auto px-1">
+                <span className="text-2xl mb-1 filter drop-shadow">{emoji}</span>
+                <h4 className="font-playfair text-[#fdf8f4] text-xs font-bold tracking-tight line-clamp-2 leading-snug">
+                  {templateName}
+                </h4>
+                <div className="w-6 h-px bg-[#e8c97e]/40 my-1.5" />
+                <span className="text-[9px] tracking-widest uppercase text-[#e8c97e] font-medium">
+                  {category} Invite
+                </span>
+                {shouldRenderIframe && !iframeLoaded && (
+                  <div className="mt-2 flex items-center gap-1.5 text-[8px] text-[#e8c97e]/80">
+                    <span className="w-2 h-2 rounded-full border border-[#e8c97e] border-t-transparent animate-spin" />
+                    <span>Loading animation…</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer motif */}
+              <div className="w-full flex justify-between text-[#e8c97e]/40 text-[9px] pb-1">
+                <span>✦</span>
+                <span className="text-[8px] text-[#e8c97e]/50 tracking-wider">TAP OR HOVER</span>
+                <span>✦</span>
+              </div>
             </div>
           )}
 
-          {/* Not visible yet — dark placeholder */}
-          {!isVisible && (
-            <div
-              className="absolute inset-0"
-              style={{ background: '#1a1a1a' }}
-            />
-          )}
-
-          {/* THE ACTUAL CARD IFRAME */}
-          {isVisible && iframeHtml && (
+          {/* THE ACTUAL CARD IFRAME (Mounted lazily on hover/tap) */}
+          {shouldRenderIframe && iframeHtml && (
             <iframe
               key={htmlFilePath}
               srcDoc={iframeHtml}
@@ -220,7 +252,7 @@ export function MiniCardPreview({
                 marginTop: '-1px',
                 pointerEvents: 'none',
                 opacity: iframeLoaded ? 1 : 0,
-                transition: 'opacity 0.3s ease',
+                transition: 'opacity 0.4s ease',
               }}
             />
           )}
@@ -235,7 +267,7 @@ export function MiniCardPreview({
             height: '3px',
             background: 'rgba(255,255,255,0.25)',
             borderRadius: '2px',
-            zIndex: 10,
+            zIndex: 20,
           }}/>
         </div>
 
@@ -275,7 +307,7 @@ export function MiniCardPreview({
         }}
       >
         <div style={{
-          background: 'rgba(0,0,0,0.55)',
+          background: 'rgba(0,0,0,0.65)',
           color: 'white',
           fontSize: '11px',
           padding: '5px 12px',
@@ -285,6 +317,7 @@ export function MiniCardPreview({
           alignItems: 'center',
           gap: '5px',
           whiteSpace: 'nowrap',
+          border: '1px solid rgba(232, 201, 126, 0.3)',
         }}>
           <span style={{
             width: '6px',
@@ -298,7 +331,7 @@ export function MiniCardPreview({
         </div>
       </div>
 
-      {/* "Click to interact" pill — shows when hovered */}
+      {/* "Click to view full preview" pill — shows when hovered */}
       <div
         style={{
           position: 'absolute',
@@ -311,19 +344,19 @@ export function MiniCardPreview({
         }}
       >
         <div style={{
-          background: 'rgba(0,0,0,0.7)',
+          background: 'rgba(0,0,0,0.75)',
           color: 'white',
           fontSize: '11px',
           padding: '5px 12px',
           borderRadius: '20px',
           backdropFilter: 'blur(4px)',
           whiteSpace: 'nowrap',
+          border: '1px solid rgba(232, 201, 126, 0.4)',
         }}>
           Click to view full preview ✨
         </div>
       </div>
 
-      {/* Add keyframe styles */}
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }

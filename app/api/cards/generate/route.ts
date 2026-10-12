@@ -74,13 +74,18 @@ export async function POST(req: Request) {
     // 3. Load template HTML file
     // Templates are stored in public/templates/[slug].html
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    const templateResponse = await fetch(`${appUrl}/templates/${template.slug}.html`)
-    
-    if (!templateResponse.ok) {
-      throw new Error(`Template HTML file not found for ${template.slug}`)
+    let html = ''
+    try {
+      const filePath = path.join(process.cwd(), 'public', 'templates', `${template.slug}.html`)
+      html = await fs.promises.readFile(filePath, 'utf-8')
+    } catch (fsErr) {
+      console.warn(`Filesystem read failed for template ${template.slug}, falling back to HTTP fetch:`, fsErr)
+      const templateResponse = await fetch(`${appUrl}/templates/${template.slug}.html`)
+      if (!templateResponse.ok) {
+        throw new Error(`Template HTML file not found for ${template.slug}`)
+      }
+      html = await templateResponse.text()
     }
-
-    let html = await templateResponse.text()
 
     // 4. Substitution logic
     const extraFields = customization.extra_fields || {}

@@ -1,11 +1,22 @@
 import { TemplateGrid } from '@/components/templates/TemplateGrid'
+import { createAdminClient } from '@/lib/supabase/server'
+import type { Template } from '@/lib/types'
 
 export const metadata = {
   title: 'Wedding Invitation Templates — Animated Digital Cards',
   description: 'Browse our collection of premium animated wedding, engagement, and event invitation templates. Start for free or get Premium access for ₹499. Instant WhatsApp sharing.',
 }
 
-export default function TemplatesPage() {
+export const revalidate = 60
+
+export default async function TemplatesPage() {
+  const supabase = createAdminClient()
+  const { data: templates } = await supabase
+    .from('templates')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center max-w-xl mx-auto mb-16">
@@ -20,7 +31,7 @@ export default function TemplatesPage() {
         </p>
       </div>
 
-      <TemplateGrid />
+      <TemplateGrid initialTemplates={(templates as Template[]) || []} />
     </div>
   )
 }

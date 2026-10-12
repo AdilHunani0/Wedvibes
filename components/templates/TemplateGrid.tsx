@@ -5,14 +5,26 @@ import { FilterBar } from './FilterBar'
 import { TemplateCard } from './TemplateCard'
 import { useTemplates } from '@/hooks/useTemplates'
 import { TemplateCardSkeleton } from '@/components/ui/Skeleton'
-import type { TemplateCategory, TemplateTier } from '@/lib/types'
+import type { Template, TemplateCategory, TemplateTier } from '@/lib/types'
 
-export function TemplateGrid() {
+interface TemplateGridProps {
+  initialTemplates?: Template[]
+}
+
+export function TemplateGrid({ initialTemplates }: TemplateGridProps = {}) {
   const [category, setCategory] = useState<string>('all')
 
-  const { templates, loading, error } = useTemplates({
-    category: category !== 'all' ? (category as TemplateCategory) : undefined,
+  const { templates: fetchedTemplates, loading, error } = useTemplates({
+    category: category !== 'all' && !initialTemplates ? (category as TemplateCategory) : undefined,
+    initialTemplates,
   })
+
+  // When initialTemplates are provided, filter instantly on client without network delay
+  const templates = initialTemplates && initialTemplates.length > 0
+    ? (category === 'all' 
+        ? initialTemplates 
+        : initialTemplates.filter((t) => t.category.toLowerCase() === category.toLowerCase()))
+    : fetchedTemplates
 
   return (
     <div className="space-y-8">

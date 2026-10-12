@@ -18,9 +18,12 @@ interface CustomizeFormProps {
   userRole?: string
   userCredits?: number
   authLoading?: boolean
+  creditsLoading?: boolean
   submitting: boolean
   isEditing?: boolean
   onUpdate?: () => void
+  onResetDraft?: () => void
+  isDraftRestored?: boolean
 }
 
 export function CustomizeForm({
@@ -35,9 +38,12 @@ export function CustomizeForm({
   userRole,
   userCredits,
   authLoading,
+  creditsLoading,
   submitting,
   isEditing,
   onUpdate,
+  onResetDraft,
+  isDraftRestored,
 }: CustomizeFormProps) {
   const maxPhotos = TIER_MAX_PHOTOS[template.tier] || 1
 
@@ -89,13 +95,46 @@ export function CustomizeForm({
     <div className="flex flex-col bg-white rounded-2xl border border-[#e8c97e]/20 shadow-xl overflow-hidden">
       {/* Form header */}
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-[#e8c97e]/20 bg-gradient-to-br from-[#fdf8f4] to-[#faf4ec]">
-        <span className="inline-flex text-[10px] uppercase tracking-wider font-semibold text-[#a0522d] bg-[#4a0e18]/5 px-2.5 py-1 rounded-full border border-[#a0522d]/20">
-          Step {currentStep} of {schema.steps.length} · {currentStepConfig.title}
-        </span>
+        <div className="flex items-center justify-between gap-2">
+          <span className="inline-flex text-[10px] uppercase tracking-wider font-semibold text-[#a0522d] bg-[#4a0e18]/5 px-2.5 py-1 rounded-full border border-[#a0522d]/20">
+            Step {currentStep} of {schema.steps.length} · {currentStepConfig.title}
+          </span>
+          {!isEditing && onResetDraft && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm('Reset this form to start fresh? Any entered details will be cleared.')) {
+                  onResetDraft()
+                }
+              }}
+              className="text-[11px] font-semibold text-[#a0522d] hover:text-[#4a0e18] flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#e8c97e]/40 bg-white hover:bg-[#fffaf5] transition-all shadow-sm cursor-pointer"
+              title="Reset all fields to blank template defaults"
+            >
+              <span>↺</span> Start fresh
+            </button>
+          )}
+        </div>
+
         <h2 className="font-playfair text-lg sm:text-xl font-bold text-[#2a1810] mt-2">
           Customise {template.name}
         </h2>
-        <p className="text-xs text-[#a07060] mt-1 leading-relaxed">
+
+        {isDraftRestored && !isEditing && (
+          <div className="mt-2 text-[11px] bg-[#f5ebe1] border border-[#e8c97e]/50 rounded-lg px-3 py-1.5 flex items-center justify-between text-[#6b3d2a]">
+            <span>📝 Draft restored from your previous visit</span>
+            {onResetDraft && (
+              <button
+                type="button"
+                onClick={onResetDraft}
+                className="font-semibold text-[#a0522d] hover:text-[#4a0e18] underline ml-2 cursor-pointer"
+              >
+                Clear form
+              </button>
+            )}
+          </div>
+        )}
+
+        <p className="text-xs text-[#a07060] mt-1.5 leading-relaxed">
           {currentStepConfig.description || 'Enter your details below. Changes reflect instantly in the preview.'}
         </p>
       </div>
@@ -193,15 +232,6 @@ export function CustomizeForm({
           >
             Save Changes ✓
           </Button>
-        ) : authLoading ? (
-          <Button
-            type="button"
-            variant="primary"
-            loading={true}
-            disabled={true}
-          >
-            Loading...
-          </Button>
         ) : userRole === 'planner' || userRole === 'admin' ? (
           (template.credit_cost || 0) === 0 || template.price === 0 ? (
             <Button
@@ -224,6 +254,15 @@ export function CustomizeForm({
               className="bg-[#2a1810] text-[#e8c97e]"
             >
               Buy with {template.credit_cost || 0} Credits 🪙
+            </Button>
+          ) : creditsLoading ? (
+            <Button
+              type="button"
+              variant="primary"
+              loading={true}
+              disabled={true}
+            >
+              Checking credits...
             </Button>
           ) : (
             <Button

@@ -8,41 +8,48 @@ interface UseTemplatesOptions {
   category?: TemplateCategory
   tier?: TemplateTier
   limit?: number
+  initialTemplates?: Template[]
 }
 
 export function useTemplates(options: UseTemplatesOptions = {}) {
-  const [templates, setTemplates] = useState<Template[]>([])
-  const [loading, setLoading] = useState(true)
+  const [templates, setTemplates] = useState<Template[]>(options.initialTemplates || [])
+  const [loading, setLoading] = useState(!options.initialTemplates || options.initialTemplates.length === 0)
   const [error, setError] = useState<string | null>(null)
 
   const fetchTemplates = useCallback(async () => {
-    let query = supabase
-      .from('templates')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
+    setLoading(true)
+    setError(null)
+    try {
+      let query = supabase
+        .from('templates')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
 
-    if (options.category) query = query.eq('category', options.category)
-    if (options.tier) query = query.eq('tier', options.tier)
-    if (options.limit) query = query.limit(options.limit)
+      if (options.category) query = query.eq('category', options.category)
+      if (options.tier) query = query.eq('tier', options.tier)
+      if (options.limit) query = query.limit(options.limit)
 
-    const { data, error } = await query
-    if (error) {
-      setError(error.message)
-    } else {
-      setTemplates(data || [])
+      const { data, error } = await query
+      if (error) {
+        setError(error.message)
+      } else {
+        setTemplates(data || [])
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch templates')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [options.category, options.tier, options.limit])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(true)
-      setError(null)
-      fetchTemplates()
-    }, 0)
-    return () => clearTimeout(timer)
-  }, [fetchTemplates])
+    // If initialTemplates provided and no filters changed, don't refetch on mount
+    if (options.initialTemplates && options.initialTemplates.length > 0 && !options.category && !options.tier && !options.limit) {
+      return
+    }
+    fetchTemplates()
+  }, [fetchTemplates, options.category, options.tier, options.limit, options.initialTemplates])
 
   return { templates, loading, error, refetch: fetchTemplates }
 }
