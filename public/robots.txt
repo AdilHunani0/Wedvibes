@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /dashboard/
+Disallow: /account/
+Disallow: /_next/
+Disallow: /cdn-cgi/
+
+Crawl-delay: 1
+
+Sitemap: https://wedvibe.in/sitemap.xml

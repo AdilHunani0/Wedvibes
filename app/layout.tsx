@@ -76,7 +76,7 @@ export default function RootLayout({
       logo: 'https://wedvibe.in/logo.png',
       description: "India's leading animated digital wedding invitation platform.",
       sameAs: [
-        'https://instagram.com/wedvibe.in',
+        'https://www.instagram.com/wedvibe.in_/',
         'https://facebook.com/wedvibe.in'
       ]
     },
@@ -96,11 +96,6 @@ export default function RootLayout({
         availability: 'https://schema.org/InStock',
         seller: { '@type': 'Organization', name: 'WedVibe' },
       },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '1200',
-      },
     },
     {
       '@context': 'https://schema.org',
@@ -108,14 +103,15 @@ export default function RootLayout({
       name: 'WedVibe',
       description: "India's leading animated digital wedding invitation platform. WhatsApp-ready shaadi cards starting at ₹499.",
       url: 'https://wedvibe.in',
-      email: 'hello@wedvibe.in',
+      telephone: '+91-8200736691',
+      email: 'support@wedvibe.in',
       address: { '@type': 'PostalAddress', addressCountry: 'IN' },
       areaServed: ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Surat', 'Chennai', 'Pune', 'Kolkata', 'Hyderabad', 'India'],
       priceRange: '₹499',
       openingHours: 'Mo-Su 09:00-21:00',
       logo: 'https://wedvibe.in/logo.png',
       image: 'https://wedvibe.in/engagement-hero.png',
-      sameAs: ['https://instagram.com/wedvibe.in', 'https://facebook.com/wedvibe.in'],
+      sameAs: ['https://www.instagram.com/wedvibe.in_/'],
     },
     {
       '@context': 'https://schema.org',
