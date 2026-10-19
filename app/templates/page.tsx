@@ -3,8 +3,10 @@ import { createAdminClient } from '@/lib/supabase/server'
 import type { Template } from '@/lib/types'
 
 export const metadata = {
-  title: 'Wedding Invitation Templates — Animated Digital Cards',
-  description: 'Browse our collection of premium animated wedding, engagement, and event invitation templates. Start for free or get Premium access for ₹499. Instant WhatsApp sharing.',
+  title: 'Animated Wedding Card Templates India | WedVibe',
+  description:
+    'Browse 50+ animated digital wedding card templates. WhatsApp-ready designs for every style — Hindu, Muslim, Christian & more. Starting \u20b9499. Preview free!',
+  alternates: { canonical: 'https://wedvibe.in/templates' },
 }
 
 export const revalidate = 60

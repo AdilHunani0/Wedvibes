@@ -2,8 +2,10 @@ import { PricingSection } from '@/components/home/PricingSection'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Pricing — Free & Premium Digital Invitations | WedVibe',
-  description: 'Simple, honest pricing for animated digital wedding cards. Start for free, or upgrade to Premium for just ₹499. Pay once, share forever.',
+  title: 'Digital Wedding Invitation Price \u20b9499 | WedVibe',
+  description:
+    'Digital wedding invitations starting at just \u20b9499. See all WedVibe plans — animated WhatsApp cards, RSVP links, and premium designs. No hidden charges!',
+  alternates: { canonical: 'https://wedvibe.in/pricing' },
 }
 
 export default function PricingPage() {

@@ -1,3 +1,10 @@
+export const metadata = {
+  title: 'Contact WedVibe — WhatsApp Wedding Card Support | WedVibe',
+  description:
+    'Need help with your digital wedding card? Contact WedVibe — WhatsApp support available. Get your animated shaadi invitation ready in minutes. \u20b9499 only!',
+  alternates: { canonical: 'https://wedvibe.in/contact' },
+}
+
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-[#fcf9f5] py-20 px-6 sm:px-12 relative overflow-hidden">

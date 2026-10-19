@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { createAdminClient } from '@/lib/supabase/server'
 
 const CITIES = [
-  'mumbai', 'delhi', 'bangalore', 'ahmedabad', 'chennai', 
+  'mumbai', 'delhi', 'bangalore', 'ahmedabad', 'chennai',
   'hyderabad', 'pune', 'jaipur', 'kolkata', 'surat'
 ]
 
@@ -15,7 +15,7 @@ const BLOGS = [
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createAdminClient()
-  
+
   // Fetch active templates
   const { data: templates } = await supabase
     .from('templates')
@@ -32,8 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const cityUrls = CITIES.map((city) => ({
     url: `https://wedvibe.in/digital-wedding-invitation-${city}`,
     lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
   }))
 
   const blogUrls = BLOGS.map((slug) => ({
@@ -43,41 +43,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  const staticUrls = [
+  const staticUrls: MetadataRoute.Sitemap = [
     {
       url: 'https://wedvibe.in',
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 1,
+      changeFrequency: 'weekly',
+      priority: 1.0,
     },
     {
       url: 'https://wedvibe.in/templates',
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
+      changeFrequency: 'weekly',
       priority: 0.9,
-    },
-    {
-      url: 'https://wedvibe.in/planners',
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
     },
     {
       url: 'https://wedvibe.in/pricing',
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: 'https://wedvibe.in/how-it-works',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
       priority: 0.8,
+    },
+    {
+      url: 'https://wedvibe.in/planners',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
     },
     {
       url: 'https://wedvibe.in/about',
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: 'yearly',
       priority: 0.5,
     },
     {
       url: 'https://wedvibe.in/contact',
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: 'yearly',
       priority: 0.5,
     },
   ]

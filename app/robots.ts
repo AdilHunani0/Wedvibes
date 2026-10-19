@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin', '/dashboard', '/api', '/auth'],
+      disallow: ['/admin', '/dashboard', '/api', '/auth', '/checkout', '/cdn-cgi'],
     },
     sitemap: 'https://wedvibe.in/sitemap.xml',
   }

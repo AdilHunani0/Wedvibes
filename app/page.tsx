@@ -7,12 +7,14 @@ import { PlannerTeaser } from '@/components/home/PlannerTeaser'
 import { Testimonials } from '@/components/home/Testimonials'
 import { CityLinks } from '@/components/home/CityLinks'
 import { CTABanner } from '@/components/home/CTABanner'
+import { HomeSEOContent } from '@/components/home/HomeSEOContent'
 
 export const metadata = {
-  title: 'WedVibe — Premium Animated Digital Wedding Invitations India',
-  description: 'Stunning animated wedding invitations. Start for free or upgrade to Premium for just ₹499. Share on WhatsApp instantly. No app needed.',
+  title: "Animated Digital Wedding Card \u20b9499 | WedVibe",
+  description:
+    'Send animated digital wedding invitations via WhatsApp instantly. Starting \u20b9499 only. Beautiful shaadi cards loved by 1000s of Indian couples. Order now!',
   alternates: {
-    canonical: '/',
+    canonical: 'https://wedvibe.in',
   },
 }
 
@@ -28,7 +30,7 @@ export default function Home() {
       <Testimonials />
       <CityLinks />
       <CTABanner />
+      <HomeSEOContent />
     </div>
   )
 }
-

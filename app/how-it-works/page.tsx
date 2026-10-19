@@ -3,9 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'How It Works — Create Your Wedding Card in 3 Easy Steps',
+  title: 'How It Works — WhatsApp Wedding Card in Minutes | WedVibe',
   description:
-    'Learn how to create a stunning digital wedding invitation on WedVibe in just 3 simple steps. Choose a template, personalise it with your details, and share instantly via WhatsApp.',
+    'See how WedVibe creates your animated digital wedding card in 3 easy steps. WhatsApp-ready in minutes. Starting \u20b9499. It\u2019s that simple \u2014 view the process!',
+  alternates: { canonical: 'https://wedvibe.in/how-it-works' },
 }
 
 const steps = [

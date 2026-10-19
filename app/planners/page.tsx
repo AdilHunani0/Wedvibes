@@ -16,11 +16,12 @@ const PERKS = [
 ]
 
 export const metadata = {
-  title: 'Wedding Planner Digital Invitation Credits India | Bulk Wedding Invites',
-  description: 'Bulk digital wedding invitations for event planners in India. Get high-margin animated cards, manage client invites effortlessly, and scale your agency.',
+  title: 'Wedding Planners — Digital Invitation Cards | WedVibe',
+  description:
+    'Wedding planners — offer digital invitation cards to your clients. Partner with WedVibe. Animated WhatsApp-ready cards at \u20b9499. Bulk pricing available!',
   alternates: {
-    canonical: '/planners',
-  }
+    canonical: 'https://wedvibe.in/planners',
+  },
 }
 
 export default async function PlannersPage() {

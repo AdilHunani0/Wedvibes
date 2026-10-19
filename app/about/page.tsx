@@ -1,3 +1,10 @@
+export const metadata = {
+  title: "About WedVibe — India's Digital Shaadi Card Brand | WedVibe",
+  description:
+    "WedVibe is India's leading digital shaadi card platform. Animated wedding invitations at \u20b9499, shared on WhatsApp. Made with love for Indian couples.",
+  alternates: { canonical: 'https://wedvibe.in/about' },
+}
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#fcf9f5] py-20 px-6 sm:px-12 relative overflow-hidden">
