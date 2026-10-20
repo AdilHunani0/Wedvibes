@@ -160,7 +160,6 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
     const isFailed = order.status === 'failed'
     return (
       <div className="min-h-screen bg-[#2a1810] flex flex-col items-center justify-center text-[#e8c97e] px-6 text-center">
-        {!isFailed && <meta httpEquiv="refresh" content="2" />}
         <p className="text-5xl animate-bounce mb-4">{isFailed ? '⚠️' : '🌸'}</p>
         <h1 className="font-playfair text-2xl font-bold mb-2">
           {isFailed ? 'Card Generation Failed' : 'Your Invitation is Being Prepared'}
@@ -176,7 +175,7 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            <span>Opening your invitation card automatically…</span>
+            <span>Opening your invitation card…</span>
           </div>
         )}
       </div>
@@ -198,6 +197,9 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
   // Sanitize — guard against literal string "null"
   const clean = (v: string) => (v && v !== 'null' && v !== 'undefined') ? v : ''
 
+  const parsedDate = resolvedDate ? new Date(resolvedDate) : null
+  const formattedDate = parsedDate && !isNaN(parsedDate.getTime()) ? format(parsedDate, 'dd MMMM yyyy') : ''
+
   return (
     <div className="flex flex-col h-screen bg-black overflow-hidden">
       <div className="flex-1 relative overflow-hidden">
@@ -208,7 +210,7 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
           cardUrl={order.card_url}
           person1Name={clean(resolvedPerson1)}
           person2Name={clean(resolvedPerson2)}
-          eventDate={resolvedDate ? format(new Date(resolvedDate), 'dd MMMM yyyy') : ''}
+          eventDate={formattedDate}
           eventTime={clean(resolvedTime)}
           venueName={clean(resolvedVenue)}
           venueAddress={clean(resolvedAddress)}

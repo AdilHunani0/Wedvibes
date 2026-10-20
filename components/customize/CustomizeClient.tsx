@@ -153,7 +153,12 @@ export function CustomizeClient({
         } catch { /* ignore */ }
 
         toast.success('Your card is ready! 🎉', { id: 'generating' })
-        window.location.href = `/card/${targetUrl || orderId}?share=true`
+        const target = `/card/${targetUrl || orderId}?share=true`
+        try {
+          router.push(target)
+        } catch {
+          window.location.href = target
+        }
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : 'Failed to generate card.', { id: 'generating' })
       }
@@ -318,17 +323,25 @@ export function CustomizeClient({
   }
 
   // ─── Main submit handler (Razorpay) ───────────────────────────────────────────
-  const handleSubmit = async () => {
+  const handleSubmit = async (e?: React.MouseEvent) => {
+    if (e?.preventDefault) e.preventDefault()
+    if (e?.stopPropagation) e.stopPropagation()
+
     setSubmitting(true)
     setErrorMessage(null)
 
     try {
-      // Step A: Collect guest email if not logged in
+      // Step A: Collect guest email if not logged in (only required for paid templates)
       console.log('[Pay] Step A: checking session')
-      const { data: { user } } = await supabase.auth.getUser()
-      let guestEmail = ''
+      let currentUser = user
+      if (!currentUser) {
+        const { data } = await supabase.auth.getUser()
+        currentUser = data?.user ?? null
+      }
 
-      if (!user) {
+      let guestEmail = currentUser?.email || ''
+
+      if (!currentUser && template.price > 0) {
         const emailInput = window.prompt('Please enter your email address to receive your invitation card:')
         if (!emailInput) {
           toast.error('Email is required to continue.')
@@ -352,7 +365,7 @@ export function CustomizeClient({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           templateId: template.id,
-          guestEmail: guestEmail || undefined,
+          guestEmail: guestEmail || (currentUser ? undefined : 'guest@wedvibe.in'),
           customization: formData,
         }),
       })

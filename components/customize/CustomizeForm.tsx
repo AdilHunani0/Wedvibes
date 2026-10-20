@@ -278,7 +278,7 @@ export function CustomizeForm({
           <Button
             type="button"
             variant="primary"
-            onClick={onSubmit}
+            onClick={(e) => { e?.preventDefault?.(); onSubmit(); }}
             loading={submitting}
             disabled={!isStepValid() || submitting}
           >
@@ -288,7 +288,7 @@ export function CustomizeForm({
           <Button
             type="button"
             variant="primary"
-            onClick={onSubmit}
+            onClick={(e) => { e?.preventDefault?.(); onSubmit(); }}
             loading={submitting}
             disabled={!isStepValid() || submitting}
           >

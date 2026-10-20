@@ -9,13 +9,6 @@ export async function POST(req: Request) {
 
     const { templateId, guestEmail, customization } = await req.json()
 
-    if (!user && !guestEmail) {
-      return NextResponse.json(
-        { error: 'Authentication required or guest email must be provided' },
-        { status: 400 }
-      )
-    }
-
     if (!templateId || !customization) {
       return NextResponse.json(
         { error: 'Missing template ID or customization details' },
@@ -34,12 +27,19 @@ export async function POST(req: Request) {
 
     const isFree = (tData?.price || 0) === 0
 
+    if (!user && !guestEmail && !isFree) {
+      return NextResponse.json(
+        { error: 'Authentication required or guest email must be provided' },
+        { status: 400 }
+      )
+    }
+
     // Insert order (bypass RLS)
     const { data: order, error: orderError } = await adminSupabase
       .from('orders')
       .insert({
         user_id: user?.id || null,
-        guest_email: guestEmail || null,
+        guest_email: guestEmail || (user ? null : 'guest@wedvibe.in'),
         template_id: templateId,
         status: isFree ? 'paid' : 'pending',
         payment_method: null,
