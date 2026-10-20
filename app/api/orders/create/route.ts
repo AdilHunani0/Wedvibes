@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         guest_email: guestEmail || null,
         template_id: templateId,
         status: isFree ? 'paid' : 'pending',
-        payment_method: isFree ? 'free' : null,
+        payment_method: null,
         amount_paid: 0,
       })
       .select()

@@ -69,7 +69,9 @@ export function OrdersTable({ orders, onStatusUpdate }: OrdersTableProps) {
                     <div className="font-medium text-xs uppercase tracking-wider text-[#a0522d]">
                       {order.template?.name || 'Deleted Template'}
                     </div>
-                    <span className="text-[10px] text-[#a07060] capitalize">{order.payment_method} payment</span>
+                    <span className="text-[10px] text-[#a07060] capitalize">
+                      {order.payment_method ? `${order.payment_method} payment` : 'Free template'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-xs">
                     {formatDateShort(order.created_at)}
