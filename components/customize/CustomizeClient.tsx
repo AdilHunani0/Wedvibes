@@ -233,19 +233,24 @@ export function CustomizeClient({
       const { orderId } = orderBody
 
       // Step B: Deduct credits and mark order as paid
-      const payRes = await fetch('/api/orders/pay-with-credits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId }),
-      })
+      // Free templates (price = 0 / credit_cost = 0) are already auto-marked paid
+      // on creation — skip the credits API to avoid "Order is already paid" error.
+      if (template.price > 0 && (template.credit_cost ?? 0) > 0) {
+        const payRes = await fetch('/api/orders/pay-with-credits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId }),
+        })
 
-      const payBody = await payRes.json().catch(() => ({}))
-      if (!payRes.ok) {
-        throw new Error(payBody.error || 'Failed to process credit payment')
+        const payBody = await payRes.json().catch(() => ({}))
+        if (!payRes.ok) {
+          throw new Error(payBody.error || 'Failed to process credit payment')
+        }
+
+        refetchCredits()
       }
 
-      toast.success('Payment successful! 🪙', { id: 'credit-pay' })
-      refetchCredits()
+      toast.success('Generating your card! 🪙', { id: 'credit-pay' })
 
       // Step C: Generate card & redirect
       await generateAndRedirect(orderId)

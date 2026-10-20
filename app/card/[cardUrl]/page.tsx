@@ -166,9 +166,6 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
             ? 'Something went wrong while creating this card. Please contact support or try purchasing again.'
             : 'This usually takes just a moment. Please refresh the page in a few seconds.'}
         </p>
-        <p className="text-xs text-[#a07060]/60 mt-4 font-mono">
-          Status: {order.status} · ID: {order.id.slice(0, 8)}
-        </p>
       </div>
     )
   }

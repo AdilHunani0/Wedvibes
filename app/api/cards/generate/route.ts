@@ -6,6 +6,7 @@ import { resolveConditionals } from '@/lib/template-utils'
 import { nanoid } from 'nanoid'
 import fs from 'fs'
 import path from 'path'
+import { apiError } from '@/lib/api-error'
 
 function escapeHtml(str: string): string {
   return str
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
     }
 
     if (order.status !== 'paid' && !forceRegenerate) {
-      return NextResponse.json({ error: `Cannot generate card with status: ${order.status}` }, { status: 400 })
+      return NextResponse.json({ error: 'Card cannot be generated at this time.' }, { status: 400 })
     }
 
     // 2. Generate card_url FIRST and save immediately so it's always recoverable
@@ -343,9 +344,6 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Card generation', err, 500, 'Card generation failed. Please contact support.')
   }
 }

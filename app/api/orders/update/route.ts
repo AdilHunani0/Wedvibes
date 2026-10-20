@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient, createAdminClient } from '@/lib/supabase/server'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(req: Request) {
   try {
@@ -87,15 +88,11 @@ export async function POST(req: Request) {
       .eq('order_id', orderId)
 
     if (customError) {
-      throw new Error(customError.message || 'Failed to update customization')
+      throw new Error('Failed to update customization')
     }
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    console.error('Order update api error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Order update', err, 500, 'Failed to save changes. Please try again.')
   }
 }

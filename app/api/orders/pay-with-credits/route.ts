@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/resend'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(req: Request) {
   try {
@@ -117,10 +118,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    console.error('Pay with credits error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Pay with credits', err, 500, 'Payment failed. Please try again.')
   }
 }

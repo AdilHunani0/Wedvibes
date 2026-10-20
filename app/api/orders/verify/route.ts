@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/resend'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(req: Request) {
   try {
@@ -77,10 +78,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (err: unknown) {
-    console.error('Payment verification error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Payment verification', err, 500, 'Payment verification failed. Please contact support.')
   }
 }

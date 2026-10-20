@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { razorpay } from '@/lib/razorpay'
 import { createAdminClient } from '@/lib/supabase/server'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(req: Request) {
   try {
@@ -53,10 +54,6 @@ export async function POST(req: Request) {
       currency: rzpOrder.currency,
     })
   } catch (err: unknown) {
-    console.error('Razorpay order creation api error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Razorpay order creation', err, 500, 'Failed to initialise payment. Please try again.')
   }
 }

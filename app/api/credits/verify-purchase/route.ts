@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient, createServerClient } from '@/lib/supabase/server'
+import { apiError } from '@/lib/api-error'
 
 const CREDIT_PLANS = {
   starter: { name: 'Starter', price: 299900, credits: 24 },
@@ -87,10 +88,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, credits: finalCredits })
   } catch (err: unknown) {
-    console.error('Credits verification error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Credits verification', err, 500, 'Payment verification failed. Please contact support.')
   }
 }

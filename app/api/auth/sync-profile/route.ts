@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(request: Request) {
   try {
@@ -37,12 +38,11 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Failed to sync profile via service role:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: 'Profile update failed. Please try again.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
-    console.error('Profile sync error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (err: unknown) {
+    return apiError('Profile sync', err, 500, 'Profile sync failed. Please try again.')
   }
 }

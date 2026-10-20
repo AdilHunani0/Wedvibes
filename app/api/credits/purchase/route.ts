@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { razorpay } from '@/lib/razorpay'
 import { createServerClient } from '@/lib/supabase/server'
+import { apiError } from '@/lib/api-error'
 
 const CREDIT_PLANS = {
   starter: { price: 299900, credits: 24 },
@@ -41,10 +42,6 @@ export async function POST(req: Request) {
       currency: rzpOrder.currency,
     })
   } catch (err: unknown) {
-    console.error('Credit purchase initialization error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Credit purchase init', err, 500, 'Failed to initialise payment. Please try again.')
   }
 }

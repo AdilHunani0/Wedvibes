@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient, createAdminClient } from '@/lib/supabase/server'
+import { apiError } from '@/lib/api-error'
 
 export async function POST(req: Request) {
   try {
@@ -96,10 +97,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ orderId: order.id })
   } catch (err: unknown) {
-    console.error('Order creation api error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Internal Server Error' },
-      { status: 500 }
-    )
+    return apiError('Order creation', err, 500, 'Failed to create order. Please try again.')
   }
 }
