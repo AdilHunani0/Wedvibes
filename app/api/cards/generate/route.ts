@@ -45,12 +45,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Card already generated', cardUrl: order.card_url })
     }
 
-    if (order.status === 'generating') {
-      // Another process is already generating — return the existing card_url so client can redirect
-      return NextResponse.json({ success: true, message: 'Generation already in progress', cardUrl: order.card_url })
+    if (order.status === 'generating' && !forceRegenerate) {
+      const updatedAt = order.updated_at ? new Date(order.updated_at).getTime() : 0
+      if (Date.now() - updatedAt < 12000) {
+        return NextResponse.json({ success: true, message: 'Generation already in progress', cardUrl: order.card_url })
+      }
+      // If generating for more than 12s, previous attempt is stale — recover and continue generation below
     }
 
-    if (order.status !== 'paid' && !forceRegenerate) {
+    if (order.status !== 'paid' && order.status !== 'generating' && !forceRegenerate) {
       return NextResponse.json({ error: 'Card cannot be generated at this time.' }, { status: 400 })
     }
 

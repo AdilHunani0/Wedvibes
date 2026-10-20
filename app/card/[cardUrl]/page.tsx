@@ -3,6 +3,9 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { CardViewer } from '@/components/card/CardViewer'
 import { ShareBar } from '@/components/card/ShareBar'
 import { format } from 'date-fns'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   params: Promise<{ cardUrl: string }>
   searchParams: Promise<{ share?: string }>
@@ -140,14 +143,14 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
     notFound()
   }
 
-  // Auto-retrigger card generation if paid but not yet delivered
-  if (order.status === 'paid') {
+  // Auto-retrigger card generation if not delivered yet (paid, generating, or retry)
+  if (order.status === 'paid' || order.status === 'generating') {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     try {
       fetch(`${appUrl}/api/cards/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: order.id }),
+        body: JSON.stringify({ orderId: order.id, forceRegenerate: true }),
       }).catch(() => {})
     } catch {}
   }
@@ -157,15 +160,25 @@ export default async function CardViewerPage({ params, searchParams }: PageProps
     const isFailed = order.status === 'failed'
     return (
       <div className="min-h-screen bg-[#2a1810] flex flex-col items-center justify-center text-[#e8c97e] px-6 text-center">
-        <p className="text-5xl mb-4">{isFailed ? '⚠️' : '🌸'}</p>
+        {!isFailed && <meta httpEquiv="refresh" content="2" />}
+        <p className="text-5xl animate-bounce mb-4">{isFailed ? '⚠️' : '🌸'}</p>
         <h1 className="font-playfair text-2xl font-bold mb-2">
           {isFailed ? 'Card Generation Failed' : 'Your Invitation is Being Prepared'}
         </h1>
         <p className="text-sm text-[#a07060] max-w-xs leading-relaxed">
           {isFailed
             ? 'Something went wrong while creating this card. Please contact support or try purchasing again.'
-            : 'This usually takes just a moment. Please refresh the page in a few seconds.'}
+            : 'Generating your custom invitation card. Please wait a moment...'}
         </p>
+        {!isFailed && (
+          <div className="mt-6 flex items-center gap-2 text-xs text-[#c9a96e]">
+            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span>Opening your invitation card automatically…</span>
+          </div>
+        )}
       </div>
     )
   }

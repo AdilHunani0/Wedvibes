@@ -120,26 +120,40 @@ export function CustomizeClient({
     async (orderId: string, forceRegenerate = false) => {
       toast.loading('Generating your invitation card…', { id: 'generating' })
       try {
-        const genResponse = await fetch('/api/cards/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId, forceRegenerate }),
-        })
+        let attempts = 0
+        let targetUrl = ''
 
-        if (!genResponse.ok) {
-          const genError = await genResponse.json().catch(() => ({}))
-          throw new Error(genError.error || 'Failed to generate card')
+        while (attempts < 4) {
+          attempts++
+          const genResponse = await fetch('/api/cards/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, forceRegenerate: forceRegenerate || attempts > 1 }),
+          })
+
+          if (!genResponse.ok) {
+            const genError = await genResponse.json().catch(() => ({}))
+            throw new Error(genError.error || 'Failed to generate card')
+          }
+
+          const genData = await genResponse.json()
+          targetUrl = genData.cardUrl || orderId
+
+          if (genData.message !== 'Generation already in progress') {
+            break
+          }
+
+          // Wait 1.5s if generation was still in progress before checking again
+          await new Promise((r) => setTimeout(r, 1500))
         }
 
-        const genData = await genResponse.json()
-        
         // Card generation succeeded! Clear draft so subsequent cards start fresh
         try {
           localStorage.removeItem(storageKey)
         } catch { /* ignore */ }
 
         toast.success('Your card is ready! 🎉', { id: 'generating' })
-        window.location.href = `/card/${genData.cardUrl || orderId}?share=true`
+        window.location.href = `/card/${targetUrl || orderId}?share=true`
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : 'Failed to generate card.', { id: 'generating' })
       }
