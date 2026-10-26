@@ -33,6 +33,19 @@ const CITY_CULTURE: Record<string, string> = {
   bangalore: 'Bangalore weddings are a beautiful mix of South Indian traditions and cosmopolitan flair. A digital invitation perfectly reflects that modern yet rooted spirit.',
 }
 
+const CITY_H1: Record<string, string> = {
+  delhi: 'Digital Wedding Invitation in Delhi — Animated, WhatsApp-Ready, ₹499',
+  mumbai: 'Digital Wedding Invitation in Mumbai — Animated Cards at ₹499',
+  ahmedabad: 'Digital Wedding Invitation in Ahmedabad — Share on WhatsApp for ₹499',
+  jaipur: 'Digital Wedding Invitation in Jaipur — Beautiful Animated Shaadi Cards',
+  surat: 'Digital Wedding Invitation in Surat — WhatsApp-Ready for Just ₹499',
+  chennai: 'Digital Wedding Invitation in Chennai — Animated Cards at ₹499',
+  pune: 'Digital Wedding Invitation in Pune — Share Instantly on WhatsApp',
+  kolkata: 'Digital Wedding Invitation in Kolkata — Animated Shaadi Cards ₹499',
+  hyderabad: 'Digital Wedding Invitation in Hyderabad — Animated, WhatsApp-Ready',
+  bangalore: 'Digital Wedding Invitation in Bangalore — Animated, WhatsApp-Ready, ₹499',
+}
+
 const OTHER_CITIES = [
   { slug: 'delhi', name: 'Delhi' },
   { slug: 'mumbai', name: 'Mumbai' },
@@ -97,6 +110,7 @@ export default async function CityLandingPage({ params }: { params: Promise<{ ci
   if (!CITIES.includes(city)) notFound()
 
   const cityName = CITY_NAMES[city]
+  const h1Text = CITY_H1[city] ?? `Digital Wedding Invitation in ${cityName} — Animated, WhatsApp-Ready, ₹499`
   const cultureNote = CITY_CULTURE[city] ?? `${cityName} weddings are vibrant celebrations full of tradition and warmth.`
   const otherCities = OTHER_CITIES.filter((c) => c.slug !== city)
 
@@ -109,9 +123,7 @@ export default async function CityLandingPage({ params }: { params: Promise<{ ci
             Serving Couples in {cityName}
           </span>
           <h1 className="font-playfair text-4xl sm:text-5xl font-extrabold text-[#2a1810] leading-tight">
-            Digital Wedding Invitation in{' '}
-            <span className="text-[#a0522d] italic">{cityName}</span> — Animated,
-            WhatsApp-Ready, ₹499
+            {h1Text}
           </h1>
           <p className="text-[#6b3d2a] text-lg max-w-2xl mx-auto leading-relaxed">
             Join hundreds of happy couples from {cityName} who chose WedVibe. Get a premium

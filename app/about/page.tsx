@@ -17,7 +17,7 @@ export default function AboutPage() {
         <div className="text-center mb-16 space-y-4">
           <span className="text-[#a0522d] tracking-[0.2em] text-xs font-semibold uppercase">Our Story</span>
           <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-[#2a1810] font-extrabold tracking-tight">
-            About WedVibe
+            About WedVibe — India&apos;s Animated Digital Shaadi Card Platform
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#c9a96e] to-transparent mx-auto mt-6" />
         </div>

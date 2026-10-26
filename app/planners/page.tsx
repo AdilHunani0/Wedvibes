@@ -67,7 +67,7 @@ export default async function PlannersPage() {
           Planner Solutions
         </span>
         <h1 className="font-playfair text-4xl sm:text-5xl font-extrabold text-[#2a1810] leading-tight max-w-2xl mx-auto">
-          Scale Your Event Business With <span className="text-[#a0522d] italic">WedVibe Credits</span>
+          Wedding Planners: Offer Digital Invitation Cards to Your Clients
         </h1>
         <p className="text-sm text-[#6b3d2a] max-w-xl mx-auto leading-relaxed">
           Unlock high-margin animated invitations for all your wedding, engagement, and anniversary clients. Buy credit packs and customize on-demand.

@@ -26,7 +26,7 @@ export default async function TemplatesPage() {
           Template Designs
         </span>
         <h1 className="font-playfair text-3xl sm:text-4xl font-extrabold text-[#2a1810] mt-4 mb-3">
-          Select Your Invitation Style
+          Browse Animated Digital Wedding Card Templates — All Styles, All Budgets
         </h1>
         <p className="text-sm text-[#6b3d2a]">
           Find the perfect design for your celebration. Filter by categories (wedding, engagement, anniversary) and price tiers to get started.

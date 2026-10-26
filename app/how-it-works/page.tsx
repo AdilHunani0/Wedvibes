@@ -93,8 +93,7 @@ export default function HowItWorksPage() {
         <div className="relative max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.25em] uppercase text-gold font-medium mb-4">Simple · Beautiful · Fast</p>
           <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-foreground mb-6 leading-tight">
-            How to Create Your{' '}
-            <span className="text-gold-gradient">Wedding Card</span>
+            How to Get Your Animated Digital Wedding Card in 3 Easy Steps
           </h1>
           <p className="text-brown-muted text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8">
             From choosing a stunning template to sharing with your guests — WedVibe makes the entire process effortless, beautiful, and done in minutes.

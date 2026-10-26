@@ -18,6 +18,9 @@ export default function PricingPage() {
 
   return (
     <div className="space-y-12">
+      <h1 className="sr-only">
+        Digital Wedding Invitation Price — Starting ₹499, No Hidden Charges
+      </h1>
       <PricingSection />
 
       {/* FAQ */}

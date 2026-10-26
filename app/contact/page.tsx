@@ -16,7 +16,7 @@ export default function ContactPage() {
         <div className="text-center mb-16 space-y-4">
           <span className="text-[#a0522d] tracking-[0.2em] text-xs font-semibold uppercase">Get in Touch</span>
           <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-[#2a1810] font-extrabold tracking-tight">
-            Contact Us
+            Contact WedVibe — We&apos;ll Help You Create the Perfect Digital Wedding Card
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#c9a96e] to-transparent mx-auto mt-6" />
           <p className="text-[#6b3d2a] text-lg max-w-2xl mx-auto pt-4">

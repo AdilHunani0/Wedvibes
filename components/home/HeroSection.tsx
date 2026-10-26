@@ -26,8 +26,7 @@ export function HeroSection() {
 
             {/* Headline */}
             <h1 className="font-playfair text-4xl sm:text-6xl lg:text-[5.5rem] text-foreground leading-[1.1] mb-6 tracking-wide">
-              Your love story,<br />
-              <span className="text-gold-gradient italic pr-2">beautifully told</span>
+              India&apos;s Most Loved Animated Digital Wedding Invitations — Just ₹499
             </h1>
 
             {/* Subtext */}
