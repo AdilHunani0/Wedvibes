@@ -499,11 +499,14 @@ function sendWish() {
   document.getElementById('wishInput').value = ''
   document.getElementById('senderInput').value = ''
 
-  // float up
+  // float up — build DOM safely to prevent XSS from guest wish input
   const el = document.createElement('div')
   el.className = 'floating-wish'
   el.style.bottom = '100px'
-  el.innerHTML = `${msg}<b>— ${name || 'Anonymous'}</b>`
+  el.appendChild(document.createTextNode(msg + ' '))
+  const bold = document.createElement('b')
+  bold.textContent = '— ' + (name || 'Anonymous')
+  el.appendChild(bold)
   document.body.appendChild(el)
   setTimeout(() => el.remove(), 5300)
 }

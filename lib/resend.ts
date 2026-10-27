@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { escapeHtml } from '@/lib/xss'
 
 export const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key')
 export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@wedvibe.in'
@@ -9,6 +10,10 @@ export async function sendOrderConfirmationEmail(
   templateName: string,
   tier: string
 ) {
+  const safeName = escapeHtml(name)
+  const safeTemplate = escapeHtml(templateName)
+  const safeTier = escapeHtml(tier)
+
   await resend.emails.send({
     from: FROM_EMAIL,
     to,
@@ -19,9 +24,9 @@ export async function sendOrderConfirmationEmail(
           <h1 style="color: #a0522d; font-size: 28px; margin: 0;">WedVibe</h1>
           <p style="color: #6b3d2a; font-size: 14px; margin: 4px 0 0;">Your love story, beautifully told</p>
         </div>
-        <h2 style="color: #2a1810; font-size: 22px;">Hello ${name}! 🌸</h2>
+        <h2 style="color: #2a1810; font-size: 22px;">Hello ${safeName}! 🌸</h2>
         <p style="color: #6b3d2a; font-size: 16px; line-height: 1.6;">
-          We've received your order for the <strong>${templateName}</strong> (${tier}) invitation card. 
+          We've received your order for the <strong>${safeTemplate}</strong> (${safeTier}) invitation card. 
           Your beautiful card is being crafted and will be ready in moments.
         </p>
         <div style="background: #fff; border: 1px solid #e8c97e; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -45,8 +50,10 @@ export async function sendCardDeliveredEmail(
   name: string,
   cardUrl: string
 ) {
+  const safeName = escapeHtml(name)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  const cardLink = `${appUrl}/card/${cardUrl}`
+  const safeCardUrl = encodeURIComponent(cardUrl)
+  const cardLink = `${appUrl}/card/${safeCardUrl}`
   const waLink = `https://wa.me/?text=${encodeURIComponent(`You're invited! View our beautiful card: ${cardLink}`)}`
 
   await resend.emails.send({
@@ -59,7 +66,7 @@ export async function sendCardDeliveredEmail(
           <h1 style="color: #a0522d; font-size: 28px; margin: 0;">WedVibe</h1>
           <p style="color: #6b3d2a; font-size: 14px; margin: 4px 0 0;">Your love story, beautifully told</p>
         </div>
-        <h2 style="color: #2a1810; font-size: 22px;">Your card is ready, ${name}! 🎉</h2>
+        <h2 style="color: #2a1810; font-size: 22px;">Your card is ready, ${safeName}! 🎉</h2>
         <p style="color: #6b3d2a; font-size: 16px; line-height: 1.6;">
           Your beautiful animated invitation is ready to share with your guests.
         </p>
@@ -82,6 +89,7 @@ export async function sendCardDeliveredEmail(
 }
 
 export async function sendWelcomeEmail(to: string, name: string) {
+  const safeName = escapeHtml(name)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   await resend.emails.send({
     from: FROM_EMAIL,
@@ -93,7 +101,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
           <h1 style="color: #a0522d; font-size: 28px; margin: 0;">WedVibe</h1>
           <p style="color: #6b3d2a; font-size: 14px; margin: 4px 0 0;">Your love story, beautifully told</p>
         </div>
-        <h2 style="color: #2a1810; font-size: 22px;">Welcome, ${name}! 🌹</h2>
+        <h2 style="color: #2a1810; font-size: 22px;">Welcome, ${safeName}! 🌹</h2>
         <p style="color: #6b3d2a; font-size: 16px; line-height: 1.6;">
           We're thrilled to have you join the WedVibe family. India's most beautiful animated digital invitations are just a few clicks away.
         </p>
@@ -119,21 +127,23 @@ export async function sendCreditPurchaseEmail(
   creditsAdded: number,
   amountPaidPaise: number
 ) {
+  const safeName = escapeHtml(name)
+  const safePlan = escapeHtml(planName)
   const amountRs = (amountPaidPaise / 100).toLocaleString('en-IN')
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   
   await resend.emails.send({
     from: FROM_EMAIL,
     to,
-    subject: `Receipt: ${planName} Planner Pack 🪙`,
+    subject: `Receipt: ${safePlan} Planner Pack 🪙`,
     html: `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #fdf8f4; padding: 40px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 32px;">
           <h1 style="color: #a0522d; font-size: 28px; margin: 0;">WedVibe Planners</h1>
         </div>
-        <h2 style="color: #2a1810; font-size: 22px;">Thank you, ${name}! 🪙</h2>
+        <h2 style="color: #2a1810; font-size: 22px;">Thank you, ${safeName}! 🪙</h2>
         <p style="color: #6b3d2a; font-size: 16px; line-height: 1.6;">
-          Your payment for the <strong>${planName}</strong> was successful. We have added <strong>${creditsAdded} credits</strong> to your wallet.
+          Your payment for the <strong>${safePlan}</strong> was successful. We have added <strong>${creditsAdded} credits</strong> to your wallet.
         </p>
         <div style="background: #fff; border: 1px solid #e8c97e; border-radius: 8px; padding: 20px; margin: 24px 0;">
           <p style="color: #a0522d; font-weight: bold; margin: 0 0 12px;">Transaction Details</p>

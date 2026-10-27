@@ -856,7 +856,11 @@ function initWishWall(){
     el.className = 'floating-wish';
     el.style.bottom = '90px';
     el.style.left = (46 + Math.random()*8) + '%';
-    el.innerHTML = msg.replace(/</g,'&lt;') + '<b>— ' + (name || 'A well-wisher').replace(/</g,'&lt;') + '</b>';
+    // Build DOM safely — textContent prevents XSS from any user-supplied text
+    el.appendChild(document.createTextNode(msg + ' '));
+    const bold = document.createElement('b');
+    bold.textContent = '— ' + (name || 'A well-wisher');
+    el.appendChild(bold);
     document.body.appendChild(el);
     setTimeout(()=> el.remove(), 5200);
   }

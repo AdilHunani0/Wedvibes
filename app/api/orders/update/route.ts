@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient, createAdminClient } from '@/lib/supabase/server'
 import { apiError } from '@/lib/api-error'
+import { validateAndSanitizeCustomization } from '@/lib/validations/customization'
 
 export async function POST(req: Request) {
   try {
@@ -22,6 +23,16 @@ export async function POST(req: Request) {
         { status: 400 }
       )
     }
+
+    // Server-side Zod validation & XSS payload rejection
+    const validation = validateAndSanitizeCustomization(customization)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error || 'Invalid customization input' },
+        { status: 400 }
+      )
+    }
+    const validatedCustomization = validation.data!
 
     // 1. Verify user owns the order and it is within the 5-day window
     const { data: order, error: orderError } = await supabase
@@ -65,7 +76,7 @@ export async function POST(req: Request) {
       photo_urls,
       extra_message,
       ...restOfCustomization
-    } = customization || {}
+    } = validatedCustomization || {}
 
     // 3. Update customizations table
     const { error: customError } = await adminSupabase

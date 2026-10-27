@@ -966,7 +966,11 @@ function initWishWall(){
     
     const w = document.createElement('div');
     w.className = 'floating-wish';
-    w.innerHTML = `${m} <b>— ${n}</b>`;
+    // Build DOM safely to prevent XSS from guest wish input
+    w.appendChild(document.createTextNode(m + ' '));
+    const b = document.createElement('b');
+    b.textContent = '— ' + n;
+    w.appendChild(b);
     document.body.appendChild(w);
     
     nameInp.value = '';

@@ -1,87 +1,152 @@
 import Link from 'next/link'
 
 export function HomeSEOContent() {
+  const bulletPoints = [
+    {
+      title: 'Save money',
+      desc: 'Our online wedding card costs just ₹499 — a fraction of printed cards',
+    },
+    {
+      title: 'Save time',
+      desc: 'Share on WhatsApp in minutes, reach 500 guests instantly',
+    },
+    {
+      title: 'Save the planet',
+      desc: 'Zero paper, zero waste, 100% beautiful',
+    },
+    {
+      title: 'Always accessible',
+      desc: 'Your guests can revisit the invite anytime, no misplacing',
+    },
+  ]
+
+  const steps = [
+    'Choose your favourite animated template from our growing collection',
+    'Enter your wedding details — names, date, venue, and mehendi/haldi timings',
+    'Receive your personalised digital shaadi card within minutes',
+    'Share directly on WhatsApp, Instagram, or any messaging app',
+  ]
+
   return (
     <section
-      aria-label="About WedVibe digital wedding invitations"
-      className="bg-[#fdf8f4] border-t border-[#e8c97e]/30 py-20 px-4 sm:px-6 lg:px-8"
+      aria-labelledby="seo-heading"
+      className="bg-[#fdf8f4] border-t border-[#e8c97e]/30 py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto space-y-10">
-        {/* Heading */}
+      <div className="max-w-4xl mx-auto space-y-12">
+        {/* Section Heading (H2) */}
         <div className="text-center space-y-3">
           <span className="text-[#a0522d] font-bold tracking-widest uppercase text-xs">
             Why WedVibe
           </span>
-          <h2 className="font-playfair text-3xl sm:text-4xl font-extrabold text-[#2a1810]">
-            India&apos;s Most Loved Animated Digital Wedding Invitations — Just ₹499
+          <h2
+            id="seo-heading"
+            className="font-playfair text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2a1810] leading-tight max-w-3xl mx-auto"
+          >
+            Why Thousands of Indian Couples Choose WedVibe for Their Digital Wedding Invitations
           </h2>
         </div>
 
-        {/* Body copy — 300 words, all 8 keywords woven in naturally */}
-        <div className="max-w-none text-[#6b3d2a] leading-relaxed space-y-5 text-base">
+        {/* Introductory Body Content */}
+        <div className="text-[#6b3d2a] leading-relaxed space-y-4 text-base sm:text-lg">
           <p>
             Planning a wedding in India is a celebration like no other — and your wedding
-            invitation should match that energy. WedVibe creates{' '}
-            <strong>animated wedding cards</strong> that your guests will actually save and
-            remember, at just <strong>₹499</strong>. No expensive printing, no courier delays,
-            no stress.
+            invitation should match that energy. WedVibe creates animated digital wedding
+            cards that your guests will actually save and remember, at just ₹499.
           </p>
-
           <p>
-            Forget printed cards that arrive late or get lost in transit. With WedVibe, your{' '}
-            <strong>digital wedding invitation</strong> is ready within minutes and shared
-            instantly on <strong>WhatsApp</strong> — the way every Indian family actually
-            communicates. No app downloads, no complicated links. Just tap and share with your
-            entire contact list in seconds.
-          </p>
-
-          <h3 className="font-playfair text-xl font-bold text-[#2a1810] pt-2">
-            Animated Shaadi Cards Made for Every Indian Celebration
-          </h3>
-          <p>
-            Whether you are planning a grand Hindu shaadi in Delhi, an intimate Nikah in
-            Hyderabad, or a fusion wedding in Mumbai — WedVibe has a design for every
-            celebration. Our <strong>animated shaadi invitations</strong> feature traditional
-            motifs, elegant typography, and smooth motion graphics that bring your invitation
-            to life on any smartphone screen.
-          </p>
-
-          <h3 className="font-playfair text-xl font-bold text-[#2a1810] pt-2">
-            The Smarter Way to Create a Wedding Card Online in India
-          </h3>
-          <ul className="space-y-2 list-none pl-0">
-            <li>💛 <strong>Save money</strong> — our <strong>online wedding card maker</strong> costs just ₹499, a fraction of printed cards</li>
-            <li>⚡ <strong>Save time</strong> — share on WhatsApp in minutes, reach 500 guests instantly</li>
-            <li>🌿 <strong>Save the planet</strong> — zero paper, zero waste, 100% beautiful</li>
-            <li>📱 <strong>Always accessible</strong> — guests can revisit the invite anytime, no misplacing</li>
-          </ul>
-
-          <h3 className="font-playfair text-xl font-bold text-[#2a1810] pt-2">
-            How It Works
-          </h3>
-          <p>
-            Choose your favourite template, enter your details — names, date, venue, and
-            pre-wedding events — and receive your personalised{' '}
-            <strong>digital shaadi card</strong> within minutes. Share directly on WhatsApp,
-            Instagram, or any messaging app. With WedVibe, creating a{' '}
-            <strong>wedding card online in India</strong> has never been simpler or more
-            affordable. Join thousands of happy couples who have already made the switch.
+            Forget expensive printed cards that arrive late and get lost. With WedVibe, your
+            digital wedding invitation is ready within minutes and shared instantly on
+            WhatsApp — the way every Indian family actually communicates. No app downloads, no
+            complicated links. Just tap and share with your entire contact list.
           </p>
         </div>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+        {/* Sub Heading 1: Animated Wedding Cards */}
+        <div className="space-y-4">
+          <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+            Animated Wedding Cards Made for Indian Couples
+          </h3>
+          <p className="text-[#6b3d2a] leading-relaxed text-base sm:text-lg">
+            Whether you are planning a grand Hindu shaadi in Delhi, an intimate nikah in
+            Hyderabad, or a fusion wedding in Mumbai — WedVibe has a design for every
+            celebration. Our animated shaadi cards feature traditional motifs, elegant
+            typography, and smooth motion graphics that bring your invitation to life on any
+            smartphone screen.
+          </p>
+        </div>
+
+        {/* Sub Heading 2: Smart Choice Bullet List */}
+        <div className="space-y-5">
+          <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+            Why Digital Wedding Invitations Are the Smart Choice
+          </h3>
+          <ul className="space-y-3 pl-0 list-none">
+            {bulletPoints.map((item, idx) => (
+              <li
+                key={idx}
+                className="flex items-start gap-3.5 p-4 rounded-xl bg-white/80 border border-[#e8c97e]/35 shadow-sm"
+              >
+                <span className="text-[#a0522d] font-bold text-lg leading-none mt-1">✦</span>
+                <span className="text-sm sm:text-base text-[#6b3d2a] leading-relaxed">
+                  <strong className="text-[#2a1810] font-bold">{item.title}:</strong> {item.desc}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Sub Heading 3: How WedVibe Works Step List */}
+        <div className="space-y-5">
+          <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+            How WedVibe Works
+          </h3>
+          <ol className="space-y-3.5 pl-0 list-none">
+            {steps.map((step, idx) => (
+              <li
+                key={idx}
+                className="flex items-start gap-4 p-4 rounded-xl bg-white/80 border border-[#e8c97e]/35 shadow-sm"
+              >
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6b1d2f] to-[#4a101f] text-gold-light font-bold text-sm flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                  {idx + 1}
+                </span>
+                <span className="text-sm sm:text-base text-[#6b3d2a] leading-relaxed pt-1">
+                  {step}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Closing Paragraph */}
+        <div className="p-6 rounded-2xl bg-white/60 border border-[#e8c97e]/40 shadow-sm">
+          <p className="text-[#6b3d2a] text-base sm:text-lg leading-relaxed">
+            With WedVibe, creating a wedding card online in India has never been simpler or
+            more affordable. Join thousands of happy couples who&apos;ve already made the
+            switch to digital. Your love story deserves a stunning entrance — order your
+            animated wedding invitation today.
+          </p>
+        </div>
+
+        {/* CTA Button */}
+        <div className="flex justify-center pt-2">
           <Link
             href="/templates"
-            className="px-8 py-4 rounded-xl bg-[#2a1810] text-[#e8c97e] font-semibold text-center hover:bg-[#3d2218] transition-colors shadow-lg"
+            className="inline-flex items-center justify-center gap-2 px-9 py-4 rounded-full bg-gradient-to-r from-[#6b1d2f] to-[#4a101f] text-gold-light font-semibold text-base sm:text-lg hover:shadow-luxury-hover transition-all duration-300 hover:-translate-y-0.5 shadow-luxury border border-maroon/50"
           >
-            Browse Animated Templates
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-8 py-4 rounded-xl border-2 border-[#a0522d] text-[#a0522d] font-semibold text-center hover:bg-[#a0522d]/10 transition-colors"
-          >
-            View Pricing — ₹499
+            Browse Templates
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </Link>
         </div>
       </div>

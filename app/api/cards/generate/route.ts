@@ -3,19 +3,11 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { sendCardDeliveredEmail } from '@/lib/resend'
 import { generateSlug } from '@/lib/utils'
 import { resolveConditionals } from '@/lib/template-utils'
+import { escapeHtml, safeUrl } from '@/lib/xss'
 import { nanoid } from 'nanoid'
 import fs from 'fs'
 import path from 'path'
 import { apiError } from '@/lib/api-error'
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
 
 export async function POST(req: Request) {
   let orderId: string | null = null
@@ -95,24 +87,25 @@ export async function POST(req: Request) {
     const extraFields = customization.extra_fields || {}
 
     // Resolve names: standard fields first, then fall back to template-specific extra_fields
-    const groomName = customization.person1_name || (extraFields as Record<string, string>).groom_name || 'Groom'
-    const brideName = customization.person2_name || (extraFields as Record<string, string>).bride_name || 'Bride'
+    const groomName = escapeHtml(customization.person1_name || (extraFields as Record<string, string>).groom_name || 'Groom')
+    const brideName = escapeHtml(customization.person2_name || (extraFields as Record<string, string>).bride_name || 'Bride')
 
     html = html.replace(/\{\{PERSON1_NAME\}\}/g, groomName)
     html = html.replace(/\{\{PERSON2_NAME\}\}/g, brideName)
     html = html.replace(/\{\{GROOM_NAME\}\}/g, groomName)
     html = html.replace(/\{\{BRIDE_NAME\}\}/g, brideName)
-    const coupleInitials = `${groomName.trim().charAt(0)}&${brideName.trim().charAt(0)}`
+    // Initials: safe — single chars, but escape & between them
+    const coupleInitials = `${groomName.trim().charAt(0)}&amp;${brideName.trim().charAt(0)}`
     html = html.replace(/\{\{COUPLE_INITIALS\}\}/g, coupleInitials)
     html = html.replace(/\{\{EVENT_DATE\}\}/g, customization.event_date ? new Date(customization.event_date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '')
-    html = html.replace(/\{\{EVENT_TIME\}\}/g, customization.event_time || '')
-    html = html.replace(/\{\{VENUE_NAME\}\}/g, customization.venue_name || '')
-    html = html.replace(/\{\{VENUE_ADDRESS\}\}/g, customization.venue_address || '')
-    html = html.replace(/\{\{FAMILY_BRIDE_FATHER\}\}/g, customization.family_bride_father || '')
-    html = html.replace(/\{\{FAMILY_BRIDE_MOTHER\}\}/g, customization.family_bride_mother || '')
-    html = html.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, customization.family_groom_father || '')
-    html = html.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, customization.family_groom_mother || '')
-    html = html.replace(/\{\{EXTRA_MESSAGE\}\}/g, customization.extra_message || '')
+    html = html.replace(/\{\{EVENT_TIME\}\}/g, escapeHtml(customization.event_time || ''))
+    html = html.replace(/\{\{VENUE_NAME\}\}/g, escapeHtml(customization.venue_name || ''))
+    html = html.replace(/\{\{VENUE_ADDRESS\}\}/g, escapeHtml(customization.venue_address || ''))
+    html = html.replace(/\{\{FAMILY_BRIDE_FATHER\}\}/g, escapeHtml(customization.family_bride_father || ''))
+    html = html.replace(/\{\{FAMILY_BRIDE_MOTHER\}\}/g, escapeHtml(customization.family_bride_mother || ''))
+    html = html.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, escapeHtml(customization.family_groom_father || ''))
+    html = html.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, escapeHtml(customization.family_groom_mother || ''))
+    html = html.replace(/\{\{EXTRA_MESSAGE\}\}/g, escapeHtml(customization.extra_message || ''))
 
     const fallbackPhotos = (template.slug === 'our-wedding-story' || template.slug === 'royal-dark-wedding')
       ? [
@@ -145,8 +138,8 @@ export async function POST(req: Request) {
 
     const photo_urls = customization.photo_urls || []
     for (let i = 1; i <= 4; i++) {
-      const photoUrl = photo_urls[i - 1] || fallbackPhotos[(i - 1) % fallbackPhotos.length]
-      html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), photoUrl)
+      const photoUrl = safeUrl(photo_urls[i - 1]) || safeUrl(fallbackPhotos[(i - 1) % fallbackPhotos.length]) || ''
+      html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), escapeHtml(photoUrl))
     }
 
     // ef must be declared before any usage of couple_photos / gallery_photos below
@@ -161,8 +154,8 @@ export async function POST(req: Request) {
     const photoPool = userPhotos.length > 0 ? userPhotos : fallbackPhotos
 
     for (let i = 1; i <= 6; i++) {
-      const floatUrl = photoPool[(i - 1) % photoPool.length]
-      html = html.replace(new RegExp(`\\{\\{FLOAT_PHOTOS_${i}\\}\\}`, 'g'), floatUrl)
+      const floatUrl = safeUrl(photoPool[(i - 1) % photoPool.length]) || ''
+      html = html.replace(new RegExp(`\\{\\{FLOAT_PHOTOS_${i}\\}\\}`, 'g'), escapeHtml(floatUrl))
     }
 
     // Auto-derive countdown_target if the user left it blank
@@ -193,8 +186,10 @@ export async function POST(req: Request) {
       const value = (extraFields as Record<string, unknown>)[key]
       if (Array.isArray(value)) {
         for (let i = 1; i <= 10; i++) {
-          const photoUrl = (value[i - 1] as string) || fallbackPhotos[(i - 1) % fallbackPhotos.length]
-          html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}_${i}\\}\\}`, 'g'), photoUrl)
+          const rawUrl = (value[i - 1] as string) || fallbackPhotos[(i - 1) % fallbackPhotos.length]
+          // Array fields are always photo URLs — validate and escape
+          const safePhotoUrl = safeUrl(rawUrl) || safeUrl(fallbackPhotos[0]) || ''
+          html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}_${i}\\}\\}`, 'g'), escapeHtml(safePhotoUrl))
         }
       } else if (typeof value === 'string') {
         let displayValue = value || ''
@@ -205,7 +200,14 @@ export async function POST(req: Request) {
           displayValue = new Date(value).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
         }
         if (!nameAliases.has(key)) {
-          html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), displayValue)
+          // countdown_target is a raw ISO date string consumed by JS — only allow safe date chars
+          if (key === 'countdown_target') {
+            // Strip anything that isn't a date/time character
+            const safeIso = displayValue.replace(/[^0-9T:+\-Z]/g, '')
+            html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), safeIso)
+          } else {
+            html = html.replace(new RegExp(`\\{\\{${key.toUpperCase()}\\}\\}`, 'g'), escapeHtml(displayValue))
+          }
         }
       } else if (typeof value === 'boolean') {
         // Checkbox fields (e.g. add_music) — substitute 'true' or '' so {{#if}} conditionals resolve correctly

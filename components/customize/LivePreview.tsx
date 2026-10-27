@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { escapeHtml, safeUrl } from '@/lib/xss'
 import type { CustomizationFormData } from '@/lib/types'
 
 interface LivePreviewProps {
@@ -60,10 +61,10 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
       ]
 
   // Names
-  html = html.replace(/\{\{BRIDE_NAME\}\}/g, bride)
-  html = html.replace(/\{\{GROOM_NAME\}\}/g, groom)
-  html = html.replace(/\{\{PERSON1_NAME\}\}/g, groom)
-  html = html.replace(/\{\{PERSON2_NAME\}\}/g, bride)
+  html = html.replace(/\{\{BRIDE_NAME\}\}/g, escapeHtml(bride))
+  html = html.replace(/\{\{GROOM_NAME\}\}/g, escapeHtml(groom))
+  html = html.replace(/\{\{PERSON1_NAME\}\}/g, escapeHtml(groom))
+  html = html.replace(/\{\{PERSON2_NAME\}\}/g, escapeHtml(bride))
 
   // Dates
   const fallbackDate = 'Saturday, 12 December 2026'
@@ -84,102 +85,104 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   html = html.replace(/\{\{WALIMA_DATE\}\}/g, formatDate(d.walima_date, wDate))
 
   // Times
-  html = html.replace(/\{\{WEDDING_TIME\}\}/g, wTime)
-  html = html.replace(/\{\{EVENT_TIME\}\}/g, wTime)
-  html = html.replace(/\{\{WEDDING_CEREMONY_TIME\}\}/g, d.wedding_ceremony_time || wTime)
-  html = html.replace(/\{\{HALDI_TIME\}\}/g, d.haldi_time || '10:00 AM')
-  html = html.replace(/\{\{RECEPTION_TIME\}\}/g, d.reception_time || '7:00 PM')
-  html = html.replace(/\{\{NIKKAH_TIME\}\}/g, d.nikkah_time || wTime)
-  html = html.replace(/\{\{WALIMA_TIME\}\}/g, d.walima_time || '7:00 PM')
+  html = html.replace(/\{\{WEDDING_TIME\}\}/g, escapeHtml(wTime))
+  html = html.replace(/\{\{EVENT_TIME\}\}/g, escapeHtml(wTime))
+  html = html.replace(/\{\{WEDDING_CEREMONY_TIME\}\}/g, escapeHtml(d.wedding_ceremony_time || wTime))
+  html = html.replace(/\{\{HALDI_TIME\}\}/g, escapeHtml(d.haldi_time || '10:00 AM'))
+  html = html.replace(/\{\{RECEPTION_TIME\}\}/g, escapeHtml(d.reception_time || '7:00 PM'))
+  html = html.replace(/\{\{NIKKAH_TIME\}\}/g, escapeHtml(d.nikkah_time || wTime))
+  html = html.replace(/\{\{WALIMA_TIME\}\}/g, escapeHtml(d.walima_time || '7:00 PM'))
 
   // Venues
-  html = html.replace(/\{\{VENUE_NAME\}\}/g, venue)
-  html = html.replace(/\{\{VENUE_ADDRESS\}\}/g, addr)
-  html = html.replace(/\{\{WEDDING_VENUE_NAME\}\}/g, d.wedding_venue_name || venue)
-  html = html.replace(/\{\{WEDDING_VENUE_ADDRESS\}\}/g, d.wedding_venue_address || addr)
-  html = html.replace(/\{\{HALDI_VENUE_NAME\}\}/g, d.haldi_venue_name || venue)
-  html = html.replace(/\{\{HALDI_VENUE_ADDRESS\}\}/g, d.haldi_venue_address || addr)
-  html = html.replace(/\{\{RECEPTION_VENUE_NAME\}\}/g, d.reception_venue_name || venue)
-  html = html.replace(/\{\{RECEPTION_VENUE_ADDRESS\}\}/g, d.reception_venue_address || addr)
-  html = html.replace(/\{\{NIKKAH_VENUE_NAME\}\}/g, d.nikkah_venue_name || venue)
-  html = html.replace(/\{\{NIKKAH_VENUE_ADDRESS\}\}/g, d.nikkah_venue_address || addr)
-  html = html.replace(/\{\{WALIMA_VENUE_NAME\}\}/g, d.walima_venue_name || venue)
+  html = html.replace(/\{\{VENUE_NAME\}\}/g, escapeHtml(venue))
+  html = html.replace(/\{\{VENUE_ADDRESS\}\}/g, escapeHtml(addr))
+  html = html.replace(/\{\{WEDDING_VENUE_NAME\}\}/g, escapeHtml(d.wedding_venue_name || venue))
+  html = html.replace(/\{\{WEDDING_VENUE_ADDRESS\}\}/g, escapeHtml(d.wedding_venue_address || addr))
+  html = html.replace(/\{\{HALDI_VENUE_NAME\}\}/g, escapeHtml(d.haldi_venue_name || venue))
+  html = html.replace(/\{\{HALDI_VENUE_ADDRESS\}\}/g, escapeHtml(d.haldi_venue_address || addr))
+  html = html.replace(/\{\{RECEPTION_VENUE_NAME\}\}/g, escapeHtml(d.reception_venue_name || venue))
+  html = html.replace(/\{\{RECEPTION_VENUE_ADDRESS\}\}/g, escapeHtml(d.reception_venue_address || addr))
+  html = html.replace(/\{\{NIKKAH_VENUE_NAME\}\}/g, escapeHtml(d.nikkah_venue_name || venue))
+  html = html.replace(/\{\{NIKKAH_VENUE_ADDRESS\}\}/g, escapeHtml(d.nikkah_venue_address || addr))
+  html = html.replace(/\{\{WALIMA_VENUE_NAME\}\}/g, escapeHtml(d.walima_venue_name || venue))
 
   // Extra / misc
-  html = html.replace(/\{\{EXTRA_MESSAGE\}\}/g, msg)
-  html = html.replace(/\{\{COUPLE_TAGLINE\}\}/g, d.couple_tagline || msg)
-  html = html.replace(/\{\{WEDDING_MUHURAT_NOTE\}\}/g, d.wedding_muhurat_note || '')
-  html = html.replace(/\{\{HALDI_DRESS_CODE\}\}/g, d.haldi_dress_code || 'Yellow / Pastels')
-  html = html.replace(/\{\{RECEPTION_NOTE\}\}/g, d.reception_note || '')
-  html = html.replace(/\{\{NIKKAH_NOTE\}\}/g, d.nikkah_note || '')
-  html = html.replace(/\{\{WALIMA_NOTE\}\}/g, d.walima_note || '')
-  html = html.replace(/\{\{MUSIC_URL\}\}/g, d.music_url || '')
+  html = html.replace(/\{\{EXTRA_MESSAGE\}\}/g, escapeHtml(msg))
+  html = html.replace(/\{\{COUPLE_TAGLINE\}\}/g, escapeHtml(d.couple_tagline || msg))
+  html = html.replace(/\{\{WEDDING_MUHURAT_NOTE\}\}/g, escapeHtml(d.wedding_muhurat_note || ''))
+  html = html.replace(/\{\{HALDI_DRESS_CODE\}\}/g, escapeHtml(d.haldi_dress_code || 'Yellow / Pastels'))
+  html = html.replace(/\{\{RECEPTION_NOTE\}\}/g, escapeHtml(d.reception_note || ''))
+  html = html.replace(/\{\{NIKKAH_NOTE\}\}/g, escapeHtml(d.nikkah_note || ''))
+  html = html.replace(/\{\{WALIMA_NOTE\}\}/g, escapeHtml(d.walima_note || ''))
+  html = html.replace(/\{\{MUSIC_URL\}\}/g, escapeHtml(safeUrl(d.music_url) || ''))
   
   // Custom templates specific fields
-  html = html.replace(/\{\{SCRATCH_DATE\}\}/g, formatDate(d.scratch_date, '21 November 2026'))
-  html = html.replace(/\{\{SCRATCH_LOCATION\}\}/g, d.scratch_location || 'Friday through Sunday · Udaipur')
+  html = html.replace(/\{\{SCRATCH_DATE\}\}/g, escapeHtml(formatDate(d.scratch_date, '21 November 2026')))
+  html = html.replace(/\{\{SCRATCH_LOCATION\}\}/g, escapeHtml(d.scratch_location || 'Friday through Sunday · Udaipur'))
   const defaultCountdown = d.scratch_date ? `${d.scratch_date}T10:00:00` : (d.event_date ? `${d.event_date}T10:00:00` : '2026-11-21T17:30:00+05:30')
-  html = html.replace(/\{\{COUNTDOWN_TARGET\}\}/g, d.countdown_target || defaultCountdown)
-  html = html.replace(/\{\{FOOTER_DATE\}\}/g, d.footer_date || '20–22 · November · 2026 · Goa')
+  // countdown_target feeds directly into JS — strip to safe ISO chars only
+  const rawCountdown = d.countdown_target || defaultCountdown
+  html = html.replace(/\{\{COUNTDOWN_TARGET\}\}/g, rawCountdown.replace(/[^0-9T:+\-Z]/g, ''))
+  html = html.replace(/\{\{FOOTER_DATE\}\}/g, escapeHtml(d.footer_date || '20–22 · November · 2026 · Goa'))
   if (d.wedding_date_label) {
-    html = html.replace(/\{\{WEDDING_DATE_LABEL\}\}/g, d.wedding_date_label)
+    html = html.replace(/\{\{WEDDING_DATE_LABEL\}\}/g, escapeHtml(d.wedding_date_label))
   }
 
   // Family
-  html = html.replace(/\{\{FAMILY_BRIDE_FATHER\}\}/g, d.family_bride_father || 'Mr. Ramesh Sharma')
-  html = html.replace(/\{\{FAMILY_BRIDE_MOTHER\}\}/g, d.family_bride_mother || 'Mrs. Savitha Sharma')
-  html = html.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, d.family_groom_father || 'Mr. Suresh Kumar')
-  html = html.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, d.family_groom_mother || 'Mrs. Sunitha Kumar')
-  html = html.replace(/\{\{BRIDE_FATHER_NAME\}\}/g, d.bride_father_name || d.family_bride_father || 'Mr. Ramesh Sharma')
-  html = html.replace(/\{\{BRIDE_MOTHER_NAME\}\}/g, d.bride_mother_name || d.family_bride_mother || 'Mrs. Savitha Sharma')
-  html = html.replace(/\{\{GROOM_FATHER_NAME\}\}/g, d.groom_father_name || d.family_groom_father || 'Mr. Suresh Kumar')
-  html = html.replace(/\{\{GROOM_MOTHER_NAME\}\}/g, d.groom_mother_name || d.family_groom_mother || 'Mrs. Sunitha Kumar')
+  html = html.replace(/\{\{FAMILY_BRIDE_FATHER\}\}/g, escapeHtml(d.family_bride_father || 'Mr. Ramesh Sharma'))
+  html = html.replace(/\{\{FAMILY_BRIDE_MOTHER\}\}/g, escapeHtml(d.family_bride_mother || 'Mrs. Savitha Sharma'))
+  html = html.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, escapeHtml(d.family_groom_father || 'Mr. Suresh Kumar'))
+  html = html.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, escapeHtml(d.family_groom_mother || 'Mrs. Sunitha Kumar'))
+  html = html.replace(/\{\{BRIDE_FATHER_NAME\}\}/g, escapeHtml(d.bride_father_name || d.family_bride_father || 'Mr. Ramesh Sharma'))
+  html = html.replace(/\{\{BRIDE_MOTHER_NAME\}\}/g, escapeHtml(d.bride_mother_name || d.family_bride_mother || 'Mrs. Savitha Sharma'))
+  html = html.replace(/\{\{GROOM_FATHER_NAME\}\}/g, escapeHtml(d.groom_father_name || d.family_groom_father || 'Mr. Suresh Kumar'))
+  html = html.replace(/\{\{GROOM_MOTHER_NAME\}\}/g, escapeHtml(d.groom_mother_name || d.family_groom_mother || 'Mrs. Sunitha Kumar'))
 
   // Crimson Door extra fields
-  html = html.replace(/\{\{COUPLE_INITIALS\}\}/g, `${groom.charAt(0)}&${bride.charAt(0)}`)
-  html = html.replace(/\{\{BRIDE_PARENTS\}\}/g, d.bride_parents || 'D/o Mr. & Mrs. Sharma')
-  html = html.replace(/\{\{GROOM_PARENTS\}\}/g, d.groom_parents || 'S/o Mr. & Mrs. Singh')
-  html = html.replace(/\{\{BRIDE_BIO\}\}/g, d.bride_bio || 'A beautiful soul')
-  html = html.replace(/\{\{GROOM_BIO\}\}/g, d.groom_bio || 'A handsome prince')
-  html = html.replace(/\{\{STORY_YEAR_1\}\}/g, d.story_year_1 || '2021')
-  html = html.replace(/\{\{STORY_HEADING_1\}\}/g, d.story_heading_1 || 'First Met')
-  html = html.replace(/\{\{STORY_TEXT_1\}\}/g, d.story_text_1 || 'We met at a coffee shop...')
-  html = html.replace(/\{\{STORY_YEAR_2\}\}/g, d.story_year_2 || '2023')
-  html = html.replace(/\{\{STORY_HEADING_2\}\}/g, d.story_heading_2 || 'The Proposal')
-  html = html.replace(/\{\{STORY_TEXT_2\}\}/g, d.story_text_2 || 'He got down on one knee...')
-  html = html.replace(/\{\{STORY_YEAR_3\}\}/g, d.story_year_3 || '2026')
-  html = html.replace(/\{\{STORY_HEADING_3\}\}/g, d.story_heading_3 || 'Forever')
-  html = html.replace(/\{\{STORY_TEXT_3\}\}/g, d.story_text_3 || 'Tying the knot...')
+  html = html.replace(/\{\{COUPLE_INITIALS\}\}/g, `${escapeHtml(groom.charAt(0))}&amp;${escapeHtml(bride.charAt(0))}`)
+  html = html.replace(/\{\{BRIDE_PARENTS\}\}/g, escapeHtml(d.bride_parents || 'D/o Mr. & Mrs. Sharma'))
+  html = html.replace(/\{\{GROOM_PARENTS\}\}/g, escapeHtml(d.groom_parents || 'S/o Mr. & Mrs. Singh'))
+  html = html.replace(/\{\{BRIDE_BIO\}\}/g, escapeHtml(d.bride_bio || 'A beautiful soul'))
+  html = html.replace(/\{\{GROOM_BIO\}\}/g, escapeHtml(d.groom_bio || 'A handsome prince'))
+  html = html.replace(/\{\{STORY_YEAR_1\}\}/g, escapeHtml(d.story_year_1 || '2021'))
+  html = html.replace(/\{\{STORY_HEADING_1\}\}/g, escapeHtml(d.story_heading_1 || 'First Met'))
+  html = html.replace(/\{\{STORY_TEXT_1\}\}/g, escapeHtml(d.story_text_1 || 'We met at a coffee shop...'))
+  html = html.replace(/\{\{STORY_YEAR_2\}\}/g, escapeHtml(d.story_year_2 || '2023'))
+  html = html.replace(/\{\{STORY_HEADING_2\}\}/g, escapeHtml(d.story_heading_2 || 'The Proposal'))
+  html = html.replace(/\{\{STORY_TEXT_2\}\}/g, escapeHtml(d.story_text_2 || 'He got down on one knee...'))
+  html = html.replace(/\{\{STORY_YEAR_3\}\}/g, escapeHtml(d.story_year_3 || '2026'))
+  html = html.replace(/\{\{STORY_HEADING_3\}\}/g, escapeHtml(d.story_heading_3 || 'Forever'))
+  html = html.replace(/\{\{STORY_TEXT_3\}\}/g, escapeHtml(d.story_text_3 || 'Tying the knot...'))
 
   // ── Birthday Love Card fields ──────────────────────────────────────────────
   if (isBirthdayCard) {
-    html = html.replace(/\{\{RECIPIENT_NAME\}\}/g, d.recipient_name || 'My Love')
-    html = html.replace(/\{\{SENDER_NAME\}\}/g, d.sender_name || 'Your Love')
-    html = html.replace(/\{\{BIRTHDAY_DATE\}\}/g, formatDate(d.birthday_date, 'A Special Day'))
-    html = html.replace(/\{\{HERO_EYEBROW\}\}/g, d.hero_eyebrow || 'A little something for you')
-    html = html.replace(/\{\{HERO_TAGLINE\}\}/g, d.hero_tagline || 'To the one who makes my heart skip a beat\u2026')
-    html = html.replace(/\{\{LETTER_GREETING\}\}/g, d.letter_greeting || 'My Dearest Love,')
-    html = html.replace(/\{\{LETTER_BODY\}\}/g, d.letter_body || '')
-    html = html.replace(/\{\{LETTER_SIGN\}\}/g, d.letter_sign || 'Forever yours, with all my love')
-    html = html.replace(/\{\{REASON_1\}\}/g, d.reason_1 || 'The way your eyes light up\u2026')
-    html = html.replace(/\{\{REASON_2\}\}/g, d.reason_2 || 'How you remember every tiny detail\u2026')
-    html = html.replace(/\{\{REASON_3\}\}/g, d.reason_3 || 'Your hugs that make the world feel safe\u2026')
-    html = html.replace(/\{\{REASON_4\}\}/g, d.reason_4 || 'Just\u2026 you. All of you.')
-    html = html.replace(/\{\{MEM1_CAPTION\}\}/g, d.mem1_caption || 'The Day We Met')
-    html = html.replace(/\{\{MEM1_DATE\}\}/g, d.mem1_date || 'Where it all began')
-    html = html.replace(/\{\{MEM2_CAPTION\}\}/g, d.mem2_caption || 'Our First Date')
-    html = html.replace(/\{\{MEM2_DATE\}\}/g, d.mem2_date || 'Nervous laughs & stolen glances')
-    html = html.replace(/\{\{MEM3_CAPTION\}\}/g, d.mem3_caption || 'That Coffee Shop')
-    html = html.replace(/\{\{MEM3_DATE\}\}/g, d.mem3_date || 'Our little corner of the world')
-    html = html.replace(/\{\{MEM4_CAPTION\}\}/g, d.mem4_caption || 'Our First Trip')
-    html = html.replace(/\{\{MEM4_DATE\}\}/g, d.mem4_date || 'Getting lost & finding ourselves')
-    html = html.replace(/\{\{MEM5_CAPTION\}\}/g, d.mem5_caption || 'Sunset Together')
-    html = html.replace(/\{\{MEM5_DATE\}\}/g, d.mem5_date || 'Golden hour with you')
-    html = html.replace(/\{\{MEM6_CAPTION\}\}/g, d.mem6_caption || 'Just Us, Always')
-    html = html.replace(/\{\{MEM6_DATE\}\}/g, d.mem6_date || 'My favourite photo in the world')
-    html = html.replace(/\{\{CANDLE_WISH\}\}/g, d.candle_wish || 'May this year bring you all the joy you deserve\u2026')
-    html = html.replace(/\{\{PROMISE_ICON\}\}/g, d.promise_icon || '\uD83D\uDC8D')
-    html = html.replace(/\{\{PROMISE_TEXT\}\}/g, d.promise_text || 'I promise to be there for every birthday, every adventure\u2026')
+    html = html.replace(/\{\{RECIPIENT_NAME\}\}/g, escapeHtml(d.recipient_name || 'My Love'))
+    html = html.replace(/\{\{SENDER_NAME\}\}/g, escapeHtml(d.sender_name || 'Your Love'))
+    html = html.replace(/\{\{BIRTHDAY_DATE\}\}/g, escapeHtml(formatDate(d.birthday_date, 'A Special Day')))
+    html = html.replace(/\{\{HERO_EYEBROW\}\}/g, escapeHtml(d.hero_eyebrow || 'A little something for you'))
+    html = html.replace(/\{\{HERO_TAGLINE\}\}/g, escapeHtml(d.hero_tagline || 'To the one who makes my heart skip a beat\u2026'))
+    html = html.replace(/\{\{LETTER_GREETING\}\}/g, escapeHtml(d.letter_greeting || 'My Dearest Love,'))
+    html = html.replace(/\{\{LETTER_BODY\}\}/g, escapeHtml(d.letter_body || ''))
+    html = html.replace(/\{\{LETTER_SIGN\}\}/g, escapeHtml(d.letter_sign || 'Forever yours, with all my love'))
+    html = html.replace(/\{\{REASON_1\}\}/g, escapeHtml(d.reason_1 || 'The way your eyes light up\u2026'))
+    html = html.replace(/\{\{REASON_2\}\}/g, escapeHtml(d.reason_2 || 'How you remember every tiny detail\u2026'))
+    html = html.replace(/\{\{REASON_3\}\}/g, escapeHtml(d.reason_3 || 'Your hugs that make the world feel safe\u2026'))
+    html = html.replace(/\{\{REASON_4\}\}/g, escapeHtml(d.reason_4 || 'Just\u2026 you. All of you.'))
+    html = html.replace(/\{\{MEM1_CAPTION\}\}/g, escapeHtml(d.mem1_caption || 'The Day We Met'))
+    html = html.replace(/\{\{MEM1_DATE\}\}/g, escapeHtml(d.mem1_date || 'Where it all began'))
+    html = html.replace(/\{\{MEM2_CAPTION\}\}/g, escapeHtml(d.mem2_caption || 'Our First Date'))
+    html = html.replace(/\{\{MEM2_DATE\}\}/g, escapeHtml(d.mem2_date || 'Nervous laughs & stolen glances'))
+    html = html.replace(/\{\{MEM3_CAPTION\}\}/g, escapeHtml(d.mem3_caption || 'That Coffee Shop'))
+    html = html.replace(/\{\{MEM3_DATE\}\}/g, escapeHtml(d.mem3_date || 'Our little corner of the world'))
+    html = html.replace(/\{\{MEM4_CAPTION\}\}/g, escapeHtml(d.mem4_caption || 'Our First Trip'))
+    html = html.replace(/\{\{MEM4_DATE\}\}/g, escapeHtml(d.mem4_date || 'Getting lost & finding ourselves'))
+    html = html.replace(/\{\{MEM5_CAPTION\}\}/g, escapeHtml(d.mem5_caption || 'Sunset Together'))
+    html = html.replace(/\{\{MEM5_DATE\}\}/g, escapeHtml(d.mem5_date || 'Golden hour with you'))
+    html = html.replace(/\{\{MEM6_CAPTION\}\}/g, escapeHtml(d.mem6_caption || 'Just Us, Always'))
+    html = html.replace(/\{\{MEM6_DATE\}\}/g, escapeHtml(d.mem6_date || 'My favourite photo in the world'))
+    html = html.replace(/\{\{CANDLE_WISH\}\}/g, escapeHtml(d.candle_wish || 'May this year bring you all the joy you deserve\u2026'))
+    html = html.replace(/\{\{PROMISE_ICON\}\}/g, escapeHtml(d.promise_icon || '\uD83D\uDC8D'))
+    html = html.replace(/\{\{PROMISE_TEXT\}\}/g, escapeHtml(d.promise_text || 'I promise to be there for every birthday, every adventure\u2026'))
   }
   // ──────────────────────────────────────────────────────────────────────────
 
@@ -187,16 +190,16 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   const photos: string[] = (d.photo_urls && d.photo_urls.length > 0) ? d.photo_urls : (d.couple_photos || [])
   const galleryPhotos: string[] = (d.gallery_photos && d.gallery_photos.length > 0) ? d.gallery_photos : []
   for (let i = 1; i <= 6; i++) {
-    const url = photos[i - 1] || FALLBACK_PHOTOS[(i - 1) % FALLBACK_PHOTOS.length]
-    const galleryUrl = galleryPhotos[i - 1] || FALLBACK_PHOTOS[(i - 1) % FALLBACK_PHOTOS.length]
+    const url = escapeHtml(safeUrl(photos[i - 1]) || safeUrl(FALLBACK_PHOTOS[(i - 1) % FALLBACK_PHOTOS.length]) || '')
+    const galleryUrl = escapeHtml(safeUrl(galleryPhotos[i - 1]) || safeUrl(FALLBACK_PHOTOS[(i - 1) % FALLBACK_PHOTOS.length]) || '')
     html = html.replace(new RegExp(`\\{\\{COUPLE_PHOTOS_${i}\\}\\}`, 'g'), url)
     html = html.replace(new RegExp(`\\{\\{PHOTO_${i}\\}\\}`, 'g'), url)
     html = html.replace(new RegExp(`\\{\\{GALLERY_PHOTOS_${i}\\}\\}`, 'g'), galleryUrl)
-    html = html.replace(new RegExp(`\\{\\{GALLERY_CAPTION_${i}\\}\\}`, 'g'), d[`gallery_caption_${i}`] || '')
+    html = html.replace(new RegExp(`\\{\\{GALLERY_CAPTION_${i}\\}\\}`, 'g'), escapeHtml(d[`gallery_caption_${i}`] || ''))
   }
 
-  const brideFamilyPhoto = (d.bride_family_photo && d.bride_family_photo[0]) || FALLBACK_PHOTOS[0]
-  const groomFamilyPhoto = (d.groom_family_photo && d.groom_family_photo[0]) || FALLBACK_PHOTOS[1]
+  const brideFamilyPhoto = escapeHtml(safeUrl((d.bride_family_photo && d.bride_family_photo[0])) || safeUrl(FALLBACK_PHOTOS[0]) || '')
+  const groomFamilyPhoto = escapeHtml(safeUrl((d.groom_family_photo && d.groom_family_photo[0])) || safeUrl(FALLBACK_PHOTOS[1]) || '')
   html = html.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, brideFamilyPhoto)
   html = html.replace(/\{\{GROOM_FAMILY_PHOTO_1\}\}/g, groomFamilyPhoto)
 
