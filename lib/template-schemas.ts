@@ -723,10 +723,11 @@ export const roseBloomWeddingSchema: TemplateFormConfig = {
     },
     {
       title: 'Event Details',
-      description: 'Wedding date, muhurat time, and venue information.',
+      description: 'Wedding date, time, and venue information.',
       fields: [
         { name: 'event_date', label: 'Wedding Date 📅', type: 'date', required: true },
-        { name: 'event_time', label: 'Muhurat Time ⏰', type: 'text', placeholder: 'e.g. 11:00 AM onwards', required: true },
+        { name: 'event_time_label', label: 'Time Section Label 🏷️', type: 'text', placeholder: 'e.g. Muhurat Time or Nikah Time' },
+        { name: 'event_time', label: 'Event Time ⏰', type: 'text', placeholder: 'e.g. 10:00 AM onwards', required: true },
         { name: 'venue_name', label: 'Venue Name 🏰', type: 'text', placeholder: 'e.g. Grand Palace Hall', required: true },
         { name: 'venue_address', label: 'Venue Address 📍', type: 'textarea', placeholder: 'Full physical address of the venue', rows: 3, required: true },
         { name: 'extra_message', label: 'Extra Message or Note 📝', type: 'textarea', placeholder: 'e.g. No boxed gifts please.', rows: 3 },

@@ -220,6 +220,7 @@ export async function POST(req: Request) {
     html = html.replace(/\{\{PHOTO_LABEL_2\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_2 || 'Her Family'))
     html = html.replace(/\{\{PHOTO_LABEL_3\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_3 || 'Always ♡'))
     html = html.replace(/\{\{PHOTO_LABEL_4\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_4 || 'His Family'))
+    html = html.replace(/\{\{EVENT_TIME_LABEL\}\}/g, escapeHtml((extraFields as Record<string, string>).event_time_label || 'Muhurat Time'))
 
     // 5. Resolve conditional blocks — strip sections whose key fields are empty
     const conditionalData: Record<string, string | string[] | undefined | null> = {}

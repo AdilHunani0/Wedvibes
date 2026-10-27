@@ -87,6 +87,7 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
   // Times
   html = html.replace(/\{\{WEDDING_TIME\}\}/g, escapeHtml(wTime))
   html = html.replace(/\{\{EVENT_TIME\}\}/g, escapeHtml(wTime))
+  html = html.replace(/\{\{EVENT_TIME_LABEL\}\}/g, escapeHtml(d.event_time_label || 'Muhurat Time'))
   html = html.replace(/\{\{WEDDING_CEREMONY_TIME\}\}/g, escapeHtml(d.wedding_ceremony_time || wTime))
   html = html.replace(/\{\{HALDI_TIME\}\}/g, escapeHtml(d.haldi_time || '10:00 AM'))
   html = html.replace(/\{\{RECEPTION_TIME\}\}/g, escapeHtml(d.reception_time || '7:00 PM'))

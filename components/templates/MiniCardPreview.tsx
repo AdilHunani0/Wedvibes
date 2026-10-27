@@ -79,6 +79,7 @@ export function MiniCardPreview({
         h = h.replace(/\{\{PHOTO_LABEL_2\}\}/g, 'Her Family');
         h = h.replace(/\{\{PHOTO_LABEL_3\}\}/g, 'Always ♡');
         h = h.replace(/\{\{PHOTO_LABEL_4\}\}/g, 'His Family');
+        h = h.replace(/\{\{EVENT_TIME_LABEL\}\}/g, 'Muhurat Time');
         
         // Strip logic blocks and remaining placeholders
         h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');

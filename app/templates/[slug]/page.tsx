@@ -198,6 +198,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_2\}\}/g, 'Her Family')
     templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_3\}\}/g, 'Always ♡')
     templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_4\}\}/g, 'His Family')
+    templateHtml = templateHtml.replace(/\{\{EVENT_TIME_LABEL\}\}/g, 'Muhurat Time')
     
     const isBirthdayCard = slug === 'birthday-love-card'
     const isRoyalDark = slug === 'royal-dark-wedding'
