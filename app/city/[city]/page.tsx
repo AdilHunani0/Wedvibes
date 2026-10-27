@@ -56,7 +56,6 @@ const OTHER_CITIES = [
   { slug: 'pune', name: 'Pune' },
   { slug: 'kolkata', name: 'Kolkata' },
   { slug: 'hyderabad', name: 'Hyderabad' },
-  { slug: 'bangalore', name: 'Bangalore' },
 ]
 
 export async function generateStaticParams() {
@@ -148,64 +147,111 @@ export default async function CityLandingPage({ params }: { params: Promise<{ ci
 
       <FeaturedTemplates />
 
-      {/* SEO Body Content — 200 words */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
+      {/* SEO Content Section */}
+      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8 border-t border-[#e8c97e]/20">
         <div className="max-w-3xl mx-auto space-y-8">
-          <h2 className="font-playfair text-3xl font-bold text-[#2a1810]">
-            Digital Wedding Invitations in {cityName} — The Smarter Choice
+          <h2 className="font-playfair text-3xl sm:text-4xl font-bold text-[#2a1810] leading-tight">
+            Digital Wedding Invitations in {cityName} — Animated, WhatsApp-Ready, ₹499
           </h2>
-          <div className="space-y-5 text-[#6b3d2a] leading-relaxed">
+
+          <div className="space-y-4 text-[#6b3d2a] text-base sm:text-lg leading-relaxed">
+            <p>
+              {cityName} weddings are known for their warmth, colour, and unforgettable celebrations.
+              Whether you&apos;re planning an intimate gathering or a grand multi-day affair, your
+              wedding invitation sets the tone for everything that follows. WedVibe brings you
+              beautiful animated digital wedding invitations crafted specifically for {cityName} couples.
+            </p>
             <p>{cultureNote}</p>
-            <p>
-              Gone are the days of waiting weeks for printed cards. With WedVibe, your{' '}
-              <strong>digital wedding invitation in {cityName}</strong> is ready within minutes
-              and shared instantly on <strong>WhatsApp</strong> — reaching family and friends
-              across {cityName} and beyond in seconds. No courier delays, no extra printing
-              costs, no stress.
-            </p>
-            <p>
-              Our animated wedding cards are priced at just <strong>₹499</strong> — that&apos;s
-              less than a single printed card, but infinitely more impressive. Each design
-              features smooth animations, elegant typography, and customisable details including
-              venue, date, and all pre-wedding events like mehendi, haldi, and sangeet.
-            </p>
-            <p>
-              Simply choose a template, add your details, and share on WhatsApp. Thousands of
-              couples from {cityName} have already made the switch to digital invitations — join
-              them and make your wedding memorable from the very first invite.
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+              Why {cityName} Couples Love WedVibe
+            </h3>
+            <div className="space-y-4 text-[#6b3d2a] text-base sm:text-lg leading-relaxed">
+              <p>
+                Gone are the days of waiting weeks for printed cards. With WedVibe, your digital wedding
+                invitation in {cityName} is ready within minutes and shared instantly on WhatsApp —
+                reaching family and friends across {cityName} and beyond in seconds. No courier delays,
+                no extra printing costs.
+              </p>
+              <p>
+                Our animated wedding cards are priced at just ₹499 — that&apos;s less than a single
+                printed card, but infinitely more impressive. Each design features smooth animations,
+                elegant typography, and customisable details including venue, date, and all pre-wedding
+                events.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2a1810]">
+              Get Your {cityName} Digital Shaadi Card Today
+            </h3>
+            <p className="text-[#6b3d2a] text-base sm:text-lg leading-relaxed">
+              Simply choose a template, add your details, and share on WhatsApp. Thousands of couples
+              from {cityName} have already made the switch to digital invitations — join them and make
+              your wedding memorable from the very first invite.
             </p>
           </div>
 
+          {/* CTA Button */}
+          <div className="pt-2">
+            <Link
+              href="/templates"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#6b1d2f] to-[#4a101f] text-gold-light font-semibold text-base hover:shadow-luxury-hover transition-all duration-300 hover:-translate-y-0.5 shadow-luxury border border-maroon/50"
+            >
+              Create Your {cityName} Wedding Card
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
           {/* Internal links */}
-          <div className="flex flex-wrap gap-3 pt-4">
-            <Link href="/how-it-works" className="text-sm text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
-              How does WedVibe work? →
+          <div className="flex flex-wrap gap-4 pt-6 border-t border-[#e8c97e]/20 text-sm">
+            <Link href="/templates" className="text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
+              Browse all animated templates
             </Link>
-            <Link href="/templates" className="text-sm text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
-              Browse all animated templates →
+            <Link href="/pricing" className="text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
+              View full pricing
             </Link>
-            <Link href="/pricing" className="text-sm text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
-              Full pricing details →
+            <Link href="/how-it-works" className="text-[#a0522d] underline underline-offset-4 hover:text-[#7a3a20]">
+              How does WedVibe work?
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Other cities — internal linking grid */}
-      <section className="bg-[#fdf8f4] border-t border-[#e8c97e]/20 py-14 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#a0522d] mb-6 text-center">
-            Also Serving
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {otherCities.map((c) => (
-              <Link
-                key={c.slug}
-                href={`/digital-wedding-invitation-${c.slug}`}
-                className="px-4 py-2 rounded-lg border border-[#e8c97e]/60 bg-white text-sm text-[#6b3d2a] hover:border-[#a0522d] hover:text-[#a0522d] transition-colors"
-              >
-                {c.name}
-              </Link>
+      {/* Also Serving Couples In — horizontal link list */}
+      <section className="bg-[#fdf8f4] border-t border-[#e8c97e]/20 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <h3 className="font-playfair text-xl sm:text-2xl font-bold text-[#2a1810]">
+            Also Serving Couples In
+          </h3>
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-[#6b3d2a]">
+            {otherCities.map((c, i) => (
+              <span key={c.slug} className="inline-flex items-center">
+                <Link
+                  href={`/digital-wedding-invitation-${c.slug}`}
+                  className="text-[#a0522d] font-medium hover:text-[#7a3a20] hover:underline underline-offset-4 transition-colors"
+                >
+                  {c.name}
+                </Link>
+                {i < otherCities.length - 1 && (
+                  <span className="text-[#e8c97e] ml-3 select-none">|</span>
+                )}
+              </span>
             ))}
           </div>
         </div>

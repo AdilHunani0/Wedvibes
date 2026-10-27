@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export const metadata = {
   title: 'Contact WedVibe — WhatsApp Wedding Card Support | WedVibe',
   description:
@@ -50,6 +52,27 @@ export default function ContactPage() {
             >
               Message Us
             </a>
+          </div>
+        </div>
+
+        {/* Explore More Internal Links */}
+        <div className="mt-12 text-center pt-8 border-t border-[#e8c97e]/30">
+          <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+            Explore More
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <Link
+              href="/how-it-works"
+              className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+            >
+              Read our FAQ first
+            </Link>
+            <Link
+              href="/templates"
+              className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+            >
+              Browse our templates
+            </Link>
           </div>
         </div>
       </div>

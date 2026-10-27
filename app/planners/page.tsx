@@ -176,6 +176,33 @@ export default async function PlannersPage() {
           </div>
         </div>
       </section>
+
+      {/* Explore More Internal Links */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-[#e8c97e]/20 text-center">
+        <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+          Explore More
+        </p>
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <Link
+            href="/pricing"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Individual card pricing
+          </Link>
+          <Link
+            href="/templates"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Browse available designs
+          </Link>
+          <Link
+            href="/contact"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Get bulk pricing — contact us
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

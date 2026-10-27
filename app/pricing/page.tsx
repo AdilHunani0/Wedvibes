@@ -52,6 +52,33 @@ export default function PricingPage() {
           View Planner Packages →
         </Link>
       </section>
+
+      {/* Explore More Internal Links */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-[#e8c97e]/20 text-center">
+        <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+          Explore More
+        </p>
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <Link
+            href="/templates"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Browse designs before you order
+          </Link>
+          <Link
+            href="/planners"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Wedding planners: see bulk pricing
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Not sure? See how it works
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

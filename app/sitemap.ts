@@ -7,10 +7,9 @@ const CITIES = [
 ]
 
 const BLOGS = [
-  'whatsapp-wedding-invitation-guide',
-  'digital-vs-printed-wedding-invitations-2026',
-  'bulk-digital-invitations-wedding-planners',
-  'nikah-digital-invitation-ideas'
+  'how-to-send-wedding-invitation-on-whatsapp',
+  'animated-wedding-card-vs-printed-card-india',
+  'digital-wedding-invitation-cost-india',
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -79,6 +78,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
+    },
+    {
+      url: 'https://wedvibe.in/blog',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: 'https://wedvibe.in/contact',

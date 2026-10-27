@@ -35,6 +35,9 @@ export function Navbar() {
             <Link href="/planners" className="text-sm text-[#6b3d2a] hover:text-[#2a1810] transition-colors font-medium">
               For Planners
             </Link>
+            <Link href="/blog" className="text-sm text-[#6b3d2a] hover:text-[#2a1810] transition-colors font-medium">
+              Blog
+            </Link>
             <Link href="/about" className="text-sm text-[#6b3d2a] hover:text-[#2a1810] transition-colors font-medium">
               About Us
             </Link>
@@ -111,6 +114,7 @@ export function Navbar() {
           <Link href="/templates" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>Templates</Link>
           <Link href="/pricing" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>Pricing</Link>
           <Link href="/planners" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>For Planners</Link>
+          <Link href="/blog" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>Blog</Link>
           <Link href="/about" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>About Us</Link>
           <Link href="/contact" className="block py-3 text-sm text-[#2a1810] font-medium border-b border-[#f7efe8]" onClick={() => setMenuOpen(false)}>Contact Us</Link>
           {user ? (

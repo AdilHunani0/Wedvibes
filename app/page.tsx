@@ -6,6 +6,7 @@ import { PricingSection } from '@/components/home/PricingSection'
 import { PlannerTeaser } from '@/components/home/PlannerTeaser'
 import { Testimonials } from '@/components/home/Testimonials'
 import { CityLinks } from '@/components/home/CityLinks'
+import { BlogPreview } from '@/components/home/BlogPreview'
 import { CTABanner } from '@/components/home/CTABanner'
 import { HomeSEOContent } from '@/components/home/HomeSEOContent'
 
@@ -131,6 +132,7 @@ export default function Home() {
         <PlannerTeaser />
         <Testimonials />
         <CityLinks />
+        <BlogPreview />
         <CTABanner />
         <HomeSEOContent />
       </div>

@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export const metadata = {
   title: "About WedVibe — India's Digital Shaadi Card Brand | WedVibe",
   description:
@@ -62,6 +64,33 @@ export default function AboutPage() {
                 Founded by <strong>Adil Hunani</strong>, WedVibe was created to give couples a modern, elegant, and effortless way to share the joy of their special day with the people they love the most.
               </p>
             </section>
+          </div>
+
+          {/* Explore More Internal Links */}
+          <div className="pt-6 border-t border-[#e8c97e]/30 text-center">
+            <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+              Explore More
+            </p>
+            <div className="flex flex-wrap justify-center gap-6 text-sm">
+              <Link
+                href="/templates"
+                className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+              >
+                See our designs
+              </Link>
+              <Link
+                href="/how-it-works"
+                className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+              >
+                Learn how we work
+              </Link>
+              <Link
+                href="/contact"
+                className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+              >
+                Get in touch with us
+              </Link>
+            </div>
           </div>
         </div>
       </div>

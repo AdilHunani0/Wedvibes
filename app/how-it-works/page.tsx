@@ -277,6 +277,33 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </section>
+
+      {/* Explore More Internal Links */}
+      <section className="py-12 border-t border-[#e8c97e]/20 text-center px-4">
+        <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+          Explore More
+        </p>
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <Link
+            href="/templates"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Step 1: Choose a template
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            View pricing — from ₹499
+          </Link>
+          <Link
+            href="/contact"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Still have questions? Contact us
+          </Link>
+        </div>
+      </section>
     </main>
   )
 }

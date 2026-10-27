@@ -1,6 +1,7 @@
 import { TemplateGrid } from '@/components/templates/TemplateGrid'
 import { createAdminClient } from '@/lib/supabase/server'
 import type { Template } from '@/lib/types'
+import Link from 'next/link'
 
 export const metadata = {
   title: 'Animated Wedding Card Templates India | WedVibe',
@@ -34,6 +35,27 @@ export default async function TemplatesPage() {
       </div>
 
       <TemplateGrid initialTemplates={(templates as Template[]) || []} />
+
+      {/* Explore More Internal Links */}
+      <div className="mt-16 pt-8 border-t border-[#e8c97e]/20 text-center">
+        <p className="text-xs uppercase tracking-widest font-bold text-[#a0522d] mb-4">
+          Explore More
+        </p>
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <Link
+            href="/pricing"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            Ready to order? Check our pricing
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="text-[#a0522d] font-semibold underline underline-offset-4 hover:text-[#7a3a20] transition-colors"
+          >
+            How does it work?
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
