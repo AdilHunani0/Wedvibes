@@ -194,6 +194,10 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     templateHtml = templateHtml.replace(/\{\{FAMILY_GROOM_FATHER\}\}/g, 'Mr. Suresh Kumar')
     templateHtml = templateHtml.replace(/\{\{FAMILY_GROOM_MOTHER\}\}/g, 'Mrs. Sunitha Kumar')
     templateHtml = templateHtml.replace(/\{\{EXTRA_MESSAGE\}\}/g, 'Your presence is our biggest blessing.')
+    templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_1\}\}/g, 'Us ♡')
+    templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_2\}\}/g, 'Her Family')
+    templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_3\}\}/g, 'Always ♡')
+    templateHtml = templateHtml.replace(/\{\{PHOTO_LABEL_4\}\}/g, 'His Family')
     
     const isBirthdayCard = slug === 'birthday-love-card'
     const isRoyalDark = slug === 'royal-dark-wedding'

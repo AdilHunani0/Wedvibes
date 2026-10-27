@@ -75,6 +75,10 @@ export function MiniCardPreview({
         h = h.replace(/\{\{EVENT_DATE\}\}/g, '21st Nov 2026');
         h = h.replace(/\{\{EVENT_TIME\}\}/g, '11:00 AM');
         h = h.replace(/\{\{VENUE_NAME\}\}/g, 'Grand Palace Hall');
+        h = h.replace(/\{\{PHOTO_LABEL_1\}\}/g, 'Us ♡');
+        h = h.replace(/\{\{PHOTO_LABEL_2\}\}/g, 'Her Family');
+        h = h.replace(/\{\{PHOTO_LABEL_3\}\}/g, 'Always ♡');
+        h = h.replace(/\{\{PHOTO_LABEL_4\}\}/g, 'His Family');
         
         // Strip logic blocks and remaining placeholders
         h = h.replace(/\{\{#if [^}]+\}\}([\s\S]*?)\{\{\/if\}\}/g, '');

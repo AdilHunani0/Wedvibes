@@ -215,6 +215,11 @@ export async function POST(req: Request) {
       }
     })
 
+    // Rose Bloom polaroid memory labels fallbacks
+    html = html.replace(/\{\{PHOTO_LABEL_1\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_1 || 'Us ♡'))
+    html = html.replace(/\{\{PHOTO_LABEL_2\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_2 || 'Her Family'))
+    html = html.replace(/\{\{PHOTO_LABEL_3\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_3 || 'Always ♡'))
+    html = html.replace(/\{\{PHOTO_LABEL_4\}\}/g, escapeHtml((extraFields as Record<string, string>).photo_label_4 || 'His Family'))
 
     // 5. Resolve conditional blocks — strip sections whose key fields are empty
     const conditionalData: Record<string, string | string[] | undefined | null> = {}

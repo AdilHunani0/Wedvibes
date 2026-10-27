@@ -198,6 +198,12 @@ function applyPlaceholders(templateSlug: string, html: string, f: CustomizationF
     html = html.replace(new RegExp(`\\{\\{GALLERY_CAPTION_${i}\\}\\}`, 'g'), escapeHtml(d[`gallery_caption_${i}`] || ''))
   }
 
+  // Rose Bloom polaroid memory labels
+  html = html.replace(/\{\{PHOTO_LABEL_1\}\}/g, escapeHtml(d.photo_label_1 || 'Us ♡'))
+  html = html.replace(/\{\{PHOTO_LABEL_2\}\}/g, escapeHtml(d.photo_label_2 || 'Her Family'))
+  html = html.replace(/\{\{PHOTO_LABEL_3\}\}/g, escapeHtml(d.photo_label_3 || 'Always ♡'))
+  html = html.replace(/\{\{PHOTO_LABEL_4\}\}/g, escapeHtml(d.photo_label_4 || 'His Family'))
+
   const brideFamilyPhoto = escapeHtml(safeUrl((d.bride_family_photo && d.bride_family_photo[0])) || safeUrl(FALLBACK_PHOTOS[0]) || '')
   const groomFamilyPhoto = escapeHtml(safeUrl((d.groom_family_photo && d.groom_family_photo[0])) || safeUrl(FALLBACK_PHOTOS[1]) || '')
   html = html.replace(/\{\{BRIDE_FAMILY_PHOTO_1\}\}/g, brideFamilyPhoto)

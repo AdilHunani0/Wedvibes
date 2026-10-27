@@ -12,7 +12,7 @@ export const defaultSchema: TemplateFormConfig = {
         { name: 'add_music', label: 'Add Background Music 🎵', type: 'checkbox' },
         { name: 'music_url', label: 'Custom Music URL (MP3 Link) 🔗', type: 'text', placeholder: 'e.g. https://example.com/song.mp3 (optional)' },
         { name: 'event_date', label: 'Event Date 📅', type: 'date', required: true },
-        { name: 'event_time', label: 'Event Time ⏰', type: 'text', placeholder: 'e.g. 11:00 AM onwards', required: true },
+        { name: 'event_time', label: 'Muhurat Time ⏰', type: 'text', placeholder: 'e.g. 11:00 AM onwards', required: true },
       ],
     },
     {
@@ -697,7 +697,56 @@ export const crimsonDoorWeddingSchema: TemplateFormConfig = {
   ],
 }
 
+export const roseBloomWeddingSchema: TemplateFormConfig = {
+  slug: 'rose-bloom-wedding',
+  steps: [
+    {
+      title: 'Couple Details',
+      description: 'Enter names and background music for the card.',
+      fields: [
+        { name: 'person1_name', label: "Groom's Name 🤵", type: 'text', placeholder: "Groom's full name", required: true },
+        { name: 'person2_name', label: "Bride's Name 👰", type: 'text', placeholder: "Bride's full name", required: true },
+        { name: 'add_music', label: 'Add Background Music 🎵', type: 'checkbox' },
+        { name: 'music_url', label: 'Custom Music URL (MP3 Link) 🔗', type: 'text', placeholder: 'e.g. https://example.com/song.mp3 (optional)' },
+      ],
+    },
+    {
+      title: 'Our Memories',
+      description: 'Upload 4 hanging polaroid photos and customize the captions inside each photo.',
+      fields: [
+        { name: 'photo_urls', label: 'Memory Photos (up to 4) 📸', type: 'photo', maxPhotos: 4 },
+        { name: 'photo_label_1', label: 'Photo 1 Caption 🏷️', type: 'text', placeholder: 'e.g. Us ♡' },
+        { name: 'photo_label_2', label: 'Photo 2 Caption 🏷️', type: 'text', placeholder: 'e.g. Her Family' },
+        { name: 'photo_label_3', label: 'Photo 3 Caption 🏷️', type: 'text', placeholder: 'e.g. Always ♡' },
+        { name: 'photo_label_4', label: 'Photo 4 Caption 🏷️', type: 'text', placeholder: 'e.g. His Family' },
+      ],
+    },
+    {
+      title: 'Event Details',
+      description: 'Wedding date, muhurat time, and venue information.',
+      fields: [
+        { name: 'event_date', label: 'Wedding Date 📅', type: 'date', required: true },
+        { name: 'event_time', label: 'Muhurat Time ⏰', type: 'text', placeholder: 'e.g. 11:00 AM onwards', required: true },
+        { name: 'venue_name', label: 'Venue Name 🏰', type: 'text', placeholder: 'e.g. Grand Palace Hall', required: true },
+        { name: 'venue_address', label: 'Venue Address 📍', type: 'textarea', placeholder: 'Full physical address of the venue', rows: 3, required: true },
+        { name: 'extra_message', label: 'Extra Message or Note 📝', type: 'textarea', placeholder: 'e.g. No boxed gifts please.', rows: 3 },
+      ],
+    },
+    {
+      title: 'Family Details',
+      description: 'Blessings from both families.',
+      fields: [
+        { name: 'family_bride_father', label: "Bride's Father", type: 'text', placeholder: "Father's name" },
+        { name: 'family_bride_mother', label: "Bride's Mother", type: 'text', placeholder: "Mother's name" },
+        { name: 'family_groom_father', label: "Groom's Father", type: 'text', placeholder: "Father's name" },
+        { name: 'family_groom_mother', label: "Groom's Mother", type: 'text', placeholder: "Mother's name" },
+      ],
+    },
+  ],
+}
+
 export const templateSchemas: Record<string, TemplateFormConfig> = {
+  'rose-bloom-wedding': roseBloomWeddingSchema,
   'royal-dark-wedding': royalDarkWeddingSchema,
   'destination-beach-wedding': destinationBeachWeddingSchema,
   'vintage-story-book-wedding': vintageStoryBookSchema,
